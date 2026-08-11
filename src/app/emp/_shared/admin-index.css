@@ -1,0 +1,307 @@
+/* Aurora — admin dashboard supplemental styles (stat cards, offer list,
+   conversions table). These classes are not currently wired into
+   page.js (which uses inline styles) but are kept theme-consistent so
+   any admin page opting into them gets the Aurora look automatically. */
+:root {
+  --z-fixed: 100;
+}
+
+/*========== BASE ==========*/
+*,
+::before,
+::after {
+  box-sizing: border-box;
+}
+
+h3 {
+  margin: 0;
+  font-family: var(--lg-font-display);
+}
+
+a {
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ====================================== SECTION 1 START ====================================== */
+
+.container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.right-container {
+  width: 26%;
+  min-width: 300px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.left-container {
+  width: 74%;
+  height: 0;
+  min-width: 300px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  min-width: 280px;
+  flex-grow: 1;
+  background-color: var(--lg-paper-raised);
+  box-shadow: var(--lg-shadow-md);
+  margin: 0.75rem;
+  border-radius: var(--lg-radius-lg);
+  padding: 1.5rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .card {
+    transition: transform 180ms ease, box-shadow 180ms ease;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--lg-shadow-lg);
+  }
+}
+
+.card-logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: var(--lg-radius);
+  margin-right: 1.25rem;
+  flex-shrink: 0;
+  color: #fff;
+}
+
+.card-logo-container svg {
+  width: 28px;
+  height: 28px;
+}
+
+.card-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-details h3 {
+  font-size: 1.75rem;
+  font-family: var(--lg-font-display);
+  font-weight: 700;
+  color: var(--lg-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.card-details p {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  color: var(--lg-ink-faint);
+  margin-top: 0.35rem;
+}
+
+.card-main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-grow: 1;
+  width: 100%;
+}
+
+.card-main-lable {
+  font-weight: 700;
+  font-size: 1.1rem;
+  font-family: var(--lg-font-display);
+  margin-bottom: 0.75rem;
+  color: var(--lg-ink);
+}
+
+.card-main-data {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 0.75rem;
+}
+
+.card-main-data-lable {
+  font-weight: 500;
+  color: var(--lg-ink-soft);
+}
+
+.card-main-data-value {
+  font-weight: 700;
+  color: var(--lg-violet);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Rotating colorful gradient badges — violet/pink, cyan/blue, orange/yellow */
+.card:nth-child(3n+1) .card-logo-container {
+  background: linear-gradient(135deg, var(--lg-violet), var(--lg-pink));
+}
+
+.card:nth-child(3n+2) .card-logo-container {
+  background: linear-gradient(135deg, var(--lg-cyan), var(--lg-blue));
+}
+
+.card:nth-child(3n+3) .card-logo-container {
+  background: linear-gradient(135deg, var(--lg-orange), var(--lg-yellow));
+}
+
+/* Responsive Cards */
+@media screen and (min-width: 1024px) {
+  .container {
+    justify-content: space-between;
+    /* Ensure cards are spread across the width */
+  }
+}
+
+@media screen and (max-width: 618px) {
+  .container {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .right-container {
+    width: 100%;
+  }
+
+  .left-container {
+    width: 100%;
+    height: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .card {
+    margin: 0.75rem;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+.recent-conversions {
+  width: 100%;
+  margin: 0.75rem;
+  padding: 1.5rem;
+  background-color: var(--lg-paper-raised);
+  box-shadow: var(--lg-shadow-md);
+  border-radius: var(--lg-radius-lg);
+}
+
+.recent-conversions h3 {
+  margin-bottom: 1.25rem;
+  font-size: 1.15rem;
+  font-family: var(--lg-font-display);
+  font-weight: 700;
+  color: var(--lg-ink);
+}
+
+.table-container {
+  overflow-x: auto; /* Enables horizontal scrolling */
+  width: 100%;
+}
+
+.conversions-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px; /* Updated to accommodate extra fields */
+}
+
+.conversions-table th, .conversions-table td {
+  text-align: left;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--lg-line);
+}
+
+.conversions-table th {
+  background-color: var(--lg-paper-sunken);
+  font-weight: 800;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--lg-ink-faint);
+}
+
+.conversions-table tr:last-child td {
+  border-bottom: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .conversions-table tr {
+    transition: background-color 140ms ease;
+  }
+}
+
+.conversions-table tr:hover {
+  background-color: var(--lg-violet-soft);
+}
+
+.conversions-table td {
+  color: var(--lg-ink-soft);
+  font-size: 0.9rem; /* Slightly smaller text for better fit */
+}
+
+@media screen and (max-width: 768px) {
+  .table-container {
+      margin-bottom: 1rem; /* Add spacing around the table */
+  }
+
+  .conversions-table th, .conversions-table td {
+      font-size: 0.875rem; /* Adjust font size for smaller screens */
+      padding: 0.5rem;
+  }
+}
+
+
+/* ====================================== SECTION 1 END ====================================== */
+.top-offers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.offer-cell {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85rem 1.1rem;
+  border-radius: var(--lg-radius-sm);
+  background-color: var(--lg-paper-sunken);
+  font-size: 0.95rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .offer-cell {
+    transition: background-color 150ms ease, transform 150ms ease;
+  }
+  .offer-cell:hover {
+    background-color: var(--lg-violet-soft);
+    transform: translateY(-1px);
+  }
+}
+
+.offer-cell span {
+  font-weight: 600;
+}
+
+.offer-cell span:first-child {
+  color: var(--lg-ink);
+}
+
+.offer-cell span:last-child {
+  color: var(--lg-violet);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}

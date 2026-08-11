@@ -1,0 +1,88 @@
+/* Aurora — admin toast notifications.
+   Keyframe names (fadein/fadeout) and the animated property (bottom/opacity)
+   are unchanged so existing JS toast trigger logic keeps working. */
+#sucess {
+    visibility: hidden;
+    min-width: 240px;
+    margin-left: -120px;
+    background-color: var(--lg-paper-raised);
+    color: var(--lg-success);
+    border-left: 4px solid var(--lg-success);
+    text-align: left;
+    border-radius: var(--lg-radius);
+    padding: 14px 20px;
+    position: fixed;
+    z-index: 10;
+    left: 50%;
+    bottom: 30px;
+    font-size: 13.5px;
+    font-weight: 700;
+    font-family: var(--lg-font-body);
+    box-shadow: var(--lg-shadow-lg);
+}
+
+#sucess.show {
+    visibility: visible;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    #sucess.show {
+        -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+}
+
+
+
+#failed {
+    visibility: hidden;
+    min-width: 240px;
+    margin-left: -120px;
+    background-color: var(--lg-paper-raised);
+    color: var(--lg-error);
+    border-left: 4px solid var(--lg-error);
+    text-align: left;
+    border-radius: var(--lg-radius);
+    padding: 14px 20px;
+    position: fixed;
+    z-index: 10;
+    left: 50%;
+    bottom: 30px;
+    font-size: 13.5px;
+    font-weight: 700;
+    font-family: var(--lg-font-body);
+    box-shadow: var(--lg-shadow-lg);
+}
+
+#failed.show {
+    visibility: visible;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    #failed.show {
+        -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+}
+
+
+
+@-webkit-keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}

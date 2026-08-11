@@ -1,0 +1,11 @@
+/* Tailwind entry point, loaded globally from the root layout.
+   The affiliate dashboard, its shared header, and other components rely
+   on Tailwind utility classNames (flex, h-16, rounded-xl, etc.) directly
+   in their JSX, so this must be loaded app-wide, not scoped to isolated
+   pages. Existing plain-CSS files (login.css, loothat-home.css, the
+   admin/employee panel stylesheets) are imported after this one at their
+   respective layout/page level and take precedence on any overlapping
+   property. */
+@import "tailwindcss";
+@source "../app";
+@source "../components";

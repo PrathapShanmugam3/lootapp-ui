@@ -1,0 +1,198 @@
+/* ============================================================
+   AURORA — shared design tokens (light + dark)
+   Light, colorful, gradient-driven identity used across the
+   affiliate dashboard, admin panel, and employee panel.
+   Import once per route-group layout, before any other
+   stylesheet that references these custom properties.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Surfaces */
+  --lg-ink: #14162B;
+  --lg-ink-soft: #565B7A;
+  --lg-ink-faint: #8D91AC;
+  --lg-paper: #F3F4FB;
+  --lg-paper-raised: #FFFFFF;
+  --lg-paper-sunken: #EAEBF6;
+  --lg-line: #E4E5F2;
+  --lg-line-soft: #ECEDF7;
+
+  /* Brand — emerald → teal */
+  --lg-violet: #10B981;
+  --lg-violet-deep: #0D8F65;
+  --lg-violet-soft: #E1F7EC;
+  --lg-pink: #14B8A6;
+  --lg-pink-soft: #DDF7F3;
+  --lg-cyan: #2FD4C7;
+  --lg-blue: #3B8AFF;
+  --lg-orange: #FF8A4C;
+  --lg-yellow: #FFC94C;
+  --lg-hero-1: #10B981;
+  --lg-hero-2: #14B8A6;
+
+  /* Semantic */
+  --lg-success: #1FB574;
+  --lg-success-soft: #E4FAF0;
+  --lg-warning: #FF9F1C;
+  --lg-warning-soft: #FFF3E1;
+  --lg-error: #FF4D6D;
+  --lg-error-soft: #FFE7EC;
+  --lg-info: #3B8AFF;
+  --lg-info-soft: #E7F1FF;
+
+  /* Elevation */
+  --lg-shadow-sm: 0 2px 6px rgba(20,22,43,0.04);
+  --lg-shadow-md: 0 8px 20px -6px rgba(20,22,43,0.10), 0 2px 6px rgba(20,22,43,0.04);
+  --lg-shadow-lg: 0 24px 48px -12px rgba(20,22,43,0.16), 0 8px 16px rgba(20,22,43,0.06);
+
+  --lg-radius: 16px;
+  --lg-radius-sm: 10px;
+  --lg-radius-lg: 20px;
+  --lg-radius-pill: 999px;
+
+  --lg-font-display: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --lg-font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+
+  /* Back-compat aliases for legacy component code written against the old
+     "Ledger" token names (teal/gold) — map onto the new brand hues so
+     nothing silently breaks while pages are migrated file-by-file. */
+  --lg-teal: var(--lg-violet);
+  --lg-teal-deep: var(--lg-violet-deep);
+  --lg-teal-bright: var(--lg-violet);
+  --lg-teal-soft: var(--lg-violet-soft);
+  --lg-gold: var(--lg-pink);
+  --lg-gold-soft: var(--lg-pink-soft);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --lg-ink: #EEEFFB;
+    --lg-ink-soft: #B4B7D6;
+    --lg-ink-faint: #7B7FA3;
+    --lg-paper: #100E22;
+    --lg-paper-raised: #191735;
+    --lg-paper-sunken: #0B0A1A;
+    --lg-line: #2C2A54;
+    --lg-line-soft: #211F42;
+
+    --lg-violet: #34D399;
+    --lg-violet-deep: #10B981;
+    --lg-violet-soft: #123726;
+    --lg-pink: #2DD4BF;
+    --lg-pink-soft: #113B36;
+    --lg-cyan: #4FE3D6;
+    --lg-blue: #5CA0FF;
+    --lg-orange: #FFA262;
+    --lg-yellow: #FFD569;
+    --lg-hero-1: #10B981;
+    --lg-hero-2: #14B8A6;
+
+    --lg-success: #4FDB9C;
+    --lg-success-soft: #123726;
+    --lg-warning: #FFB65C;
+    --lg-warning-soft: #3A2A11;
+    --lg-error: #FF7590;
+    --lg-error-soft: #3A1622;
+    --lg-info: #5CA0FF;
+    --lg-info-soft: #142744;
+
+    --lg-shadow-sm: 0 2px 6px rgba(0,0,0,0.35);
+    --lg-shadow-md: 0 8px 20px -6px rgba(0,0,0,0.5);
+    --lg-shadow-lg: 0 24px 48px -12px rgba(0,0,0,0.6);
+
+    --lg-teal: var(--lg-violet);
+    --lg-teal-deep: var(--lg-violet-deep);
+    --lg-teal-bright: var(--lg-violet);
+    --lg-teal-soft: var(--lg-violet-soft);
+    --lg-gold: var(--lg-pink);
+    --lg-gold-soft: var(--lg-pink-soft);
+  }
+}
+
+:root[data-theme="dark"] {
+  --lg-ink: #EEEFFB;
+  --lg-ink-soft: #B4B7D6;
+  --lg-ink-faint: #7B7FA3;
+  --lg-paper: #100E22;
+  --lg-paper-raised: #191735;
+  --lg-paper-sunken: #0B0A1A;
+  --lg-line: #2C2A54;
+  --lg-line-soft: #211F42;
+
+  --lg-violet: #34D399;
+  --lg-violet-deep: #10B981;
+  --lg-violet-soft: #123726;
+  --lg-pink: #2DD4BF;
+  --lg-pink-soft: #113B36;
+  --lg-cyan: #4FE3D6;
+  --lg-blue: #5CA0FF;
+  --lg-orange: #FFA262;
+  --lg-yellow: #FFD569;
+  --lg-hero-1: #10B981;
+  --lg-hero-2: #14B8A6;
+
+  --lg-success: #4FDB9C;
+  --lg-success-soft: #123726;
+  --lg-warning: #FFB65C;
+  --lg-warning-soft: #3A2A11;
+  --lg-error: #FF7590;
+  --lg-error-soft: #3A1622;
+  --lg-info: #5CA0FF;
+  --lg-info-soft: #142744;
+
+  --lg-shadow-sm: 0 2px 6px rgba(0,0,0,0.35);
+  --lg-shadow-md: 0 8px 20px -6px rgba(0,0,0,0.5);
+  --lg-shadow-lg: 0 24px 48px -12px rgba(0,0,0,0.6);
+
+  --lg-teal: var(--lg-violet);
+  --lg-teal-deep: var(--lg-violet-deep);
+  --lg-teal-bright: var(--lg-violet);
+  --lg-teal-soft: var(--lg-violet-soft);
+  --lg-gold: var(--lg-pink);
+  --lg-gold-soft: var(--lg-pink-soft);
+}
+
+body {
+  background: var(--lg-paper);
+  color: var(--lg-ink);
+  font-family: var(--lg-font-body);
+}
+
+/* Shared responsive table-scroll container (AdminTable and any other
+   wide-table wrapper). Keeps horizontal overflow contained within the
+   card's rounded corners with a slim styled scrollbar instead of the
+   browser's default thick bar, and a subtle edge fade to hint that
+   more content is scrollable. */
+.lg-table-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--lg-line) transparent;
+}
+.lg-table-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+.lg-table-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.lg-table-scroll::-webkit-scrollbar-thumb {
+  background: var(--lg-line);
+  border-radius: var(--lg-radius-pill);
+}
+.lg-table-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--lg-ink-faint);
+}
+
+/* Shared loading spinner (see components/Loader.js). Gradient-ring spin,
+   falls back to a static ring when the user prefers reduced motion. */
+@keyframes lg-spin {
+  to { transform: rotate(360deg); }
+}
+.lg-spinner {
+  box-sizing: border-box;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .lg-spinner {
+    animation: lg-spin 0.7s linear infinite;
+  }
+}

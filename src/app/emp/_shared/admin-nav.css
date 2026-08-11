@@ -1,0 +1,399 @@
+/*========== VARIABLES CSS ==========*/
+:root {
+  --header-height: 3.5rem;
+  --nav-width: 260px;
+
+  /* Legacy local aliases now point at the shared Aurora tokens so the
+     rest of this file (and admin-index.css, which reuses these names)
+     stays theme-aware automatically. */
+  --first-color: var(--lg-violet);
+  --first-color-light: var(--lg-violet-soft);
+  --title-color: var(--lg-ink);
+  --text-color: var(--lg-ink-soft);
+  --text-color-light: var(--lg-ink-faint);
+  --body-color: var(--lg-paper);
+  --container-color: var(--lg-paper-raised);
+  --border-color: var(--lg-line);
+
+  --body-font: var(--lg-font-body);
+  --normal-font-size: .938rem;
+  --small-font-size: .75rem;
+  --smaller-font-size: .75rem;
+
+  --font-medium: 500;
+  --font-semi-bold: 600;
+
+  --z-fixed: 100;
+}
+
+@media screen and (min-width: 1024px) {
+  :root {
+    --normal-font-size: 1rem;
+    --small-font-size: .875rem;
+    --smaller-font-size: .813rem;
+  }
+}
+
+/*========== BASE ==========*/
+*,
+::before,
+::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: var(--header-height) 0 0 0;
+  padding: 1rem 1rem 0;
+  font-family: var(--body-font);
+  font-size: var(--normal-font-size);
+  background-color: var(--body-color);
+  color: var(--text-color);
+}
+
+h3 {
+  margin: 0;
+  font-family: var(--lg-font-display);
+}
+
+a {
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/*========== HEADER ==========*/
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--container-color);
+  border-bottom: 1.5px solid var(--border-color);
+  padding: 0 1rem;
+  z-index: var(--z-fixed);
+}
+
+.header__container {
+  display: flex;
+  align-items: center;
+  height: var(--header-height);
+  justify-content: space-between;
+}
+
+.header__img {
+  color: var(--title-color);
+  max-width: 150px;
+  font-size: 20px;
+  font-weight: 700;
+  font-family: var(--lg-font-display);
+  height: 35px;
+  border-radius: 50%;
+}
+
+.header__logo {
+  color: var(--title-color);
+  font-weight: var(--font-medium);
+  display: none;
+}
+
+.header__search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: .55rem .9rem;
+  background-color: var(--lg-paper-sunken);
+  border: 1.5px solid transparent;
+  border-radius: var(--lg-radius-pill);
+  transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.header__search:focus-within {
+  border-color: var(--lg-violet);
+  background-color: var(--lg-paper-raised);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12);
+}
+
+.header__input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  color: var(--title-color);
+  font-family: var(--body-font);
+}
+
+.header__input::placeholder {
+  font-family: var(--body-font);
+  color: var(--text-color-light);
+}
+
+.header__icon,
+.header__toggle {
+  font-size: 1.2rem;
+  color: var(--title-color);
+}
+
+.header__toggle {
+  color: var(--title-color);
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .header__toggle {
+    transition: color 150ms ease;
+  }
+  .header__toggle:hover {
+    color: var(--first-color);
+  }
+}
+
+/*========== NAV ==========*/
+/* Fixed-width, always-full-visibility sidebar. The previous version of
+   this file forced a permanently-collapsed 68px icon-only rail on
+   desktop (`.nav { left:-100% }` off-canvas by default, a min-width:768px
+   query pinning `width:68px`, and `.nav__logo-name/.nav__name/.nav__subtitle
+   /.nav__dropdown-icon { opacity:0 }` that only became visible on
+   `.nav:hover`). That produced the reported "nav icons/text half-hidden"
+   bug. It has been removed: on desktop the nav is always left:0 at the
+   full --nav-width with every label always visible. Mobile off-canvas
+   toggle (`.show-menu`) is preserved as legitimate responsive behavior. */
+.nav {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  height: 100vh;
+  padding: 1rem 1rem 0;
+  background-color: var(--container-color);
+  border-right: 1.5px solid var(--border-color);
+  z-index: var(--z-fixed);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nav {
+    transition: left 220ms ease;
+  }
+}
+
+.nav__container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-bottom: 3rem;
+  overflow: auto;
+  scrollbar-width: none;
+  /* For mozilla */
+}
+
+/* For Google Chrome and others */
+.nav__container::-webkit-scrollbar {
+  display: none;
+}
+
+.nav__logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: var(--font-semi-bold);
+  font-family: var(--lg-font-display);
+  font-size: 1.05rem;
+  color: var(--title-color);
+  margin-bottom: 2rem;
+  padding: 0 .25rem 1.25rem;
+  border-bottom: 1.5px solid var(--border-color);
+}
+
+.nav__list,
+.nav__items {
+  display: grid;
+}
+
+.nav__list {
+  row-gap: 2rem;
+}
+
+.nav__items {
+  row-gap: 0.3rem;
+}
+
+.nav__subtitle {
+  font-size: var(--small-font-size);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-weight: 700;
+  color: var(--text-color-light);
+  padding: 0 .5rem;
+}
+
+.nav__link {
+  display: flex;
+  align-items: center;
+  padding: 0.7rem 0.75rem;
+  border-radius: var(--lg-radius-sm);
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nav__link {
+    transition: background-color 150ms ease, color 150ms ease, box-shadow 150ms ease;
+  }
+}
+
+.nav__link:hover {
+  color: var(--title-color);
+  background-color: var(--lg-paper-sunken);
+}
+
+.nav__icon {
+  font-size: 1.15rem;
+  margin-right: .65rem;
+  color: var(--first-color);
+  display: flex;
+  align-items: center;
+}
+
+.nav__name {
+  font-size: var(--small-font-size);
+  font-weight: var(--font-medium);
+  white-space: nowrap;
+}
+
+.nav__logout {
+  margin-top: 2rem;
+  border-top: 1.5px solid var(--border-color);
+  padding-top: 1rem;
+}
+
+/* Dropdown group wrapper — no fixed/clamped height here. Expand/collapse
+   is driven entirely by React via an inline max-height on
+   .nav__dropdown-collapse below (see AdminShell.js), so this element must
+   never itself clip content or the trigger row disappears at rest. */
+.nav__dropdown {
+  overflow: visible;
+}
+
+.nav__dropdown-collapse {
+  background-color: var(--lg-paper-sunken);
+  border-radius: var(--lg-radius-sm);
+  margin-top: 0.35rem;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nav__dropdown-collapse {
+    transition: max-height 220ms ease-in-out;
+  }
+}
+
+.nav__dropdown-content {
+  display: grid;
+  row-gap: .6rem;
+  padding: .75rem 1.25rem .75rem 2.4rem;
+}
+
+.nav__dropdown-item {
+  font-size: var(--smaller-font-size);
+  font-weight: var(--font-medium);
+  color: var(--text-color);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nav__dropdown-item {
+    transition: color 150ms ease;
+  }
+}
+
+.nav__dropdown-item:hover {
+  color: var(--first-color);
+}
+
+.nav__dropdown-icon {
+  margin-left: auto;
+  color: var(--text-color-light);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nav__dropdown-icon {
+    transition: transform 220ms ease;
+  }
+}
+
+/* Dropdown open/closed state is controlled by React (AdminShell.js sets
+   an inline max-height on .nav__dropdown-collapse and toggles the chevron
+   rotation via inline style based on click, not hover) — no CSS :hover
+   rule should drive this, or moving the mouse over a closed group would
+   force it open and then snap shut again the instant the pointer leaves,
+   which reads as nav items randomly disappearing. */
+
+/*===== Show menu (mobile off-canvas toggle — legitimate responsive behavior, preserved) =====*/
+.show-menu,
+.show {
+  left: 0;
+}
+
+/*===== Active link — violet/pink gradient fill + glow, matching the
+  reference file's `.rail__link.is-active` pattern =====*/
+.active {
+  color: #fff;
+  background: linear-gradient(135deg, var(--lg-violet), var(--lg-violet-deep));
+  box-shadow: 0 6px 16px -4px rgba(16, 185, 129, 0.45);
+}
+
+.active .nav__icon,
+.active .nav__dropdown-icon {
+  color: #fff;
+}
+
+/* ========== MEDIA QUERIES NAV ==========*/
+@media screen and (min-width: 768px) {
+  body {
+    padding: 1rem 1rem 0 calc(var(--nav-width) + 1rem);
+  }
+
+  .header {
+    padding: 0 2rem 0 calc(var(--nav-width) + 1.5rem);
+  }
+
+  .header__container {
+    height: calc(var(--header-height) + .5rem);
+  }
+
+  .header__search {
+    width: 300px;
+  }
+
+  .header__toggle {
+    display: none;
+  }
+
+  .header__logo {
+    display: block;
+  }
+
+  .header__img {
+    max-width: 350px;
+    font-size: 20px;
+    height: auto;
+    order: 1;
+  }
+
+  /* Sidebar is always fully expanded and visible on desktop — no
+     collapsed icon-only rail, no hover-to-expand mechanism. */
+  .nav {
+    left: 0;
+    padding: 1.25rem 1.25rem 0;
+    width: var(--nav-width);
+  }
+
+  .nav__items {
+    row-gap: 0.4rem;
+  }
+
+  .nav__icon {
+    font-size: 1.2rem;
+  }
+}
