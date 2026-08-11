@@ -1,6 +1,10 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const getBaseUrl = () => {
+  if (typeof window !== "undefined") return "";
+  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+};
 
 async function request(path, { method = "GET", body, ...rest } = {}) {
+  const API_URL = getBaseUrl();
   const res = await fetch(`${API_URL}${path}`, {
     method,
     credentials: "include", // send/receive the httpOnly session cookie
