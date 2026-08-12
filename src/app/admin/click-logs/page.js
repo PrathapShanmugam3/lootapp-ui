@@ -75,9 +75,10 @@ export default function ClickLogsPage() {
           <Loader style={{ padding: 32 }} />
         ) : (
           <>
-            <AdminTable columns={["Click ID", "Offer", "Affiliate", "Event", "IP", "Date", "Status", "Action"]}>
-              {data.clicks.map((c) => (
+            <AdminTable columns={["#", "Click ID", "Offer", "Affiliate", "Event", "IP", "Date", "Status", "Action"]}>
+              {data.clicks.map((c, i) => (
                 <tr key={c.id} style={{ borderTop: "1px solid var(--lg-line-soft)" }}>
+                  <td style={{ padding: "10px 16px", color: "var(--lg-ink-faint)", fontSize: 12.5, fontWeight: 600 }}>{(page - 1) * limit + i + 1}</td>
                   <td style={{ padding: "10px 16px", fontFamily: "monospace", fontSize: 12 }}>{c.click_id}</td>
                   <td style={{ padding: "10px 16px" }}>{c.off_name}</td>
                   <td style={{ padding: "10px 16px" }}>{c.aff_id}</td>

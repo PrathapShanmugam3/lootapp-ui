@@ -66,6 +66,7 @@ export default function EmpDashboardPage() {
           <table style={{ width: "100%", fontSize: 13, borderCollapse: "collapse", minWidth: 420 }}>
             <thead>
               <tr style={{ textAlign: "left" }}>
+                <th style={{ paddingBottom: 10, fontSize: 10.5, fontWeight: 800, color: "var(--lg-ink-faint)", textTransform: "uppercase", letterSpacing: "0.06em", width: 50 }}>#</th>
                 <th style={{ paddingBottom: 10, fontSize: 10.5, fontWeight: 800, color: "var(--lg-ink-faint)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Offer</th>
                 <th style={{ paddingBottom: 10, fontSize: 10.5, fontWeight: 800, color: "var(--lg-ink-faint)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Amount</th>
                 <th style={{ paddingBottom: 10, fontSize: 10.5, fontWeight: 800, color: "var(--lg-ink-faint)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Status</th>
@@ -77,6 +78,7 @@ export default function EmpDashboardPage() {
                 const failed = p.status === "Failed";
                 return (
                   <tr key={i} style={{ borderTop: "1px solid var(--lg-line-soft)" }}>
+                    <td style={{ padding: "10px 0", color: "var(--lg-ink-faint)", fontWeight: 600 }}>{i + 1}</td>
                     <td style={{ padding: "10px 0", fontWeight: 600, color: "var(--lg-ink)" }}>{p.offName}</td>
                     <td style={{ padding: "10px 0", fontWeight: 700, fontVariantNumeric: "tabular-nums", fontFamily: "var(--lg-font-display)" }}>₹{p.amount}</td>
                     <td style={{ padding: "10px 0" }}>

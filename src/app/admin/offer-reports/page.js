@@ -18,9 +18,10 @@ export default function OfferReportsPage() {
     <div style={{ padding: "2rem", maxWidth: 1100, margin: "0 auto" }}>
       <AdminPageHeader title="Offer Reports" subtitle={`${offers.length} offers`} />
       <AdminCard style={{ borderRadius: "var(--lg-radius)", boxShadow: "var(--lg-shadow-sm)" }}>
-        <AdminTable columns={["Offer", "Status", "Clicks", "Conversions", "Payout", "Action"]}>
-          {offers.map((o) => (
+        <AdminTable columns={["#", "Offer", "Status", "Clicks", "Conversions", "Payout", "Action"]}>
+          {offers.map((o, i) => (
             <tr key={o.off_id} style={{ borderTop: "1px solid var(--lg-line-soft)", transition: "background-color 140ms ease" }}>
+              <td style={{ padding: "10px 16px", color: "var(--lg-ink-faint)", fontSize: 12.5, fontWeight: 600 }}>{i + 1}</td>
               <td style={{ padding: "10px 16px", fontWeight: 700, color: "var(--lg-ink)" }}>{o.offer_name}</td>
               <td style={{ padding: "10px 16px" }}><StatusBadge status={o.offer_status} /></td>
               <td style={{ padding: "10px 16px", fontVariantNumeric: "tabular-nums" }}>{o.clicks.toLocaleString("en-IN")}</td>

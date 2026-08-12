@@ -41,9 +41,10 @@ export default function PendingPaymentsPage() {
           <div style={{ padding: 32, color: "var(--lg-ink-faint)", fontSize: 13 }}>No pending payments.</div>
         ) : (
           <>
-          <AdminTable columns={["Offer", "Pay To", "Pay ID", "Amount", "User Balance", "Event", "Action"]}>
-            {data.payments.map((p) => (
+          <AdminTable columns={["#", "Offer", "Pay To", "Pay ID", "Amount", "User Balance", "Event", "Action"]}>
+            {data.payments.map((p, i) => (
               <tr key={p.id} style={{ borderTop: "1px solid var(--lg-line-soft)", transition: "background-color 140ms ease" }} onMouseEnter={(e) => (e.currentTarget.style.background = "var(--lg-paper-sunken)")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                <td style={{ padding: "12px 16px", color: "var(--lg-ink-faint)", fontSize: 12.5, fontWeight: 600 }}>{(page - 1) * limit + i + 1}</td>
                 <td style={{ padding: "12px 16px", fontWeight: 700, color: "var(--lg-ink)" }}>{p.off_name}</td>
                 <td style={{ padding: "12px 16px" }}>{p.pay_to}</td>
                 <td style={{ padding: "12px 16px", fontFamily: "monospace", fontSize: 12, maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={p.pay_id}>{p.pay_id}</td>

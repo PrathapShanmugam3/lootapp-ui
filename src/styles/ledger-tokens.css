@@ -1,198 +1,169 @@
 /* ============================================================
-   AURORA — shared design tokens (light + dark)
-   Light, colorful, gradient-driven identity used across the
-   affiliate dashboard, admin panel, and employee panel.
-   Import once per route-group layout, before any other
-   stylesheet that references these custom properties.
+   Loot Hat — Unified Premium Design Tokens (Light + Dark)
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap');
 
 :root {
-  /* Surfaces */
-  --lg-ink: #14162B;
-  --lg-ink-soft: #565B7A;
-  --lg-ink-faint: #8D91AC;
-  --lg-paper: #F3F4FB;
-  --lg-paper-raised: #FFFFFF;
-  --lg-paper-sunken: #EAEBF6;
-  --lg-line: #E4E5F2;
-  --lg-line-soft: #ECEDF7;
+  /* Surface Tokens - Light Mode */
+  --lg-ink: #0f172a;
+  --lg-ink-soft: #475569;
+  --lg-ink-faint: #94a3b8;
+  --lg-paper: #f8fafc;
+  --lg-paper-raised: #ffffff;
+  --lg-paper-sunken: #f1f5f9;
+  --lg-line: #e2e8f0;
+  --lg-line-soft: #f1f5f9;
 
-  /* Brand — emerald → teal */
-  --lg-violet: #10B981;
-  --lg-violet-deep: #0D8F65;
-  --lg-violet-soft: #E1F7EC;
-  --lg-pink: #14B8A6;
-  --lg-pink-soft: #DDF7F3;
-  --lg-cyan: #2FD4C7;
-  --lg-blue: #3B8AFF;
-  --lg-orange: #FF8A4C;
-  --lg-yellow: #FFC94C;
-  --lg-hero-1: #10B981;
-  --lg-hero-2: #14B8A6;
+  /* Brand Palette - Modern Indigo / Purple Gradient Hues */
+  --lg-violet: #6366f1;
+  --lg-violet-deep: #4f46e5;
+  --lg-violet-soft: #eeeffe;
+  --lg-pink: #ec4899;
+  --lg-pink-soft: #fce7f3;
+  --lg-cyan: #06b6d4;
+  --lg-blue: #3b82f6;
+  --lg-orange: #f97316;
+  --lg-yellow: #eab308;
+  --lg-emerald: #10b981;
 
-  /* Semantic */
-  --lg-success: #1FB574;
-  --lg-success-soft: #E4FAF0;
-  --lg-warning: #FF9F1C;
-  --lg-warning-soft: #FFF3E1;
-  --lg-error: #FF4D6D;
-  --lg-error-soft: #FFE7EC;
-  --lg-info: #3B8AFF;
-  --lg-info-soft: #E7F1FF;
+  --lg-hero-1: #6366f1;
+  --lg-hero-2: #8b5cf6;
 
-  /* Elevation */
-  --lg-shadow-sm: 0 2px 6px rgba(20,22,43,0.04);
-  --lg-shadow-md: 0 8px 20px -6px rgba(20,22,43,0.10), 0 2px 6px rgba(20,22,43,0.04);
-  --lg-shadow-lg: 0 24px 48px -12px rgba(20,22,43,0.16), 0 8px 16px rgba(20,22,43,0.06);
+  /* Semantic Hues */
+  --lg-success: #10b981;
+  --lg-success-soft: #d1fae5;
+  --lg-warning: #f59e0b;
+  --lg-warning-soft: #fef3c7;
+  --lg-error: #ef4444;
+  --lg-error-soft: #fee2e2;
+  --lg-info: #3b82f6;
+  --lg-info-soft: #dbeafe;
+
+  /* Shadows & Elevation */
+  --lg-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  --lg-shadow-md: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+  --lg-shadow-lg: 0 12px 32px -4px rgba(99, 102, 241, 0.08), 0 4px 12px rgba(0, 0, 0, 0.03);
 
   --lg-radius: 16px;
   --lg-radius-sm: 10px;
-  --lg-radius-lg: 20px;
-  --lg-radius-pill: 999px;
+  --lg-radius-lg: 24px;
+  --lg-radius-pill: 9999px;
 
-  --lg-font-display: 'Space Grotesk', system-ui, -apple-system, sans-serif;
-  --lg-font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --lg-font-display: 'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --lg-font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
 
-  /* Back-compat aliases for legacy component code written against the old
-     "Ledger" token names (teal/gold) — map onto the new brand hues so
-     nothing silently breaks while pages are migrated file-by-file. */
+  /* Legacy Aliases */
   --lg-teal: var(--lg-violet);
   --lg-teal-deep: var(--lg-violet-deep);
   --lg-teal-bright: var(--lg-violet);
   --lg-teal-soft: var(--lg-violet-soft);
-  --lg-gold: var(--lg-pink);
-  --lg-gold-soft: var(--lg-pink-soft);
+  --lg-gold: var(--lg-warning);
+  --lg-gold-soft: var(--lg-warning-soft);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --lg-ink: #EEEFFB;
-    --lg-ink-soft: #B4B7D6;
-    --lg-ink-faint: #7B7FA3;
-    --lg-paper: #100E22;
-    --lg-paper-raised: #191735;
-    --lg-paper-sunken: #0B0A1A;
-    --lg-line: #2C2A54;
-    --lg-line-soft: #211F42;
+    --lg-ink: #f8fafc;
+    --lg-ink-soft: #94a3b8;
+    --lg-ink-faint: #64748b;
+    --lg-paper: #0b0f19;
+    --lg-paper-raised: #131b2e;
+    --lg-paper-sunken: #090d16;
+    --lg-line: #1e293b;
+    --lg-line-soft: #162032;
 
-    --lg-violet: #34D399;
-    --lg-violet-deep: #10B981;
-    --lg-violet-soft: #123726;
-    --lg-pink: #2DD4BF;
-    --lg-pink-soft: #113B36;
-    --lg-cyan: #4FE3D6;
-    --lg-blue: #5CA0FF;
-    --lg-orange: #FFA262;
-    --lg-yellow: #FFD569;
-    --lg-hero-1: #10B981;
-    --lg-hero-2: #14B8A6;
+    --lg-violet: #818cf8;
+    --lg-violet-deep: #6366f1;
+    --lg-violet-soft: rgba(99, 102, 241, 0.15);
+    --lg-pink: #f472b6;
+    --lg-pink-soft: rgba(244, 114, 182, 0.15);
+    --lg-cyan: #22d3ee;
+    --lg-blue: #60a5fa;
+    --lg-orange: #fb923c;
+    --lg-yellow: #facc15;
+    --lg-emerald: #34d399;
 
-    --lg-success: #4FDB9C;
-    --lg-success-soft: #123726;
-    --lg-warning: #FFB65C;
-    --lg-warning-soft: #3A2A11;
-    --lg-error: #FF7590;
-    --lg-error-soft: #3A1622;
-    --lg-info: #5CA0FF;
-    --lg-info-soft: #142744;
+    --lg-hero-1: #818cf8;
+    --lg-hero-2: #a78bfa;
 
-    --lg-shadow-sm: 0 2px 6px rgba(0,0,0,0.35);
-    --lg-shadow-md: 0 8px 20px -6px rgba(0,0,0,0.5);
-    --lg-shadow-lg: 0 24px 48px -12px rgba(0,0,0,0.6);
+    --lg-success: #34d399;
+    --lg-success-soft: rgba(52, 211, 153, 0.15);
+    --lg-warning: #fbbf24;
+    --lg-warning-soft: rgba(251, 191, 36, 0.15);
+    --lg-error: #f87171;
+    --lg-error-soft: rgba(248, 113, 113, 0.15);
+    --lg-info: #60a5fa;
+    --lg-info-soft: rgba(96, 165, 250, 0.15);
 
-    --lg-teal: var(--lg-violet);
-    --lg-teal-deep: var(--lg-violet-deep);
-    --lg-teal-bright: var(--lg-violet);
-    --lg-teal-soft: var(--lg-violet-soft);
-    --lg-gold: var(--lg-pink);
-    --lg-gold-soft: var(--lg-pink-soft);
+    --lg-shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.4);
+    --lg-shadow-md: 0 8px 24px -6px rgba(0, 0, 0, 0.6);
+    --lg-shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.7);
   }
 }
 
 :root[data-theme="dark"] {
-  --lg-ink: #EEEFFB;
-  --lg-ink-soft: #B4B7D6;
-  --lg-ink-faint: #7B7FA3;
-  --lg-paper: #100E22;
-  --lg-paper-raised: #191735;
-  --lg-paper-sunken: #0B0A1A;
-  --lg-line: #2C2A54;
-  --lg-line-soft: #211F42;
+  --lg-ink: #f8fafc;
+  --lg-ink-soft: #94a3b8;
+  --lg-ink-faint: #64748b;
+  --lg-paper: #0b0f19;
+  --lg-paper-raised: #131b2e;
+  --lg-paper-sunken: #090d16;
+  --lg-line: #1e293b;
+  --lg-line-soft: #162032;
 
-  --lg-violet: #34D399;
-  --lg-violet-deep: #10B981;
-  --lg-violet-soft: #123726;
-  --lg-pink: #2DD4BF;
-  --lg-pink-soft: #113B36;
-  --lg-cyan: #4FE3D6;
-  --lg-blue: #5CA0FF;
-  --lg-orange: #FFA262;
-  --lg-yellow: #FFD569;
-  --lg-hero-1: #10B981;
-  --lg-hero-2: #14B8A6;
+  --lg-violet: #818cf8;
+  --lg-violet-deep: #6366f1;
+  --lg-violet-soft: rgba(99, 102, 241, 0.15);
+  --lg-pink: #f472b6;
+  --lg-pink-soft: rgba(244, 114, 182, 0.15);
+  --lg-cyan: #22d3ee;
+  --lg-blue: #60a5fa;
+  --lg-orange: #fb923c;
+  --lg-yellow: #facc15;
+  --lg-emerald: #34d399;
 
-  --lg-success: #4FDB9C;
-  --lg-success-soft: #123726;
-  --lg-warning: #FFB65C;
-  --lg-warning-soft: #3A2A11;
-  --lg-error: #FF7590;
-  --lg-error-soft: #3A1622;
-  --lg-info: #5CA0FF;
-  --lg-info-soft: #142744;
+  --lg-hero-1: #818cf8;
+  --lg-hero-2: #a78bfa;
 
-  --lg-shadow-sm: 0 2px 6px rgba(0,0,0,0.35);
-  --lg-shadow-md: 0 8px 20px -6px rgba(0,0,0,0.5);
-  --lg-shadow-lg: 0 24px 48px -12px rgba(0,0,0,0.6);
+  --lg-success: #34d399;
+  --lg-success-soft: rgba(52, 211, 153, 0.15);
+  --lg-warning: #fbbf24;
+  --lg-warning-soft: rgba(251, 191, 36, 0.15);
+  --lg-error: #f87171;
+  --lg-error-soft: rgba(248, 113, 113, 0.15);
+  --lg-info: #60a5fa;
+  --lg-info-soft: rgba(96, 165, 250, 0.15);
 
-  --lg-teal: var(--lg-violet);
-  --lg-teal-deep: var(--lg-violet-deep);
-  --lg-teal-bright: var(--lg-violet);
-  --lg-teal-soft: var(--lg-violet-soft);
-  --lg-gold: var(--lg-pink);
-  --lg-gold-soft: var(--lg-pink-soft);
+  --lg-shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.4);
+  --lg-shadow-md: 0 8px 24px -6px rgba(0, 0, 0, 0.6);
+  --lg-shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.7);
 }
 
 body {
   background: var(--lg-paper);
   color: var(--lg-ink);
   font-family: var(--lg-font-body);
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-/* Shared responsive table-scroll container (AdminTable and any other
-   wide-table wrapper). Keeps horizontal overflow contained within the
-   card's rounded corners with a slim styled scrollbar instead of the
-   browser's default thick bar, and a subtle edge fade to hint that
-   more content is scrollable. */
+/* Custom Scrollbars */
 .lg-table-scroll {
   scrollbar-width: thin;
   scrollbar-color: var(--lg-line) transparent;
 }
 .lg-table-scroll::-webkit-scrollbar {
-  height: 8px;
-}
-.lg-table-scroll::-webkit-scrollbar-track {
-  background: transparent;
+  height: 6px;
+  width: 6px;
 }
 .lg-table-scroll::-webkit-scrollbar-thumb {
   background: var(--lg-line);
   border-radius: var(--lg-radius-pill);
 }
-.lg-table-scroll::-webkit-scrollbar-thumb:hover {
-  background: var(--lg-ink-faint);
-}
 
-/* Shared loading spinner (see components/Loader.js). Gradient-ring spin,
-   falls back to a static ring when the user prefers reduced motion. */
 @keyframes lg-spin {
   to { transform: rotate(360deg); }
 }
 .lg-spinner {
-  box-sizing: border-box;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .lg-spinner {
-    animation: lg-spin 0.7s linear infinite;
-  }
+  animation: lg-spin 0.7s linear infinite;
 }

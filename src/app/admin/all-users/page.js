@@ -54,14 +54,15 @@ export default function AllUsersPage() {
           <Loader style={{ padding: 32, color: "var(--lg-ink-soft)" }} />
         ) : (
           <>
-            <AdminTable columns={["ID", "Name", "Email", "Mobile", "UPI", "Balance", "Status", "Last Login", "Action"]}>
-              {data.users.map((u) => (
+            <AdminTable columns={["#", "ID", "Name", "Email", "Mobile", "UPI", "Balance", "Status", "Last Login", "Action"]}>
+              {data.users.map((u, i) => (
                 <tr
                   key={u.id}
                   style={{ borderTop: "1px solid var(--lg-line-soft)", transition: "background 140ms ease" }}
                   onMouseEnter={(e) => { e.currentTarget.style.background = "var(--lg-paper-sunken)"; }}
                   onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
                 >
+                  <td style={{ padding: "12px 16px", color: "var(--lg-ink-faint)", fontSize: 12.5, fontWeight: 600 }}>{(page - 1) * limit + i + 1}</td>
                   <td style={{ padding: "12px 16px", fontVariantNumeric: "tabular-nums" }}>{u.user_id}</td>
                   <td style={{ padding: "12px 16px", fontWeight: 700, color: "var(--lg-ink)" }}>{u.name}</td>
                   <td style={{ padding: "12px 16px" }}><a href={`/admin/user_performance?user_id=${u.user_id}`} style={{ color: "var(--lg-violet)", textDecoration: "none", transition: "color 150ms ease" }}>{u.email}</a></td>

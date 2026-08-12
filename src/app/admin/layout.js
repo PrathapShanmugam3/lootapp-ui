@@ -13,12 +13,5 @@ export default async function AdminLayout({ children }) {
   if (!hasSession) {
     redirect("/login");
   }
-  return (
-    <>
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" />
-      <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
-      <AdminShell>{children}</AdminShell>
-    </>
-  );
+  return <AdminShell>{children}</AdminShell>;
 }

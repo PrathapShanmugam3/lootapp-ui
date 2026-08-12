@@ -4,13 +4,21 @@ import { useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/apiClient";
 import Loader from "@/components/Loader";
 
-const COLORS = ["var(--lg-violet)", "var(--lg-violet-deep)", "var(--lg-pink)", "var(--lg-cyan)", "var(--lg-blue)", "var(--lg-orange)", "var(--lg-yellow)", "var(--lg-success)", "var(--lg-error)"];
+const COLORS = [
+  "linear-gradient(135deg, #6366f1, #a78bfa)",
+  "linear-gradient(135deg, #ec4899, #f472b6)",
+  "linear-gradient(135deg, #06b6d4, #38bdf8)",
+  "linear-gradient(135deg, #f59e0b, #fbbf24)",
+  "linear-gradient(135deg, #10b981, #34d399)",
+];
+
 const CATEGORY_COLORS = {
-  Demat: { bg: "var(--lg-violet-soft)", text: "var(--lg-violet-deep)", border: "transparent" },
-  "Bank Account": { bg: "var(--lg-info-soft)", text: "var(--lg-info)", border: "transparent" },
-  Insurance: { bg: "var(--lg-success-soft)", text: "var(--lg-success)", border: "transparent" },
+  Demat: { bg: "var(--lg-violet-soft)", text: "var(--lg-violet)" },
+  "Bank Account": { bg: "var(--lg-info-soft)", text: "var(--lg-info)" },
+  Insurance: { bg: "var(--lg-success-soft)", text: "var(--lg-success)" },
 };
-const ITEMS_PER_PAGE = 7;
+
+const ITEMS_PER_PAGE = 8;
 
 function hashColor(str) {
   let hash = 0;
@@ -65,183 +73,163 @@ export default function CampaignsPage() {
   const visible = filtered.slice(start, start + ITEMS_PER_PAGE);
   const totalPayoutPool = campaigns.reduce((s, c) => s + c.payout, 0);
 
-  if (!offers) {
-    return <Loader />;
-  }
+  if (!offers) return <Loader style={{ padding: 40, color: "var(--lg-violet)" }} />;
 
   return (
-    <main className="flex-1 px-8 py-7 max-w-7xl mx-auto w-full space-y-5">
-      <div className="lh-cp-title flex flex-col sm:flex-row items-start sm:items-end justify-between gap-3 sm:gap-0">
+    <div style={{ maxWidth: 1240, margin: "0 auto", paddingBottom: 40 }}>
+      {/* Page Header */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28, flexWrap: "wrap", gap: 16 }}>
         <div>
-          <h1 className="text-[1.45rem] font-bold mb-0.5" style={{ color: "var(--lg-ink)", letterSpacing: "-0.02em" }}>Campaigns</h1>
-          <p className="text-[13px] font-medium" style={{ color: "var(--lg-violet)" }}>Browse and join affiliate offers</p>
+          <h1 style={{ fontSize: 28, fontWeight: 800, margin: 0, fontFamily: "var(--lg-font-display)", color: "var(--lg-ink)", letterSpacing: "-0.02em" }}>Campaigns Directory</h1>
+          <p style={{ color: "var(--lg-ink-soft)", fontSize: 14, marginTop: 4 }}>Promote verified advertiser offers and earn instant commissions</p>
         </div>
-        <div className="flex items-center gap-2 text-[12px]" style={{ color: "var(--lg-ink-soft)" }}>
-          <span className="lh-live-dot" />
-          Live · {campaigns.length} offers available
+        <div style={{ display: "flex", alignItems: "center", gap: 8, background: "var(--lg-success-soft)", color: "var(--lg-success)", padding: "6px 14px", borderRadius: "var(--lg-radius-pill)", fontSize: 12, fontWeight: 800 }}>
+          <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--lg-success)" }} />
+          {campaigns.length} Live Offers Available
         </div>
       </div>
 
-      <div className="lh-cp-statbar grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="lh-cp-stat-card">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl" style={{ background: "linear-gradient(135deg,var(--lg-violet),var(--lg-pink))", boxShadow: "0 4px 14px -4px color-mix(in srgb, var(--lg-violet) 45%, transparent)" }}>
-              <svg className="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="7" height="7" x="3" y="3" rx="1" /><rect width="7" height="7" x="14" y="3" rx="1" /><rect width="7" height="7" x="14" y="14" rx="1" /><rect width="7" height="7" x="3" y="14" rx="1" /></svg>
-            </div>
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: "var(--lg-ink-soft)" }}>Total Campaigns</p>
-              <p className="text-[1.25rem] font-extrabold leading-tight" style={{ color: "var(--lg-violet)", letterSpacing: "-0.02em" }}>{campaigns.length}</p>
-            </div>
+      {/* Top Stat Bar */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20, marginBottom: 32 }}>
+        <div style={{ background: "var(--lg-paper-raised)", borderRadius: "var(--lg-radius)", padding: "20px 24px", border: "1px solid var(--lg-line)", boxShadow: "var(--lg-shadow-md)", display: "flex", alignItems: "center", gap: 16 }}>
+          <div style={{ width: 44, height: 44, borderRadius: "var(--lg-radius-sm)", background: "linear-gradient(135deg, #6366f1, #a78bfa)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff" }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><rect width="7" height="7" x="3" y="3" rx="1" /><rect width="7" height="7" x="14" y="3" rx="1" /><rect width="7" height="7" x="14" y="14" rx="1" /><rect width="7" height="7" x="3" y="14" rx="1" /></svg>
+          </div>
+          <div>
+            <p style={{ fontSize: 11.5, fontWeight: 700, color: "var(--lg-ink-soft)", textTransform: "uppercase", letterSpacing: "0.04em", margin: 0 }}>Total Campaigns</p>
+            <p style={{ fontSize: 24, fontWeight: 800, color: "var(--lg-ink)", margin: 0, fontFamily: "var(--lg-font-display)" }}>{campaigns.length}</p>
           </div>
         </div>
-        <div className="lh-cp-stat-card">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl" style={{ background: "linear-gradient(135deg,var(--lg-orange),var(--lg-yellow))", boxShadow: "0 4px 14px -4px color-mix(in srgb, var(--lg-orange) 45%, transparent)" }}>
-              <svg className="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 3h12" /><path d="M6 8h12" /><path d="m6 13 8.5 8" /><path d="M6 13h3" /><path d="M9 13c6.667 0 6.667-10 0-10" /></svg>
-            </div>
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: "var(--lg-ink-soft)" }}>Total Payout Pool</p>
-              <p className="text-[1.25rem] font-extrabold leading-tight" style={{ color: "var(--lg-orange)", letterSpacing: "-0.02em" }}>₹{totalPayoutPool.toLocaleString("en-IN")}</p>
-            </div>
+
+        <div style={{ background: "var(--lg-paper-raised)", borderRadius: "var(--lg-radius)", padding: "20px 24px", border: "1px solid var(--lg-line)", boxShadow: "var(--lg-shadow-md)", display: "flex", alignItems: "center", gap: 16 }}>
+          <div style={{ width: 44, height: 44, borderRadius: "var(--lg-radius-sm)", background: "linear-gradient(135deg, #f59e0b, #fbbf24)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff" }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M6 3h12" /><path d="M6 8h12" /><path d="m6 13 8.5 8" /><path d="M6 13h3" /><path d="M9 13c6.667 0 6.667-10 0-10" /></svg>
+          </div>
+          <div>
+            <p style={{ fontSize: 11.5, fontWeight: 700, color: "var(--lg-ink-soft)", textTransform: "uppercase", letterSpacing: "0.04em", margin: 0 }}>Total Payout Pool</p>
+            <p style={{ fontSize: 24, fontWeight: 800, color: "var(--lg-ink)", margin: 0, fontFamily: "var(--lg-font-display)" }}>₹{totalPayoutPool.toLocaleString("en-IN")}</p>
           </div>
         </div>
-        <div className="lh-cp-stat-card">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl" style={{ background: "linear-gradient(135deg,var(--lg-cyan),var(--lg-blue))", boxShadow: "0 4px 14px -4px color-mix(in srgb, var(--lg-blue) 45%, transparent)" }}>
-              <svg className="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 8v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8" /><path d="M21 8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2" /></svg>
-            </div>
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: "var(--lg-ink-soft)" }}>Active Categories</p>
-              <p className="text-[1.25rem] font-extrabold leading-tight" style={{ color: "var(--lg-blue)", letterSpacing: "-0.02em" }}>{categories.length - 1}</p>
-            </div>
+
+        <div style={{ background: "var(--lg-paper-raised)", borderRadius: "var(--lg-radius)", padding: "20px 24px", border: "1px solid var(--lg-line)", boxShadow: "var(--lg-shadow-md)", display: "flex", alignItems: "center", gap: 16 }}>
+          <div style={{ width: 44, height: 44, borderRadius: "var(--lg-radius-sm)", background: "linear-gradient(135deg, #06b6d4, #38bdf8)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff" }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M3 8v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8" /><path d="M21 8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2" /></svg>
+          </div>
+          <div>
+            <p style={{ fontSize: 11.5, fontWeight: 700, color: "var(--lg-ink-soft)", textTransform: "uppercase", letterSpacing: "0.04em", margin: 0 }}>Active Categories</p>
+            <p style={{ fontSize: 24, fontWeight: 800, color: "var(--lg-ink)", margin: 0, fontFamily: "var(--lg-font-display)" }}>{categories.length - 1}</p>
           </div>
         </div>
       </div>
 
-      <div className="lh-cp-table-card">
-        <div className="lh-cp-card-head flex flex-col sm:flex-row sm:items-center justify-between px-5 py-4 gap-4">
-          <div className="flex flex-col md:flex-row md:items-center gap-3 flex-1 min-w-0">
-            <div className="lh-input-wrap is-pill lh-icon-search flex-shrink-0 w-full sm:w-52">
+      {/* Main Filter & Search Control Panel */}
+      <div style={{ background: "var(--lg-paper-raised)", borderRadius: "var(--lg-radius)", border: "1px solid var(--lg-line)", boxShadow: "var(--lg-shadow-md)", overflow: "hidden" }}>
+        <div style={{ padding: "18px 24px", borderBottom: "1px solid var(--lg-line)", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, flex: 1, minWidth: 260 }}>
+            <div style={{ position: "relative", width: "100%", maxWidth: 300 }}>
               <input
                 type="text"
-                placeholder="Search campaigns…"
-                className="lh-cp-search text-[13px]"
+                placeholder="Search campaigns..."
                 value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setPage(1);
-                }}
+                onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                style={{ width: "100%", padding: "10px 16px 10px 38px", borderRadius: "var(--lg-radius-pill)", border: "1px solid var(--lg-line)", background: "var(--lg-paper-sunken)", fontSize: 13.5, color: "var(--lg-ink)", outline: "none" }}
               />
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "var(--lg-ink-faint)" }}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             </div>
-            <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0">
+
+            <div style={{ display: "flex", gap: 6, overflowX: "auto" }}>
               {categories.map((cat) => (
                 <button
                   key={cat}
-                  onClick={() => {
-                    setTab(cat);
-                    setPage(1);
+                  onClick={() => { setTab(cat); setPage(1); }}
+                  style={{
+                    padding: "6px 16px",
+                    borderRadius: "var(--lg-radius-pill)",
+                    fontSize: 12.5,
+                    fontWeight: 700,
+                    border: "none",
+                    cursor: "pointer",
+                    background: tab === cat ? "linear-gradient(135deg, var(--lg-violet), var(--lg-violet-deep))" : "var(--lg-paper-sunken)",
+                    color: tab === cat ? "#fff" : "var(--lg-ink-soft)",
+                    transition: "all 0.18s ease"
                   }}
-                  className={`lh-cp-tab whitespace-nowrap px-3.5 py-1.5 rounded-full text-[12px] font-semibold ${tab === cat ? "lh-cp-tab-active" : "lh-cp-tab-inactive"}`}
                 >
                   {cat}
                 </button>
               ))}
             </div>
           </div>
-          <div className="flex items-center gap-1.5 text-[12px] flex-shrink-0 sm:ml-3" style={{ color: "var(--lg-ink-soft)" }}>
-            {filtered.length} results
-          </div>
+          <span style={{ fontSize: 13, fontWeight: 600, color: "var(--lg-ink-soft)" }}>{filtered.length} Campaigns</span>
         </div>
 
-        <div className="lh-table-scroll">
-          <div className="min-w-[640px]">
-            <div className="lh-cp-col-head grid px-5 py-2.5 text-[11px] font-bold uppercase tracking-wider" style={{ gridTemplateColumns: "48px 1fr 120px 130px 110px" }}>
-              <span style={{ color: "var(--lg-ink-soft)" }}>#</span>
-              <span style={{ color: "var(--lg-violet)" }}>Campaign</span>
-              <span style={{ color: "var(--lg-violet)" }}>Payout</span>
-              <span style={{ color: "var(--lg-violet)" }}>Category</span>
-              <span style={{ color: "var(--lg-violet)", textAlign: "right" }}>Action</span>
-            </div>
-
-            <div className="px-3 pb-3">
+        {/* Campaign List */}
+        <div className="lg-table-scroll" style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 640 }}>
+            <thead>
+              <tr style={{ background: "var(--lg-paper-sunken)", borderBottom: "1px solid var(--lg-line)", textAlign: "left" }}>
+                <th style={{ padding: "14px 24px", fontSize: 11, fontWeight: 800, color: "var(--lg-ink-soft)", textTransform: "uppercase" }}>#</th>
+                <th style={{ padding: "14px 24px", fontSize: 11, fontWeight: 800, color: "var(--lg-ink-soft)", textTransform: "uppercase" }}>Campaign Name</th>
+                <th style={{ padding: "14px 24px", fontSize: 11, fontWeight: 800, color: "var(--lg-ink-soft)", textTransform: "uppercase" }}>Payout</th>
+                <th style={{ padding: "14px 24px", fontSize: 11, fontWeight: 800, color: "var(--lg-ink-soft)", textTransform: "uppercase" }}>Category</th>
+                <th style={{ padding: "14px 24px", fontSize: 11, fontWeight: 800, color: "var(--lg-ink-soft)", textTransform: "uppercase", textAlign: "right" }}>Action</th>
+              </tr>
+            </thead>
+            <tbody>
               {visible.length === 0 ? (
-                <div className="py-16 text-center" style={{ color: "var(--lg-ink-soft)" }}>
-                  <p className="text-[13px]">No campaigns found</p>
-                </div>
+                <tr>
+                  <td colSpan="5" style={{ padding: "48px 0", textAlign: "center", color: "var(--lg-ink-soft)", fontSize: 14 }}>
+                    No matching campaigns found.
+                  </td>
+                </tr>
               ) : (
                 visible.map((c, i) => {
-                  const catStyle = CATEGORY_COLORS[c.category] || { bg: "var(--lg-paper-sunken)", text: "var(--lg-ink-soft)", border: "transparent" };
+                  const catStyle = CATEGORY_COLORS[c.category] || { bg: "var(--lg-paper-sunken)", text: "var(--lg-ink-soft)" };
                   return (
-                    <div key={c.id} className="lh-cp-row grid items-center px-2 py-3 rounded-xl" style={{ gridTemplateColumns: "48px 1fr 120px 130px 110px" }}>
-                      <span className="text-[12px] font-medium pl-1" style={{ color: "var(--lg-ink-faint)" }}>{start + i + 1}</span>
-                      <div className="flex items-center gap-3 min-w-0">
-                        {c.logo ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={c.logo}
-                            alt={c.initials}
-                            className="h-10 w-10 flex-shrink-0 rounded-xl object-cover shadow-sm"
-                            onError={(e) => {
-                              e.currentTarget.style.display = "none";
-                              e.currentTarget.nextSibling.style.display = "flex";
-                            }}
-                          />
-                        ) : null}
-                        <div
-                          className="lh-cp-logo h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl text-[12px] font-bold text-white select-none"
-                          style={{ background: c.color, display: c.logo ? "none" : "flex" }}
+                    <tr key={c.id} style={{ borderBottom: "1px solid var(--lg-line)", transition: "background 0.15s ease" }}>
+                      <td style={{ padding: "16px 24px", fontSize: 13, fontWeight: 600, color: "var(--lg-ink-faint)" }}>{start + i + 1}</td>
+                      <td style={{ padding: "16px 24px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                          <div style={{ width: 38, height: 38, borderRadius: "var(--lg-radius-sm)", display: "flex", alignItems: "center", justifyContent: "center", background: c.color, color: "#fff", fontWeight: 800, fontSize: 14, flexShrink: 0 }}>
+                            {c.initials}
+                          </div>
+                          <span style={{ fontSize: 14, fontWeight: 700, color: "var(--lg-ink)" }}>{c.name}</span>
+                        </div>
+                      </td>
+                      <td style={{ padding: "16px 24px" }}>
+                        <span style={{ fontSize: 15, fontWeight: 800, color: "var(--lg-ink)", fontFamily: "var(--lg-font-display)", fontVariantNumeric: "tabular-nums" }}>₹{c.payout.toLocaleString("en-IN")}</span>
+                      </td>
+                      <td style={{ padding: "16px 24px" }}>
+                        <span style={{ display: "inline-flex", padding: "4px 12px", borderRadius: "var(--lg-radius-pill)", background: catStyle.bg, color: catStyle.text, fontSize: 11, fontWeight: 800 }}>{c.category}</span>
+                      </td>
+                      <td style={{ padding: "16px 24px", textAlign: "right" }}>
+                        <a
+                          href={`/offer-detail?o=${c.id}`}
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 6,
+                            padding: "8px 18px",
+                            borderRadius: "var(--lg-radius-pill)",
+                            background: "linear-gradient(135deg, var(--lg-violet), var(--lg-violet-deep))",
+                            color: "#fff",
+                            fontSize: 12.5,
+                            fontWeight: 700,
+                            textDecoration: "none",
+                            boxShadow: "0 4px 12px rgba(99, 102, 241, 0.3)"
+                          }}
                         >
-                          {c.initials}
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-[13px] font-semibold truncate" style={{ color: "var(--lg-ink)" }}>{c.name}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span className="lh-cp-payout text-[15px]">₹{c.payout.toLocaleString("en-IN")}</span>
-                      </div>
-                      <div>
-                        <span className="inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold" style={{ background: catStyle.bg, color: catStyle.text, border: `1px solid ${catStyle.border}` }}>{c.category}</span>
-                      </div>
-                      <div className="flex justify-end">
-                        <a href={`/offer-detail?o=${c.id}`} className="lh-cp-view-btn flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-[12px] font-semibold">
-                          View
-                          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
+                          View Offer
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
                         </a>
-                      </div>
-                    </div>
+                      </td>
+                    </tr>
                   );
                 })
               )}
-            </div>
-          </div>
+            </tbody>
+          </table>
         </div>
-
-        {totalPages > 1 && (
-          <div className="lh-cp-footer flex flex-col sm:flex-row items-center justify-between px-5 py-3 gap-3 sm:gap-0">
-            <span className="text-[12px]" style={{ color: "var(--lg-ink-soft)" }}>
-              Showing {start + 1}–{Math.min(start + ITEMS_PER_PAGE, filtered.length)} of {filtered.length}
-            </span>
-            <div className="flex items-center gap-1">
-              <button className="lh-cp-page-btn p-1.5 rounded-lg" disabled={safePage === 1} onClick={() => setPage(safePage - 1)}>
-                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                <button
-                  key={p}
-                  onClick={() => setPage(p)}
-                  className={`lh-cp-page-num text-[12px] font-semibold h-7 w-7 rounded-lg ${safePage === p ? "lh-cp-page-active" : "lh-cp-page-inactive"}`}
-                >
-                  {p}
-                </button>
-              ))}
-              <button className="lh-cp-page-btn p-1.5 rounded-lg" disabled={safePage === totalPages} onClick={() => setPage(safePage + 1)}>
-                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
-              </button>
-            </div>
-          </div>
-        )}
       </div>
-    </main>
+    </div>
   );
 }

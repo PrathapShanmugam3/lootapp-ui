@@ -2,14 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/apiClient";
+import { AdminPageHeader } from "@/components/AdminPage";
 import Loader from "@/components/Loader";
 
 const ICON_GRADIENTS = [
-  "linear-gradient(135deg, var(--lg-violet), #20C997)",
-  "linear-gradient(135deg, var(--lg-pink), #5EEAD4)",
-  "linear-gradient(135deg, var(--lg-cyan), #4CE0C9)",
-  "linear-gradient(135deg, var(--lg-yellow), var(--lg-orange))",
-  "linear-gradient(135deg, var(--lg-blue), #5CA5FF)",
+  "linear-gradient(135deg, var(--lg-violet), #a78bfa)",
+  "linear-gradient(135deg, #ec4899, #f472b6)",
+  "linear-gradient(135deg, #06b6d4, #38bdf8)",
+  "linear-gradient(135deg, #f59e0b, #fbbf24)",
+  "linear-gradient(135deg, #3b82f6, #60a5fa)",
 ];
 
 const ICONS = {
@@ -22,7 +23,7 @@ const ICONS = {
 
 function Icon({ name }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 17, height: 17, color: "#fff" }}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 18, height: 18, color: "#fff" }}>
       {ICONS[name]}
     </svg>
   );
@@ -34,19 +35,30 @@ function StatCard({ label, value, sub, icon, gradient }) {
       style={{
         background: "var(--lg-paper-raised)",
         borderRadius: "var(--lg-radius)",
-        padding: 20,
-        boxShadow: "var(--lg-shadow-lg)",
-        transition: "transform 180ms ease, box-shadow 180ms ease",
+        padding: "20px 22px",
+        boxShadow: "var(--lg-shadow-md)",
+        border: "1px solid var(--lg-line)",
+        transition: "transform 200ms ease, boxShadow 200ms ease, borderColor 200ms ease",
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-3px)"; }}
-      onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; }}
+      onMouseEnter={(e) => { 
+        e.currentTarget.style.transform = "translateY(-4px)"; 
+        e.currentTarget.style.borderColor = "var(--lg-violet)";
+        e.currentTarget.style.boxShadow = "var(--lg-shadow-lg)";
+      }}
+      onMouseLeave={(e) => { 
+        e.currentTarget.style.transform = "translateY(0)"; 
+        e.currentTarget.style.borderColor = "var(--lg-line)";
+        e.currentTarget.style.boxShadow = "var(--lg-shadow-md)";
+      }}
     >
-      <div style={{ width: 36, height: 36, borderRadius: "var(--lg-radius-sm)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 14, background: gradient }}>
-        <Icon name={icon} />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+        <p style={{ fontSize: 12, fontWeight: 700, color: "var(--lg-ink-soft)", margin: 0, textTransform: "uppercase", letterSpacing: "0.04em" }}>{label}</p>
+        <div style={{ width: 38, height: 38, borderRadius: "var(--lg-radius-sm)", display: "flex", alignItems: "center", justifyContent: "center", background: gradient, boxShadow: "0 4px 12px rgba(0,0,0,0.15)" }}>
+          <Icon name={icon} />
+        </div>
       </div>
-      <p style={{ fontSize: 11.5, fontWeight: 600, color: "var(--lg-ink-faint)", margin: 0 }}>{label}</p>
-      <p style={{ fontSize: 24, fontWeight: 700, color: "var(--lg-ink)", margin: "4px 0 0", fontFamily: "var(--lg-font-display)", fontVariantNumeric: "tabular-nums" }}>{value}</p>
-      {sub && <p style={{ fontSize: 11, color: "var(--lg-ink-faint)", margin: "4px 0 0" }}>{sub}</p>}
+      <p style={{ fontSize: 26, fontWeight: 800, color: "var(--lg-ink)", margin: 0, fontFamily: "var(--lg-font-display)", fontVariantNumeric: "tabular-nums", letterSpacing: "-0.02em" }}>{value}</p>
+      {sub && <p style={{ fontSize: 11.5, fontWeight: 600, color: "var(--lg-ink-faint)", margin: "6px 0 0" }}>{sub}</p>}
     </div>
   );
 }
@@ -55,6 +67,7 @@ const panelStyle = {
   background: "var(--lg-paper-raised)",
   borderRadius: "var(--lg-radius)",
   padding: 24,
+  border: "1px solid var(--lg-line)",
   boxShadow: "var(--lg-shadow-md)",
 };
 
@@ -65,7 +78,7 @@ export default function AdminDashboardPage() {
     api.get("/api/admin/dashboard").then((res) => setData(res.data)).catch(() => setData(null));
   }, []);
 
-  if (!data) return <Loader style={{ padding: 32, color: "var(--lg-ink-soft)" }} />;
+  if (!data) return <Loader style={{ padding: 40, color: "var(--lg-violet)" }} />;
 
   const stats1 = [
     { label: "Clicks Today", value: data.clicks.today.toLocaleString("en-IN"), sub: `${data.clicks.yesterday} yesterday`, icon: "clicks" },
@@ -86,17 +99,16 @@ export default function AdminDashboardPage() {
   const maxCr = Math.max(...data.topOffers.map((o) => Number(o.cr) || 0), 1);
 
   return (
-    <div style={{ padding: "2rem", maxWidth: 1200, margin: "0 auto" }}>
-      <h1 style={{ fontSize: 26, fontWeight: 700, marginBottom: 4, fontFamily: "var(--lg-font-display)", color: "var(--lg-ink)", letterSpacing: "-0.01em" }}>Admin Dashboard</h1>
-      <p style={{ color: "var(--lg-ink-faint)", marginBottom: 28, fontSize: 13.5 }}>Loot Hat operations overview</p>
+    <div style={{ maxWidth: 1240, margin: "0 auto", paddingBottom: 40 }}>
+      <AdminPageHeader title="Overview & Analytics" subtitle="Loot Hat operational overview & real-time analytics" />
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 20, marginBottom: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: 20, marginBottom: 24 }}>
         {stats1.map((s, i) => (
           <StatCard key={s.label} {...s} gradient={ICON_GRADIENTS[i % ICON_GRADIENTS.length]} />
         ))}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 20, marginBottom: 32 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: 20, marginBottom: 32 }}>
         {stats2.map((s, i) => (
           <StatCard key={s.label} {...s} gradient={ICON_GRADIENTS[(i + 2) % ICON_GRADIENTS.length]} />
         ))}
@@ -104,49 +116,48 @@ export default function AdminDashboardPage() {
 
       <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 24, alignItems: "start" }}>
         <div style={panelStyle}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
-            <h2 style={{ fontSize: 16.5, fontWeight: 700, margin: 0, fontFamily: "var(--lg-font-display)", color: "var(--lg-ink)" }}>Top Offers by Conversion Rate</h2>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+            <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0, fontFamily: "var(--lg-font-display)", color: "var(--lg-ink)" }}>Top Offers by Conversion Rate</h2>
           </div>
           {data.topOffers.map((o, i) => {
             const pct = Number(o.cr) || 0;
             const pctColor = pct >= 20 ? "var(--lg-success)" : pct >= 5 ? "var(--lg-warning)" : "var(--lg-ink-faint)";
             return (
-              <div key={o.offId} style={{ display: "flex", alignItems: "center", gap: 14, padding: "12px 0", borderBottom: i === data.topOffers.length - 1 ? "none" : "1px solid var(--lg-line)" }}>
-                <div style={{ width: 26, height: 26, borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--lg-font-display)", fontSize: 12, fontWeight: 700, color: "var(--lg-ink-soft)", flexShrink: 0 }}>{i + 1}</div>
-                <div style={{ fontSize: 13.5, fontWeight: 700, color: "var(--lg-ink)", flex: 1 }}>{o.offerName}</div>
-                <div style={{ fontSize: 11.5, color: "var(--lg-ink-faint)", flexShrink: 0 }}>{o.clicks} clicks · {o.conversions} conv.</div>
-                <div style={{ flex: 1, height: 6, borderRadius: 4, background: "var(--lg-paper-sunken)", overflow: "hidden", margin: "0 12px", maxWidth: 100 }}>
-                  <div style={{ width: `${Math.min(100, (pct / maxCr) * 100)}%`, height: "100%", borderRadius: 4, background: "linear-gradient(90deg, var(--lg-violet), var(--lg-pink))" }} />
+              <div key={o.offId} style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 0", borderBottom: i === data.topOffers.length - 1 ? "none" : "1px solid var(--lg-line)" }}>
+                <div style={{ width: 28, height: 28, borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--lg-font-display)", fontSize: 12, fontWeight: 800, color: "var(--lg-ink-soft)", flexShrink: 0 }}>{i + 1}</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: "var(--lg-ink)", flex: 1 }}>{o.offerName}</div>
+                <div style={{ fontSize: 12, fontWeight: 500, color: "var(--lg-ink-faint)", flexShrink: 0 }}>{o.clicks} clicks · {o.conversions} conv.</div>
+                <div style={{ flex: 1, height: 8, borderRadius: 99, background: "var(--lg-paper-sunken)", overflow: "hidden", margin: "0 14px", maxWidth: 100 }}>
+                  <div style={{ width: `${Math.min(100, (pct / maxCr) * 100)}%`, height: "100%", borderRadius: 99, background: "linear-gradient(90deg, var(--lg-violet), var(--lg-pink))" }} />
                 </div>
-                <div style={{ fontSize: 13, fontWeight: 800, fontVariantNumeric: "tabular-nums", width: 46, textAlign: "right", color: pctColor }}>{o.cr}%</div>
+                <div style={{ fontSize: 14, fontWeight: 800, fontVariantNumeric: "tabular-nums", width: 50, textAlign: "right", color: pctColor }}>{o.cr}%</div>
               </div>
             );
           })}
         </div>
 
         <div style={panelStyle}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
-            <h2 style={{ fontSize: 16.5, fontWeight: 700, margin: 0, fontFamily: "var(--lg-font-display)", color: "var(--lg-ink)" }}>Recent Payments</h2>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+            <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0, fontFamily: "var(--lg-font-display)", color: "var(--lg-ink)" }}>Recent Payments</h2>
           </div>
           <div>
             {data.recentPayments.slice(0, 5).map((p, i, arr) => {
               const initial = (p.offName || "?").charAt(0).toUpperCase();
               const success = p.status === "Success";
               return (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 0", borderBottom: i === arr.length - 1 ? "none" : "1px solid var(--lg-line)" }}>
-                  <div style={{ width: 32, height: 32, borderRadius: "var(--lg-radius-sm)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--lg-font-display)", fontWeight: 700, fontSize: 12, color: "#fff", flexShrink: 0, background: ICON_GRADIENTS[i % ICON_GRADIENTS.length] }}>{initial}</div>
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 0", borderBottom: i === arr.length - 1 ? "none" : "1px solid var(--lg-line)" }}>
+                  <div style={{ width: 36, height: 36, borderRadius: "var(--lg-radius-sm)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--lg-font-display)", fontWeight: 800, fontSize: 13, color: "#fff", flexShrink: 0, background: ICON_GRADIENTS[i % ICON_GRADIENTS.length] }}>{initial}</div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: "var(--lg-ink)" }}>{p.offName}</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "var(--lg-ink)" }}>{p.offName}</div>
                     <span
                       style={{
                         display: "inline-flex",
                         alignItems: "center",
-                        gap: 4,
-                        fontSize: 10,
+                        fontSize: 10.5,
                         fontWeight: 800,
-                        padding: "3px 9px",
+                        padding: "2px 8px",
                         borderRadius: "var(--lg-radius-pill)",
-                        marginTop: 3,
+                        marginTop: 4,
                         background: success ? "var(--lg-success-soft)" : p.status === "Failed" ? "var(--lg-error-soft)" : "var(--lg-warning-soft)",
                         color: success ? "var(--lg-success)" : p.status === "Failed" ? "var(--lg-error)" : "var(--lg-warning)",
                       }}
@@ -154,7 +165,7 @@ export default function AdminDashboardPage() {
                       {p.status}
                     </span>
                   </div>
-                  <div style={{ marginLeft: "auto", fontFamily: "var(--lg-font-display)", fontWeight: 700, fontSize: 14, color: "var(--lg-ink)", fontVariantNumeric: "tabular-nums" }}>₹{p.amount}</div>
+                  <div style={{ marginLeft: "auto", fontFamily: "var(--lg-font-display)", fontWeight: 800, fontSize: 15, color: "var(--lg-ink)", fontVariantNumeric: "tabular-nums" }}>₹{p.amount}</div>
                 </div>
               );
             })}

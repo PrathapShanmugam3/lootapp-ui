@@ -75,7 +75,7 @@ export default function ChatPage() {
           setTimeout(scrollToBottom, 50);
         }
       } catch {
-        // ignore transient poll failures
+        // ignore
       }
     }, 5000);
     return () => clearInterval(interval);
@@ -152,103 +152,141 @@ export default function ChatPage() {
   const grouped = groupWithSeparators(messages);
 
   return (
-    <main className="flex-1 flex flex-col overflow-hidden px-4 sm:px-8 py-6 max-w-4xl mx-auto w-full" style={{ position: "relative", zIndex: 1 }}>
-      <div className="flex flex-col flex-1 overflow-hidden lh-chat-card">
-        <div className="lh-chat-header flex items-center justify-between px-5 py-4">
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full text-white text-[15px] font-bold" style={{ background: "linear-gradient(135deg,var(--lg-orange),var(--lg-yellow))" }}>S</div>
-              <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white" style={{ background: "var(--lg-success)" }} />
+    <div style={{ maxWidth: 900, margin: "0 auto", height: "calc(100vh - 180px)", display: "flex", flexDirection: "column", paddingBottom: 24 }}>
+      <div 
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          background: "var(--lg-paper-raised)",
+          borderRadius: "var(--lg-radius-lg)",
+          border: "1px solid var(--lg-line)",
+          boxShadow: "var(--lg-shadow-lg)",
+          overflow: "hidden"
+        }}
+      >
+        {/* Chat Top Header */}
+        <div style={{ padding: "16px 24px", background: "linear-gradient(135deg, #4f46e5, #7c3aed)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <div style={{ position: "relative" }}>
+              <div style={{ width: 42, height: 42, borderRadius: "50%", background: "#fff", color: "#4f46e5", fontWeight: 900, fontSize: 18, display: "flex", alignItems: "center", justifyContent: "center" }}>S</div>
+              <span style={{ position: "absolute", bottom: 0, right: 0, width: 12, height: 12, borderRadius: "50%", background: "#10b981", border: "2px solid #fff" }} />
             </div>
             <div>
-              <p className="text-[14px] font-bold text-white leading-tight">Support Team</p>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="h-1.5 w-1.5 rounded-full" style={{ background: "var(--lg-success)" }} />
-                <span className="text-[11px] text-white/70">Online</span>
-              </div>
+              <h2 style={{ fontSize: 16, fontWeight: 800, margin: 0, fontFamily: "var(--lg-font-display)" }}>LootHat Support Agent</h2>
+              <span style={{ fontSize: 12, opacity: 0.85, fontWeight: 600 }}>Active • Typically replies in minutes</span>
             </div>
           </div>
+          <span style={{ fontSize: 11, fontWeight: 800, background: "rgba(255,255,255,0.2)", padding: "4px 12px", borderRadius: "var(--lg-radius-pill)" }}>Direct Help</span>
         </div>
 
-        <div ref={scrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto px-5 py-4 flex flex-col">
+        {/* Message Container */}
+        <div ref={scrollRef} onScroll={handleScroll} style={{ flex: 1, padding: 24, overflowY: "auto", display: "flex", flexDirection: "column", gap: 14 }}>
           {!loaded ? (
-            <Loader />
+            <Loader style={{ margin: "auto", color: "var(--lg-violet)" }} />
           ) : grouped.length === 0 ? (
-            <div className="flex-1 flex items-center justify-center text-sm text-gray-400">No messages yet. Say hello!</div>
+            <div style={{ margin: "auto", textAlign: "center", color: "var(--lg-ink-soft)", fontSize: 14, fontWeight: 600 }}>
+              👋 Welcome to Support Chat!<br />Send a message below and an agent will assist you.
+            </div>
           ) : (
             grouped.map((item) =>
               item.type === "separator" ? (
-                <div key={item.key} className="text-center my-4 relative">
-                  <span className="px-3 py-1 text-[11px] font-semibold rounded-xl relative z-10" style={{ background: "var(--lg-paper-sunken)", color: "var(--lg-ink-faint)" }}>{item.label}</span>
+                <div key={item.key} style={{ textAlign: "center", margin: "10px 0" }}>
+                  <span style={{ fontSize: 11, fontWeight: 800, color: "var(--lg-ink-soft)", background: "var(--lg-paper-sunken)", padding: "4px 14px", borderRadius: "var(--lg-radius-pill)" }}>{item.label}</span>
                 </div>
               ) : (
                 <div
                   key={item.id}
-                  className={`lh-chat-bubble ${item.from === "user" ? "lh-chat-bubble-me" : "lh-chat-bubble-support"}`}
-                  style={
-                    item.from === "user"
-                      ? { alignSelf: "flex-end", textAlign: "right" }
-                      : { alignSelf: "flex-start", textAlign: "left" }
-                  }
+                  style={{
+                    alignSelf: item.from === "user" ? "flex-end" : "flex-start",
+                    maxWidth: "75%",
+                    background: item.from === "user" ? "linear-gradient(135deg, var(--lg-violet), var(--lg-violet-deep))" : "var(--lg-paper-sunken)",
+                    color: item.from === "user" ? "#ffffff" : "var(--lg-ink)",
+                    borderRadius: item.from === "user" ? "18px 18px 2px 18px" : "18px 18px 18px 2px",
+                    padding: "12px 18px",
+                    boxShadow: item.from === "user" ? "0 4px 14px rgba(99, 102, 241, 0.3)" : "var(--lg-shadow-sm)",
+                    border: item.from === "user" ? "none" : "1px solid var(--lg-line)",
+                    fontSize: 14,
+                    lineHeight: "1.45"
+                  }}
                 >
-                  {item.text && item.text !== "[image]" && <div>{item.text}</div>}
+                  {item.text && item.text !== "[image]" && <div style={{ fontWeight: 500 }}>{item.text}</div>}
                   {item.imagePath && (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={`${API_URL}${item.imagePath}`} alt="attachment" />
+                    <img src={`${API_URL}${item.imagePath}`} alt="attachment" style={{ maxWidth: "100%", borderRadius: 10, marginTop: 8 }} />
                   )}
-                  <span className="msg-time" style={item.from === "user" ? { color: "rgba(255,255,255,0.7)" } : {}}>{item.time}</span>
+                  <span style={{ display: "block", fontSize: 10.5, fontWeight: 700, marginTop: 4, textAlign: "right", opacity: 0.75 }}>{item.time}</span>
                 </div>
               )
             )
           )}
         </div>
 
+        {/* Image Preview Bar */}
         {imagePreview && (
-          <div className="px-5 pt-3 pb-1 relative" style={{ borderTop: "1px solid var(--lg-line-soft)", background: "var(--lg-paper-sunken)" }}>
-            <div className="relative inline-block">
+          <div style={{ padding: "10px 24px", background: "var(--lg-paper-sunken)", borderTop: "1px solid var(--lg-line)", display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ position: "relative" }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={imagePreview} alt="Preview" className="h-20 w-auto rounded-lg object-cover" style={{ border: "1px solid var(--lg-line)", boxShadow: "var(--lg-shadow-sm)" }} />
+              <img src={imagePreview} alt="Preview" style={{ height: 60, borderRadius: 8, objectFit: "cover" }} />
               <button
-                onClick={() => {
-                  setImageFile(null);
-                  setImagePreview(null);
-                }}
-                className="absolute -top-2 -right-2 text-white rounded-full h-5 w-5 flex items-center justify-center text-[10px] font-bold"
-                style={{ background: "var(--lg-error)", boxShadow: "var(--lg-shadow-sm)" }}
+                onClick={() => { setImageFile(null); setImagePreview(null); }}
+                style={{ position: "absolute", top: -6, right: -6, background: "var(--lg-error)", color: "#fff", border: "none", width: 20, height: 20, borderRadius: "50%", cursor: "pointer", fontSize: 10, fontWeight: 900 }}
               >
                 ✕
               </button>
             </div>
+            <span style={{ fontSize: 12, fontWeight: 700, color: "var(--lg-ink-soft)" }}>Image attached</span>
           </div>
         )}
 
-        <div className="lh-chat-input-bar flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3">
-          <label className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full cursor-pointer transition-colors" style={{ background: "var(--lg-violet-soft)" }}>
-            <svg className="h-4 w-4" style={{ color: "var(--lg-violet)" }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48" /></svg>
-            <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
+        {/* Input Bar */}
+        <div style={{ padding: "16px 24px", borderTop: "1px solid var(--lg-line)", background: "var(--lg-paper-raised)", display: "flex", alignItems: "center", gap: 12 }}>
+          <label style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 40, height: 40, borderRadius: "50%", background: "var(--lg-paper-sunken)", color: "var(--lg-violet)", cursor: "pointer", border: "1px solid var(--lg-line)" }}>
+            📎
+            <input type="file" accept="image/*" style={{ display: "none" }} onChange={handleImageChange} />
           </label>
 
-          <div className="lh-input-wrap is-pill lh-chat-input lh-icon-message flex-1 min-w-0">
-            <input
-              type="text"
-              placeholder="Type a message…"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              onKeyPress={handleKeyPress}
-              className="text-[13px]"
-            />
-          </div>
+          <input
+            type="text"
+            placeholder="Type your message..."
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            onKeyPress={handleKeyPress}
+            style={{
+              flex: 1,
+              padding: "12px 20px",
+              borderRadius: "var(--lg-radius-pill)",
+              border: "1px solid var(--lg-line)",
+              background: "var(--lg-paper-sunken)",
+              fontSize: 14,
+              color: "var(--lg-ink)",
+              outline: "none"
+            }}
+          />
 
           <button
             onClick={handleSend}
             disabled={sending || (!text.trim() && !imageFile)}
-            className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full transition-opacity hover:opacity-90 cursor-pointer disabled:opacity-50"
-            style={{ background: "linear-gradient(135deg,var(--lg-violet),var(--lg-violet-deep))", boxShadow: "0 4px 14px -4px color-mix(in srgb, var(--lg-violet) 45%, transparent)" }}
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: "50%",
+              border: "none",
+              background: "linear-gradient(135deg, var(--lg-violet), var(--lg-violet-deep))",
+              color: "#fff",
+              fontSize: 16,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: "0 4px 14px rgba(99, 102, 241, 0.4)",
+              opacity: sending || (!text.trim() && !imageFile) ? 0.5 : 1
+            }}
           >
-            <svg className="h-4 w-4 text-white ml-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg>
+            ➔
           </button>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

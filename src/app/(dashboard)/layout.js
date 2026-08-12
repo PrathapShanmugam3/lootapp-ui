@@ -1,9 +1,9 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import Script from "next/script";
 import HomeShell from "./HomeShell";
 import "@/styles/ledger-tokens.css";
-import "./_shared/loothat-home.css";
+import "../admin/_shared/admin-shell.css";
+import "../admin/_shared/admin-nav.css";
 
 export default async function HomeLayout({ children }) {
   const cookieStore = await cookies();
@@ -11,15 +11,5 @@ export default async function HomeLayout({ children }) {
   if (!hasSession) {
     redirect("/login");
   }
-  return (
-    <>
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-      />
-      <Script src="https://cdn.tailwindcss.com" strategy="beforeInteractive" />
-      <HomeShell>{children}</HomeShell>
-    </>
-  );
+  return <HomeShell>{children}</HomeShell>;
 }

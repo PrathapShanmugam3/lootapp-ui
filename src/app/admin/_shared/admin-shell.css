@@ -185,4 +185,5 @@ body {
 #admin-main {
     max-width: 1320px;
     margin: 0 auto;
+    padding-top: 1rem;
 }

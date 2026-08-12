@@ -61,9 +61,10 @@ export default function IpWhitelistingPage() {
         {!ips ? (
           <Loader style={{ padding: 32 }} />
         ) : (
-          <AdminTable columns={["ID", "IP", "Label", "Action"]}>
-            {ips.map((row) => (
+          <AdminTable columns={["#", "ID", "IP", "Label", "Action"]}>
+            {ips.map((row, i) => (
               <tr key={row.id} style={{ borderTop: "1px solid var(--lg-line)", transition: "background-color 140ms ease" }}>
+                <td style={{ padding: "10px 16px", color: "var(--lg-ink-faint)", fontSize: 12.5, fontWeight: 600 }}>{i + 1}</td>
                 <td style={{ padding: "10px 16px", fontVariantNumeric: "tabular-nums" }}>{row.id}</td>
                 <td style={{ padding: "10px 16px", fontFamily: "monospace", fontWeight: 700, color: "var(--lg-ink)" }}>{row.ip}</td>
                 <td style={{ padding: "10px 16px" }}>{row.label}</td>

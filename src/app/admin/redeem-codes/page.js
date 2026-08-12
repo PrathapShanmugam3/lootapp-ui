@@ -84,9 +84,10 @@ export default function RedeemCodesPage() {
           <Loader style={{ padding: 32, color: "var(--lg-ink-faint)" }} />
         ) : (
           <>
-          <AdminTable columns={["Code", "Value", "Uses", "Expires", "Active", "Action"]}>
-            {data.codes.map((c) => (
+          <AdminTable columns={["#", "Code", "Value", "Uses", "Expires", "Active", "Action"]}>
+            {data.codes.map((c, i) => (
               <tr key={c.id} style={{ borderTop: "1px solid var(--lg-line-soft)", transition: "background-color 140ms ease" }} onMouseEnter={(e) => (e.currentTarget.style.background = "var(--lg-paper-sunken)")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                <td style={{ padding: "12px 16px", color: "var(--lg-ink-faint)", fontSize: 12.5, fontWeight: 600 }}>{(page - 1) * limit + i + 1}</td>
                 <td style={{ padding: "12px 16px", fontFamily: "monospace" }}>{c.code}</td>
                 <td style={{ padding: "12px 16px", fontWeight: 700, fontFamily: "var(--lg-font-display)", fontVariantNumeric: "tabular-nums" }}>₹{c.value}</td>
                 <td style={{ padding: "12px 16px", fontVariantNumeric: "tabular-nums" }}>{c.uses} / {c.max_uses}</td>

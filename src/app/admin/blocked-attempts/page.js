@@ -24,9 +24,10 @@ export default function BlockedAttemptsPage() {
           <div style={{ padding: 32, color: "var(--lg-ink-faint)", fontSize: 13 }}>No blocked attempts recorded.</div>
         ) : (
           <>
-            <AdminTable columns={["IP", "Route", "Reason", "Time"]}>
-              {data.attempts.map((a) => (
+            <AdminTable columns={["#", "IP", "Route", "Reason", "Time"]}>
+              {data.attempts.map((a, i) => (
                 <tr key={a.id} style={{ borderTop: "1px solid var(--lg-line)", transition: "background-color 140ms ease" }}>
+                  <td style={{ padding: "10px 16px", color: "var(--lg-ink-faint)", fontSize: 12.5, fontWeight: 600 }}>{(page - 1) * limit + i + 1}</td>
                   <td style={{ padding: "10px 16px", fontFamily: "monospace", fontWeight: 700, color: "var(--lg-ink)" }}>{a.ip}</td>
                   <td style={{ padding: "10px 16px", fontFamily: "monospace", fontSize: 12 }}>{a.route}</td>
                   <td style={{ padding: "10px 16px" }}>

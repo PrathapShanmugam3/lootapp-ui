@@ -41,7 +41,7 @@ export default function AdminChatPage() {
   }
 
   return (
-    <div style={{ display: "flex", height: "calc(100vh - 60px)" }}>
+    <div style={{ display: "flex", height: "calc(100vh - 120px)" }}>
       <div style={{ width: 300, borderRight: "1px solid var(--lg-line)", overflowY: "auto", background: "var(--lg-paper-raised)" }}>
         <div style={{ padding: 16, fontWeight: 800, fontSize: 14, fontFamily: "var(--lg-font-display)", borderBottom: "1px solid var(--lg-line-soft)" }}>Conversations</div>
         {!conversations ? (

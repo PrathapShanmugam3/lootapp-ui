@@ -39,11 +39,12 @@ export default function PendingConversionPage() {
           <div style={{ padding: 32, color: "var(--lg-ink-faint)", fontSize: 13 }}>No pending conversions.</div>
         ) : (
           <>
-          <AdminTable columns={["Offer", "Click ID", "Event", "Date", "Action"]}>
-            {data.conversions.map((c) => {
+          <AdminTable columns={["#", "Offer", "Click ID", "Event", "Date", "Action"]}>
+            {data.conversions.map((c, i) => {
               const key = `${c.click_id}-${c.event}`;
               return (
                 <tr key={c.id} style={{ borderTop: "1px solid var(--lg-line-soft)", transition: "background-color 140ms ease" }}>
+                  <td style={{ padding: "10px 16px", color: "var(--lg-ink-faint)", fontSize: 12.5, fontWeight: 600 }}>{(page - 1) * limit + i + 1}</td>
                   <td style={{ padding: "10px 16px", fontWeight: 700, color: "var(--lg-ink)" }}>{c.off_name}</td>
                   <td style={{ padding: "10px 16px", fontFamily: "monospace", fontSize: 12 }}>{c.click_id}</td>
                   <td style={{ padding: "10px 16px" }}>

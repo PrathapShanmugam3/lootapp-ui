@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/apiClient";
 import Loader from "@/components/Loader";
+import { Pagination } from "@/components/AdminPage";
 
 const STATUS_STYLE = {
   success: { bg: "var(--lg-success-soft)", text: "var(--lg-success)" },
@@ -19,12 +20,12 @@ function Toast({ toast, onDone }) {
   return (
     <div
       style={{
-        padding: "1rem 1.5rem",
-        borderRadius: "var(--lg-radius)",
+        padding: "12px 20px",
+        borderRadius: "var(--lg-radius-sm)",
         color: "#fff",
         fontSize: 13,
-        fontWeight: 600,
-        boxShadow: "var(--lg-shadow-md)",
+        fontWeight: 700,
+        boxShadow: "var(--lg-shadow-lg)",
         background: toast.type === "error" ? "var(--lg-error)" : "var(--lg-success)",
       }}
     >
@@ -51,7 +52,7 @@ function WithdrawModal({ balance, onClose, onSuccess, pushToast }) {
       if (!upiId.includes("@") || upiId.length < 5) return pushToast("error", "Invalid UPI ID format");
     } else {
       if (!accountNo || !ifscCode) return pushToast("error", "Account number and IFSC are required");
-      if (!/^[0-9]{9,18}$/.test(accountNo)) return pushToast("error", "Invalid account number (9–18 digits)");
+      if (!/^[0-9]{9,18}$/.test(accountNo)) return pushToast("error", "Invalid account number");
       if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifscCode.toUpperCase())) return pushToast("error", "Invalid IFSC code");
     }
 
@@ -75,104 +76,137 @@ function WithdrawModal({ balance, onClose, onSuccess, pushToast }) {
 
   return (
     <>
-      <div className="fixed inset-0 z-40" style={{ background: "rgba(20,22,43,0.55)", backdropFilter: "blur(5px)" }} onClick={onClose} />
-      <div className="lh-wlt-modal overflow-auto fixed z-50 left-1/2 top-1/2 w-full max-w-md" style={{ transform: "translate(-50%, -50%)", maxHeight: "88vh" }}>
-        <div className="lh-wlt-modal-head flex items-center justify-between">
-          <h2 className="text-[1.2rem] font-bold" style={{ color: "var(--lg-ink)", letterSpacing: "-0.01em" }}>Request Withdrawal</h2>
-          <button onClick={onClose} className="flex h-8 w-8 items-center justify-center rounded-full flex-shrink-0" style={{ background: "var(--lg-paper-sunken)" }}>
-            <svg className="h-4 w-4" style={{ color: "var(--lg-ink-soft)" }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18M6 6l12 12" /></svg>
-          </button>
+      <div 
+        style={{ position: "fixed", inset: 0, zIndex: 999, background: "rgba(9, 13, 22, 0.65)", backdropFilter: "blur(6px)" }} 
+        onClick={onClose} 
+      />
+      <div 
+        style={{
+          position: "fixed",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          zIndex: 1000,
+          width: "90%",
+          maxWidth: 440,
+          background: "var(--lg-paper-raised)",
+          borderRadius: "var(--lg-radius)",
+          border: "1px solid var(--lg-line)",
+          boxShadow: "var(--lg-shadow-lg)",
+          padding: 28,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+          <h2 style={{ fontSize: 20, fontWeight: 800, margin: 0, fontFamily: "var(--lg-font-display)", color: "var(--lg-ink)" }}>Request Withdrawal</h2>
+          <button onClick={onClose} style={{ background: "var(--lg-paper-sunken)", border: "none", width: 32, height: 32, borderRadius: "50%", cursor: "pointer", color: "var(--lg-ink-soft)" }}>✕</button>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="lh-wlt-modal-body">
-            <p className="text-[13px] font-semibold mb-3" style={{ color: "var(--lg-ink-soft)" }}>Select Payment Method</p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
-              <div
-                className={`lh-wlt-method-card relative rounded-xl p-4 cursor-pointer border-2 transition-colors ${type === "upi" ? "lh-wlt-method-active" : ""}`}
-                onClick={() => setType("upi")}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border-2" style={{ borderColor: type === "upi" ? "var(--lg-violet)" : "var(--lg-line)" }}>
-                    {type === "upi" && <span className="h-2 w-2 rounded-full block" style={{ background: "var(--lg-violet)" }} />}
-                  </div>
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl flex-shrink-0" style={{ background: "linear-gradient(135deg,var(--lg-violet),var(--lg-pink))" }}>
-                    <svg className="h-5 w-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" x2="21" y1="22" y2="22" /><line x1="6" x2="6" y1="18" y2="11" /><line x1="10" x2="10" y1="18" y2="11" /><line x1="14" x2="14" y1="18" y2="11" /><line x1="18" x2="18" y1="18" y2="11" /><polygon points="12 2 20 7 4 7" /></svg>
-                  </div>
-                  <div>
-                    <p className="text-[13px] font-bold" style={{ color: "var(--lg-ink)" }}>UPI Payment</p>
-                    <p className="text-[11px] mt-0.5" style={{ color: "var(--lg-ink-soft)" }}>Fast &amp; Instant Transfer</p>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className={`lh-wlt-method-card relative rounded-xl p-4 cursor-pointer border-2 transition-colors ${type === "bank" ? "lh-wlt-method-active" : ""}`}
-                onClick={() => setType("bank")}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border-2" style={{ borderColor: type === "bank" ? "var(--lg-violet)" : "var(--lg-line)" }}>
-                    {type === "bank" && <span className="h-2 w-2 rounded-full block" style={{ background: "var(--lg-violet)" }} />}
-                  </div>
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl flex-shrink-0" style={{ background: "linear-gradient(135deg,var(--lg-violet),var(--lg-pink))" }}>
-                    <svg className="h-5 w-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="20" height="14" x="2" y="5" rx="2" /><line x1="2" x2="22" y1="10" y2="10" /></svg>
-                  </div>
-                  <div>
-                    <p className="text-[13px] font-bold" style={{ color: "var(--lg-ink)" }}>Bank Transfer</p>
-                    <p className="text-[11px] mt-0.5" style={{ color: "var(--lg-ink-soft)" }}>Direct Bank Account</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              {type === "upi" ? (
-                <div>
-                  <label className="block text-[12px] font-semibold mb-1.5" style={{ color: "var(--lg-ink-soft)" }}>UPI ID</label>
-                  <div className="lh-input-wrap lh-wlt-input lh-icon-bank">
-                    <input type="text" value={upiId} onChange={(e) => setUpiId(e.target.value)} placeholder="Enter UPI ID (e.g., name@okaxis)" className="text-[13px]" />
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-[12px] font-semibold mb-1.5" style={{ color: "var(--lg-ink-soft)" }}>Account Number</label>
-                    <div className="lh-input-wrap lh-wlt-input lh-icon-bank">
-                      <input type="text" value={accountNo} onChange={(e) => setAccountNo(e.target.value)} placeholder="Enter Account Number" className="text-[13px]" />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-[12px] font-semibold mb-1.5" style={{ color: "var(--lg-ink-soft)" }}>IFSC Code</label>
-                    <div className="lh-input-wrap lh-wlt-input lh-icon-tag">
-                      <input type="text" value={ifscCode} onChange={(e) => setIfscCode(e.target.value)} placeholder="Enter IFSC Code" className="text-[13px]" />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div>
-                <label className="block text-[12px] font-semibold mb-1.5" style={{ color: "var(--lg-ink-soft)" }}>Amount (₹)</label>
-                <div className="lh-input-wrap lh-wlt-input lh-icon-amount">
-                  <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Enter amount" min="1" max="50000" required className="text-[13px]" />
-                </div>
-                <p className="text-[11px] mt-1.5" style={{ color: "var(--lg-ink-soft)" }}>
-                  Available balance: <span className="font-semibold" style={{ color: "var(--lg-violet)" }}>₹{balance.toFixed(2)}</span>
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="lh-wlt-modal-foot">
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 20 }}>
             <button
-              type="submit"
-              disabled={!amount || submitting}
-              className="lh-wlt-submit-btn w-full rounded-xl py-3.5 text-[14px] font-semibold text-white"
-              style={{ opacity: !amount || submitting ? 0.6 : 1 }}
+              type="button"
+              onClick={() => setType("bank")}
+              style={{
+                padding: 12,
+                borderRadius: "var(--lg-radius-sm)",
+                border: `2px solid ${type === "bank" ? "var(--lg-violet)" : "var(--lg-line)"}`,
+                background: type === "bank" ? "var(--lg-violet-soft)" : "var(--lg-paper-sunken)",
+                color: type === "bank" ? "var(--lg-violet)" : "var(--lg-ink-soft)",
+                fontWeight: 700,
+                fontSize: 13,
+                cursor: "pointer"
+              }}
             >
-              {submitting ? "Submitting…" : "Request Withdrawal"}
+              🏦 Bank Transfer
+            </button>
+            <button
+              type="button"
+              onClick={() => setType("upi")}
+              style={{
+                padding: 12,
+                borderRadius: "var(--lg-radius-sm)",
+                border: `2px solid ${type === "upi" ? "var(--lg-violet)" : "var(--lg-line)"}`,
+                background: type === "upi" ? "var(--lg-violet-soft)" : "var(--lg-paper-sunken)",
+                color: type === "upi" ? "var(--lg-violet)" : "var(--lg-ink-soft)",
+                fontWeight: 700,
+                fontSize: 13,
+                cursor: "pointer"
+              }}
+            >
+              ⚡ UPI Payment
             </button>
           </div>
+
+          {type === "upi" ? (
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "var(--lg-ink-soft)", marginBottom: 6 }}>UPI ID</label>
+              <input
+                type="text"
+                value={upiId}
+                onChange={(e) => setUpiId(e.target.value)}
+                placeholder="name@okaxis"
+                style={{ width: "100%", padding: "12px 16px", borderRadius: "var(--lg-radius-sm)", border: "1px solid var(--lg-line)", background: "var(--lg-paper-sunken)", fontSize: 13.5, color: "var(--lg-ink)", outline: "none" }}
+              />
+            </div>
+          ) : (
+            <>
+              <div style={{ marginBottom: 14 }}>
+                <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "var(--lg-ink-soft)", marginBottom: 6 }}>Account Number</label>
+                <input
+                  type="text"
+                  value={accountNo}
+                  onChange={(e) => setAccountNo(e.target.value)}
+                  placeholder="Enter Account Number"
+                  style={{ width: "100%", padding: "12px 16px", borderRadius: "var(--lg-radius-sm)", border: "1px solid var(--lg-line)", background: "var(--lg-paper-sunken)", fontSize: 13.5, color: "var(--lg-ink)", outline: "none" }}
+                />
+              </div>
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "var(--lg-ink-soft)", marginBottom: 6 }}>IFSC Code</label>
+                <input
+                  type="text"
+                  value={ifscCode}
+                  onChange={(e) => setIfscCode(e.target.value)}
+                  placeholder="Enter IFSC Code"
+                  style={{ width: "100%", padding: "12px 16px", borderRadius: "var(--lg-radius-sm)", border: "1px solid var(--lg-line)", background: "var(--lg-paper-sunken)", fontSize: 13.5, color: "var(--lg-ink)", outline: "none" }}
+                />
+              </div>
+            </>
+          )}
+
+          <div style={{ marginBottom: 24 }}>
+            <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "var(--lg-ink-soft)", marginBottom: 6 }}>Amount (₹)</label>
+            <input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="Enter amount"
+              min="1"
+              max="50000"
+              required
+              style={{ width: "100%", padding: "12px 16px", borderRadius: "var(--lg-radius-sm)", border: "1px solid var(--lg-line)", background: "var(--lg-paper-sunken)", fontSize: 13.5, color: "var(--lg-ink)", outline: "none" }}
+            />
+            <span style={{ fontSize: 12, color: "var(--lg-ink-soft)", marginTop: 6, display: "block" }}>Available: <strong>₹{balance.toFixed(2)}</strong></span>
+          </div>
+
+          <button
+            type="submit"
+            disabled={!amount || submitting}
+            style={{
+              width: "100%",
+              padding: "14px",
+              borderRadius: "var(--lg-radius-pill)",
+              border: "none",
+              background: "linear-gradient(135deg, var(--lg-violet), var(--lg-violet-deep))",
+              color: "#fff",
+              fontSize: 14,
+              fontWeight: 800,
+              cursor: "pointer",
+              boxShadow: "0 8px 20px rgba(99, 102, 241, 0.4)",
+              opacity: !amount || submitting ? 0.6 : 1
+            }}
+          >
+            {submitting ? "Processing..." : "Submit Withdrawal"}
+          </button>
         </form>
       </div>
     </>
@@ -200,23 +234,21 @@ function RedeemCodeCard({ onRedeemed, pushToast }) {
   }
 
   return (
-    <div className="lh-card" style={{ padding: 20 }}>
-      <p className="text-[13px] font-bold mb-2" style={{ color: "var(--lg-violet)" }}>Have a redeem code?</p>
-      <form onSubmit={handleSubmit} style={{ display: "flex", gap: 8 }}>
-        <div className="lh-input-wrap lh-icon-tag" style={{ flex: 1 }}>
-          <input
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            placeholder="Enter code"
-            style={{ fontSize: 13, textTransform: "uppercase" }}
-          />
-        </div>
+    <div style={{ background: "var(--lg-paper-raised)", borderRadius: "var(--lg-radius)", border: "1px solid var(--lg-line)", padding: 24, boxShadow: "var(--lg-shadow-md)" }}>
+      <h3 style={{ fontSize: 15, fontWeight: 800, margin: "0 0 12px 0", color: "var(--lg-ink)", fontFamily: "var(--lg-font-display)" }}>🎁 Redeem Promo Code</h3>
+      <form onSubmit={handleSubmit} style={{ display: "flex", gap: 12 }}>
+        <input
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          placeholder="ENTER GIFT CODE"
+          style={{ flex: 1, padding: "12px 18px", borderRadius: "var(--lg-radius-pill)", border: "1px solid var(--lg-line)", background: "var(--lg-paper-sunken)", fontSize: 13.5, fontWeight: 700, textTransform: "uppercase", color: "var(--lg-ink)", outline: "none" }}
+        />
         <button
           type="submit"
           disabled={submitting || !code.trim()}
-          style={{ background: "linear-gradient(135deg,var(--lg-violet),var(--lg-violet-deep))", color: "#fff", border: "none", borderRadius: "var(--lg-radius-pill)", padding: "8px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer", opacity: submitting || !code.trim() ? 0.6 : 1 }}
+          style={{ background: "linear-gradient(135deg, var(--lg-violet), var(--lg-violet-deep))", color: "#fff", border: "none", borderRadius: "var(--lg-radius-pill)", padding: "12px 24px", fontSize: 13.5, fontWeight: 800, cursor: "pointer", opacity: submitting || !code.trim() ? 0.6 : 1, boxShadow: "0 4px 14px rgba(99, 102, 241, 0.3)" }}
         >
-          {submitting ? "Redeeming…" : "Redeem"}
+          {submitting ? "Redeeming..." : "Redeem"}
         </button>
       </form>
     </div>
@@ -246,109 +278,127 @@ export default function WalletPage() {
     api.get(`/api/wallet/transactions?page=${page}`).then(setTxData).catch(() => {});
   }
 
-  if (!summary) {
-    return <Loader />;
-  }
+  if (!summary) return <Loader style={{ padding: 40, color: "var(--lg-violet)" }} />;
 
   const balanceInt = Math.floor(summary.balance);
   const balanceCents = Math.round((summary.balance - balanceInt) * 100);
 
   return (
-    <main className="flex-1 px-8 py-6 max-w-5xl mx-auto w-full space-y-5">
-      <div>
-        <h1 className="text-[1.35rem] font-extrabold" style={{ color: "var(--lg-ink)", letterSpacing: "-0.02em" }}>Wallet</h1>
-        <p className="text-[13px] mt-0.5" style={{ color: "var(--lg-ink-soft)" }}>Manage your balance and withdrawals</p>
+    <div style={{ maxWidth: 1040, margin: "0 auto", paddingBottom: 40 }}>
+      <div style={{ marginBottom: 28 }}>
+        <h1 style={{ fontSize: 28, fontWeight: 800, margin: 0, fontFamily: "var(--lg-font-display)", color: "var(--lg-ink)", letterSpacing: "-0.02em" }}>Wallet & Payouts</h1>
+        <p style={{ color: "var(--lg-ink-soft)", fontSize: 14, marginTop: 4 }}>Manage available earnings and withdraw directly to your account</p>
       </div>
 
-      <div className="lh-wlt-balance-card relative overflow-hidden">
-        <div className="lh-wlt-blob lh-wlt-blob-1" />
-        <div className="lh-wlt-blob lh-wlt-blob-2" />
-        <div className="relative z-10 flex items-start justify-between">
+      {/* Main Balance Hero Card */}
+      <div 
+        style={{
+          background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%)",
+          borderRadius: "var(--lg-radius-lg)",
+          padding: "36px 40px",
+          color: "#ffffff",
+          boxShadow: "0 20px 40px -10px rgba(99, 102, 241, 0.4)",
+          position: "relative",
+          overflow: "hidden",
+          marginBottom: 28
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 24 }}>
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <svg className="h-4 w-4 text-white/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" /><path d="M3 5v14a2 2 0 0 0 2 2h16v-5" /><path d="M18 12a2 2 0 0 0 0 4h4v-4Z" /></svg>
-              <span className="text-[13px] font-semibold text-white/80">Available Balance</span>
-            </div>
-            <p className="text-[2.8rem] font-extrabold text-white leading-none mb-5" style={{ letterSpacing: "-0.03em", textShadow: "0 2px 12px rgba(20,22,43,0.25)" }}>
-              ₹{balanceInt.toLocaleString("en-IN")}.{String(balanceCents).padStart(2, "0")}
+            <span style={{ fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "rgba(255, 255, 255, 0.8)" }}>Available Balance</span>
+            <p style={{ fontSize: 44, fontWeight: 900, fontFamily: "var(--lg-font-display)", margin: "8px 0 24px 0", letterSpacing: "-0.03em" }}>
+              ₹{balanceInt.toLocaleString("en-IN")}.<span style={{ fontSize: 28, opacity: 0.85 }}>{String(balanceCents).padStart(2, "0")}</span>
             </p>
-            <button onClick={() => setModalOpen(true)} className="lh-wlt-withdraw-btn flex items-center gap-2 rounded-xl px-5 py-2.5 text-[13px] font-semibold">
-              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg>
-              Withdraw Funds
+
+            <button
+              onClick={() => setModalOpen(true)}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                background: "#ffffff",
+                color: "#4f46e5",
+                padding: "12px 24px",
+                borderRadius: "var(--lg-radius-pill)",
+                border: "none",
+                fontSize: 14,
+                fontWeight: 800,
+                cursor: "pointer",
+                boxShadow: "0 8px 20px rgba(0, 0, 0, 0.2)"
+              }}
+            >
+              ⚡ Withdraw Funds
             </button>
           </div>
-          <div className="flex flex-col gap-3 text-right">
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 16, textAlign: "right" }}>
             <div>
-              <p className="text-[11px] font-semibold text-white/55 uppercase tracking-wider mb-0.5">Total Earned</p>
-              <p className="text-[1.15rem] font-extrabold text-white" style={{ letterSpacing: "-0.02em" }}>₹{summary.totalEarned.toLocaleString("en-IN")}</p>
+              <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: "rgba(255, 255, 255, 0.7)" }}>Total Earned</span>
+              <p style={{ fontSize: 20, fontWeight: 800, margin: "2px 0 0 0", fontFamily: "var(--lg-font-display)" }}>₹{summary.totalEarned.toLocaleString("en-IN")}</p>
             </div>
             <div>
-              <p className="text-[11px] font-semibold text-white/55 uppercase tracking-wider mb-0.5">Total Withdrawn</p>
-              <p className="text-[1.15rem] font-extrabold text-white" style={{ letterSpacing: "-0.02em" }}>₹{summary.totalWithdrawn.toLocaleString("en-IN")}</p>
+              <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: "rgba(255, 255, 255, 0.7)" }}>Total Withdrawn</span>
+              <p style={{ fontSize: 20, fontWeight: 800, margin: "2px 0 0 0", fontFamily: "var(--lg-font-display)" }}>₹{summary.totalWithdrawn.toLocaleString("en-IN")}</p>
             </div>
           </div>
         </div>
       </div>
 
-      <RedeemCodeCard
-        pushToast={pushToast}
-        onRedeemed={(newBalance) => {
-          setSummary((s) => ({ ...s, balance: newBalance }));
-          refreshTransactions();
-        }}
-      />
+      <div style={{ marginBottom: 28 }}>
+        <RedeemCodeCard
+          pushToast={pushToast}
+          onRedeemed={(newBalance) => {
+            setSummary((s) => ({ ...s, balance: newBalance }));
+            refreshTransactions();
+          }}
+        />
+      </div>
 
-      <div className="lh-card overflow-hidden p-0">
-        <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: "1px dashed var(--lg-line-soft)" }}>
-          <span className="text-[15px] font-bold" style={{ color: "var(--lg-violet)" }}>Transaction History</span>
-          <span className="text-[12px] font-medium px-2.5 py-1 rounded-full" style={{ background: "var(--lg-violet-soft)", color: "var(--lg-violet)" }}>
-            {txData?.totalRecords ?? 0} transactions
-          </span>
+      {/* Transaction History */}
+      <div style={{ background: "var(--lg-paper-raised)", borderRadius: "var(--lg-radius)", border: "1px solid var(--lg-line)", boxShadow: "var(--lg-shadow-md)", overflow: "hidden" }}>
+        <div style={{ padding: "18px 24px", borderBottom: "1px solid var(--lg-line)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <h3 style={{ fontSize: 16, fontWeight: 800, margin: 0, fontFamily: "var(--lg-font-display)", color: "var(--lg-ink)" }}>Transaction History</h3>
+          <span style={{ fontSize: 12, fontWeight: 700, background: "var(--lg-violet-soft)", color: "var(--lg-violet)", padding: "4px 12px", borderRadius: "var(--lg-radius-pill)" }}>{txData?.totalRecords ?? 0} Records</span>
         </div>
 
-        <div className="lh-table-scroll">
-          <div className="lh-wlt-thead grid px-6 py-3.5" style={{ gridTemplateColumns: "70px 1fr 120px 130px 130px", background: "linear-gradient(120deg,var(--lg-hero-1) 0%,#20C997 45%,var(--lg-hero-2) 100%)" }}>
-            <span className="text-[11px] font-extrabold uppercase tracking-widest text-white pl-2">Sr No.</span>
-            <span className="text-[11px] font-extrabold uppercase tracking-widest text-white">Type</span>
-            <span className="text-[11px] font-extrabold uppercase tracking-widest text-white">Status</span>
-            <span className="text-[11px] font-extrabold uppercase tracking-widest text-white">Amount</span>
-            <span className="text-[11px] font-extrabold uppercase tracking-widest text-white text-right">Date &amp; Time</span>
-          </div>
-
-          {!txData ? (
-            <Loader />
-          ) : txData.transactions.length === 0 ? (
-            <div className="py-10 text-center text-sm text-gray-400">No transactions yet.</div>
-          ) : (
-            txData.transactions.map((tx, i) => {
-              const style = STATUS_STYLE[tx.status?.toLowerCase()] || STATUS_STYLE.pending;
-              return (
-                <div key={tx.id} className="lh-wlt-tx-row lh-wlt-tx-grid grid px-6 py-3.5 items-center" style={{ gridTemplateColumns: "70px 1fr 120px 130px 130px", borderBottom: "1px dashed var(--lg-line-soft)" }}>
-                  <span className="text-[13px] pl-2" style={{ color: "var(--lg-ink-faint)" }}>{(page - 1) * 10 + i + 1}</span>
-                  <span className="text-[13px] font-medium capitalize" style={{ color: "var(--lg-ink)" }}>{tx.type} — {tx.comment}</span>
-                  <span className="text-[11px] font-semibold px-2 py-1 rounded-full w-fit capitalize" style={{ background: style.bg, color: style.text }}>{tx.status}</span>
-                  <span className="text-[13px] font-semibold" style={{ color: tx.type === "debit" ? "var(--lg-error)" : "var(--lg-success)" }}>{tx.type === "debit" ? "-" : "+"}₹{tx.amount.toFixed(2)}</span>
-                  <span className="text-[12px] text-right" style={{ color: "var(--lg-ink-soft)" }}>{tx.date} {tx.time}</span>
-                </div>
-              );
-            })
-          )}
+        <div className="lg-table-scroll" style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 600 }}>
+            <thead>
+              <tr style={{ background: "var(--lg-paper-sunken)", borderBottom: "1px solid var(--lg-line)", textAlign: "left" }}>
+                <th style={{ padding: "14px 24px", fontSize: 11, fontWeight: 800, color: "var(--lg-ink-soft)", textTransform: "uppercase" }}>#</th>
+                <th style={{ padding: "14px 24px", fontSize: 11, fontWeight: 800, color: "var(--lg-ink-soft)", textTransform: "uppercase" }}>Type & Description</th>
+                <th style={{ padding: "14px 24px", fontSize: 11, fontWeight: 800, color: "var(--lg-ink-soft)", textTransform: "uppercase" }}>Status</th>
+                <th style={{ padding: "14px 24px", fontSize: 11, fontWeight: 800, color: "var(--lg-ink-soft)", textTransform: "uppercase" }}>Amount</th>
+                <th style={{ padding: "14px 24px", fontSize: 11, fontWeight: 800, color: "var(--lg-ink-soft)", textTransform: "uppercase", textAlign: "right" }}>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {!txData ? (
+                <tr><td colSpan="5" style={{ padding: 32, textAlign: "center" }}><Loader /></td></tr>
+              ) : txData.transactions.length === 0 ? (
+                <tr><td colSpan="5" style={{ padding: 40, textAlign: "center", color: "var(--lg-ink-soft)", fontSize: 13 }}>No transactions found.</td></tr>
+              ) : (
+                txData.transactions.map((tx, i) => {
+                  const style = STATUS_STYLE[tx.status?.toLowerCase()] || STATUS_STYLE.pending;
+                  return (
+                    <tr key={tx.id} style={{ borderBottom: "1px solid var(--lg-line)" }}>
+                      <td style={{ padding: "14px 24px", fontSize: 13, color: "var(--lg-ink-faint)", fontWeight: 600 }}>{(page - 1) * 10 + i + 1}</td>
+                      <td style={{ padding: "14px 24px", fontSize: 13.5, fontWeight: 700, color: "var(--lg-ink)", textTransform: "capitalize" }}>{tx.type} — {tx.comment}</td>
+                      <td style={{ padding: "14px 24px" }}>
+                        <span style={{ display: "inline-flex", padding: "4px 12px", borderRadius: "var(--lg-radius-pill)", background: style.bg, color: style.text, fontSize: 11, fontWeight: 800, textTransform: "capitalize" }}>{tx.status}</span>
+                      </td>
+                      <td style={{ padding: "14px 24px", fontSize: 14, fontWeight: 800, color: tx.type === "debit" ? "var(--lg-error)" : "var(--lg-success)", fontFamily: "var(--lg-font-display)" }}>
+                        {tx.type === "debit" ? "-" : "+"}₹{tx.amount.toFixed(2)}
+                      </td>
+                      <td style={{ padding: "14px 24px", fontSize: 12.5, color: "var(--lg-ink-soft)", textAlign: "right" }}>{tx.date} {tx.time}</td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
         </div>
-
-        {txData && txData.totalPages > 1 && (
-          <div className="flex items-center justify-center border-t px-5 py-3 gap-1" style={{ borderColor: "var(--lg-line-soft)", background: "var(--lg-paper-sunken)" }}>
-            {Array.from({ length: txData.totalPages }, (_, i) => i + 1).map((p) => (
-              <button
-                key={p}
-                onClick={() => setPage(p)}
-                className="text-[12px] font-semibold h-7 w-7 rounded-lg"
-                style={p === page ? { background: "linear-gradient(135deg,var(--lg-violet),var(--lg-violet-deep))", color: "#fff" } : { background: "var(--lg-paper-raised)", color: "var(--lg-ink-soft)" }}
-              >
-                {p}
-              </button>
-            ))}
-          </div>
-        )}
+        {txData && <Pagination page={page} totalPages={txData.totalPages} onChange={setPage} />}
       </div>
 
       {modalOpen && (
@@ -364,11 +414,11 @@ export default function WalletPage() {
         />
       )}
 
-      <div style={{ position: "fixed", bottom: "2rem", right: "2rem", zIndex: 99999, display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+      <div style={{ position: "fixed", bottom: 24, right: 24, zIndex: 9999, display: "flex", flexDirection: "column", gap: 8 }}>
         {toasts.map((t) => (
           <Toast key={t.id} toast={t} onDone={() => setToasts((prev) => prev.filter((x) => x.id !== t.id))} />
         ))}
       </div>
-    </main>
+    </div>
   );
 }

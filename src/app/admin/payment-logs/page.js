@@ -47,9 +47,10 @@ export default function PaymentLogsPage() {
           <Loader style={{ padding: 32, color: "var(--lg-ink-faint)" }} />
         ) : (
           <>
-            <AdminTable columns={["Offer", "Pay To", "Pay ID", "Amount", "Status", "Date"]}>
-              {data.logs.map((l) => (
+            <AdminTable columns={["#", "Offer", "Pay To", "Pay ID", "Amount", "Status", "Date"]}>
+              {data.logs.map((l, i) => (
                 <tr key={l.id} style={{ borderTop: "1px solid var(--lg-line-soft)", transition: "background-color 140ms ease" }} onMouseEnter={(e) => (e.currentTarget.style.background = "var(--lg-paper-sunken)")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                  <td style={{ padding: "12px 16px", color: "var(--lg-ink-faint)", fontSize: 12.5, fontWeight: 600 }}>{(page - 1) * limit + i + 1}</td>
                   <td style={{ padding: "12px 16px", fontWeight: 700, color: "var(--lg-ink)" }}>{l.off_name}</td>
                   <td style={{ padding: "12px 16px" }}>{l.pay_to}</td>
                   <td style={{ padding: "12px 16px", fontFamily: "monospace", fontSize: 12, maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={l.pay_id}>{l.pay_id}</td>
