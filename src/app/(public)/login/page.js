@@ -180,7 +180,7 @@ export default function LoginPage() {
                 <div className="auth-field">
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                     <label className="auth-label" style={{ margin: 0 }}>Password</label>
-                    <a href="/forget-pass" style={{ fontSize: 12, fontWeight: 700, color: "var(--violet)", textDecoration: "none" }}>Forgot?</a>
+                    <a href="/forgot-password" style={{ fontSize: 12, fontWeight: 700, color: "var(--violet)", textDecoration: "none" }}>Forgot?</a>
                   </div>
                   <div className="auth-input-group">
                     <input 

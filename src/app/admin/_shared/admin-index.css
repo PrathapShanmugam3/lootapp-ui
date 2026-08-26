@@ -1,17 +1,3 @@
-/* Aurora — admin dashboard supplemental styles (stat cards, offer list,
-   conversions table). These classes are not currently wired into
-   page.js (which uses inline styles) but are kept theme-consistent so
-   any admin page opting into them gets the Aurora look automatically. */
-:root {
-  --z-fixed: 100;
-}
-
-/*========== BASE ==========*/
-*,
-::before,
-::after {
-  box-sizing: border-box;
-}
 
 h3 {
   margin: 0;

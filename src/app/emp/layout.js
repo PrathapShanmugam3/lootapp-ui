@@ -9,9 +9,26 @@ import "./_shared/admin-toast.css";
 
 export default async function EmpLayout({ children }) {
   const cookieStore = await cookies();
-  const hasSession = cookieStore.has(process.env.NEXT_PUBLIC_SESSION_COOKIE || "loothat_session");
-  if (!hasSession) {
+  const sessionCookie = cookieStore.get(process.env.NEXT_PUBLIC_SESSION_COOKIE || "loothat_session");
+  
+  if (!sessionCookie) {
     redirect("/login");
+  }
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"}/api/auth/me`, {
+    cache: "no-store",
+    headers: {
+      Cookie: `${sessionCookie.name}=${sessionCookie.value}`,
+    },
+  });
+
+  if (!res.ok) {
+    redirect("/login");
+  }
+
+  const data = await res.json();
+  if (String(data?.user?.status) !== "9") {
+    redirect("/home"); 
   }
   return (
     <>

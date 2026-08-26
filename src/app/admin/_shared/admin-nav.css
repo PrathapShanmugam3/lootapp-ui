@@ -45,7 +45,6 @@ body {
 }
 
 .loot-hat-admin {
-  margin-top: var(--header-height);
   padding: 1.5rem 1.5rem 0;
 }
 
@@ -115,7 +114,7 @@ a {
   background-color: var(--container-color);
   border-right: 1px solid var(--border-color);
   z-index: var(--z-fixed);
-  transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.25s ease;
+  transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.25s ease, width 0.25s cubic-bezier(0.4, 0, 0.2, 1), padding 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .nav__container {
@@ -269,14 +268,16 @@ a {
 
   .loot-hat-admin {
     padding: 1.5rem 2rem 0 calc(var(--nav-width) + 2rem);
+    transition: padding 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .header {
     padding: 0 2rem 0 calc(var(--nav-width) + 2rem);
+    transition: padding 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .header__toggle {
-    display: none;
+    display: flex;
   }
 
   .nav {
@@ -284,4 +285,42 @@ a {
     padding: 1.5rem 1.25rem 0;
     width: var(--nav-width);
   }
+
+  /* Sidebar collapsed overrides (Show icons only) */
+  .sidebar-collapsed .nav {
+    width: 84px;
+    padding: 1.5rem 0.75rem 0;
+  }
+
+  .sidebar-collapsed .nav__logo {
+    justify-content: center;
+    padding: 0 0 1.25rem 0;
+  }
+
+  .sidebar-collapsed .nav__logo-name,
+  .sidebar-collapsed .nav__name,
+  .sidebar-collapsed .nav__dropdown-icon,
+  .sidebar-collapsed .nav__dropdown-collapse {
+    display: none;
+    opacity: 0;
+  }
+
+  .sidebar-collapsed .nav__link {
+    justify-content: center;
+    padding: 0.85rem 0;
+  }
+
+  .sidebar-collapsed .nav__icon {
+    margin-right: 0;
+  }
+
+  .sidebar-collapsed .loot-hat-admin {
+    padding-left: calc(84px + 2rem);
+  }
+
+  .sidebar-collapsed .header {
+    padding-left: calc(84px + 2rem);
+  }
 }
+
+

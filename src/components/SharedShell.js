@@ -35,32 +35,39 @@ export default function SharedShell({ children, navGroups, basePath = "/home", r
   const pathname = usePathname();
   const router = useRouter();
   const [navOpen, setNavOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [openGroup, setOpenGroup] = useState(null);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  async function handleLogout() {
+  async function confirmLogout() {
     await api.post("/api/auth/logout");
     router.push("/login");
   }
 
   // Find active page title
   let pageTitle = "Dashboard";
-  navGroups.forEach(g => {
-    if (g.type === "link" && pathname === g.href) pageTitle = g.label;
-    if (g.type === "group") {
-      g.items.forEach(i => {
-        if (pathname === i.href) pageTitle = i.label;
-      });
-    }
-  });
+  if (pathname.startsWith("/offer-detail")) {
+    pageTitle = "Offer Details";
+  } else {
+    navGroups.forEach(g => {
+      if (g.type === "link" && pathname === g.href) pageTitle = g.label;
+      if (g.type === "group") {
+        g.items.forEach(i => {
+          if (pathname === i.href) pageTitle = i.label;
+        });
+      }
+    });
+  }
 
   return (
-    <div className="loot-hat-admin">
-      <header className="header">
-        <div className="header__container">
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            <div className="header__toggle" onClick={() => setNavOpen((v) => !v)}>
-              <Icon path={ICONS.menu} />
-            </div>
+    <div className={`loot-hat-admin-root ${isCollapsed ? "sidebar-collapsed" : ""}`}>
+      <div className="loot-hat-admin">
+        <header className="header">
+          <div className="header__container">
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <div className="header__toggle" onClick={() => { setNavOpen((v) => !v); setIsCollapsed((v) => !v); }}>
+                <Icon path={ICONS.menu} />
+              </div>
             <h1 style={{ fontSize: "1.25rem", fontWeight: 700, margin: 0, fontFamily: "var(--lg-font-display)", color: "var(--lg-ink)", letterSpacing: "-0.01em" }}>
               {pageTitle}
             </h1>
@@ -139,7 +146,7 @@ export default function SharedShell({ children, navGroups, basePath = "/home", r
               </div>
             </div>
           </div>
-          <a href="#" onClick={(e) => { e.preventDefault(); handleLogout(); }} className="nav__link nav__logout">
+          <a href="#" onClick={(e) => { e.preventDefault(); setShowLogoutModal(true); }} className="nav__link nav__logout">
             <span className="nav__icon"><Icon path={ICONS.logout} /></span>
             <span className="nav__name">Log Out</span>
           </a>
@@ -149,6 +156,24 @@ export default function SharedShell({ children, navGroups, basePath = "/home", r
       <main id="admin-main">
         {children}
       </main>
+
+      {/* Logout Modal */}
+      {showLogoutModal && (
+        <div className="modal" style={{ display: "block", position: "fixed", top: 0, left: 0, width: "100%", height: "100%", background: "rgba(0,0,0,0.5)", zIndex: 99999, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div className="modal-content" style={{ background: "var(--lg-paper-raised)", width: "90%", maxWidth: 400, borderRadius: "16px", padding: "24px", boxShadow: "0 10px 25px rgba(0,0,0,0.2)", textAlign: "center", border: "1px solid var(--lg-line)" }}>
+            <div style={{ width: 50, height: 50, borderRadius: "50%", background: "rgba(239,68,68,0.1)", color: "#ef4444", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
+              <Icon path={ICONS.logout} size={24} />
+            </div>
+            <h3 style={{ margin: "0 0 10px", fontSize: 20, color: "var(--lg-ink)", fontWeight: 700 }}>Log Out</h3>
+            <p style={{ margin: "0 0 24px", color: "var(--lg-ink-soft)", fontSize: 14 }}>Are you sure you want to log out of your account?</p>
+            <div style={{ display: "flex", gap: 12 }}>
+              <button onClick={() => setShowLogoutModal(false)} style={{ flex: 1, padding: "10px", borderRadius: "8px", border: "1px solid var(--lg-line)", background: "var(--lg-paper)", color: "var(--lg-ink)", fontWeight: 600, cursor: "pointer", transition: "background 0.2s" }} onMouseOver={e => e.target.style.background = "var(--lg-paper-sunken)"} onMouseOut={e => e.target.style.background = "var(--lg-paper)"}>Cancel</button>
+              <button onClick={() => { setShowLogoutModal(false); confirmLogout(); }} style={{ flex: 1, padding: "10px", borderRadius: "8px", border: "none", background: "#ef4444", color: "#fff", fontWeight: 600, cursor: "pointer", transition: "background 0.2s" }} onMouseOver={e => e.target.style.background = "#dc2626"} onMouseOut={e => e.target.style.background = "#ef4444"}>Yes, Log Out</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
     </div>
   );
 }

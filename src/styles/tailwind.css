@@ -7,5 +7,3 @@
    respective layout/page level and take precedence on any overlapping
    property. */
 @import "tailwindcss";
-@source "../app";
-@source "../components";
