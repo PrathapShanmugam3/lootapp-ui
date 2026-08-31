@@ -69,7 +69,7 @@ export default function GatewayPage() {
           <span style={{ width: 8, height: 8, borderRadius: "50%", background: "linear-gradient(135deg, var(--lg-violet), var(--lg-pink))", display: "inline-block" }} />
           {form.id ? "Edit Gateway" : "Add Gateway"}
         </h3>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginBottom: 14 }}>
             <div style={{ position: "relative" }}>
               <select value={form.gtype} onChange={(e) => set("gtype", e.target.value)} style={selectStyle} onFocus={focusOn} onBlur={focusOff}>
@@ -88,7 +88,7 @@ export default function GatewayPage() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginBottom: 18, alignItems: "center" }}>
             <div>
               <label style={{ fontSize: 12.5, fontWeight: 700, color: "var(--lg-ink-soft)", display: "block", marginBottom: 7 }}>Failover priority (lower tried first)</label>
-              <TextInput type="number" value={form.priority} onChange={(e) => set("priority", Number(e.target.value))} style={{ ...inputBase, fontVariantNumeric: "tabular-nums" }} />
+              <TextInput type="number" min="0" value={form.priority} onChange={(e) => set("priority", Number(e.target.value))} style={{ ...inputBase, fontVariantNumeric: "tabular-nums" }} />
             </div>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 18, padding: "10px 14px", background: "var(--lg-paper-sunken)", borderRadius: "var(--lg-radius-sm)" }}>
               <span style={{ fontSize: 12.5, fontWeight: 600, color: "var(--lg-ink)" }}>Active (eligible for payout routing)</span>

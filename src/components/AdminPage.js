@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+
 export function AdminPageHeader({ title, subtitle, action }) {
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28, gap: 16, flexWrap: "wrap" }}>
@@ -162,41 +166,59 @@ export function PrimaryButton({ children, ...props }) {
 }
 
 export function TextInput(props) {
-  const { style, ...rest } = props;
+  const { style, onInvalid, onInput, ...rest } = props;
+  const [error, setError] = useState("");
+
+  function handleInvalid(e) {
+    e.preventDefault();
+    setError(e.target.validationMessage);
+    onInvalid?.(e);
+  }
+
+  function handleInput(e) {
+    if (e.target.validity.valid) setError("");
+    onInput?.(e);
+  }
+
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        borderRadius: "var(--lg-radius-sm)",
-        background: "var(--lg-paper-raised)",
-        border: "1px solid var(--lg-line)",
-        transition: "all 0.18s ease",
-      }}
-      onFocus={(e) => {
-        e.currentTarget.style.borderColor = "var(--lg-violet)";
-        e.currentTarget.style.boxShadow = "0 0 0 3px var(--lg-violet-soft)";
-      }}
-      onBlur={(e) => {
-        e.currentTarget.style.borderColor = "var(--lg-line)";
-        e.currentTarget.style.boxShadow = "none";
-      }}
-    >
-      <input
-        {...rest}
+    <div style={{ width: style?.width }}>
+      <div
         style={{
-          width: "100%",
-          border: "none",
-          background: "transparent",
+          display: "flex",
+          alignItems: "center",
           borderRadius: "var(--lg-radius-sm)",
-          padding: "10px 14px",
-          fontSize: 14,
-          color: "var(--lg-ink)",
-          fontFamily: "var(--lg-font-body)",
-          outline: "none",
-          ...style,
+          background: "var(--lg-paper-raised)",
+          border: error ? "1px solid #dc2626" : "1px solid var(--lg-line)",
+          transition: "all 0.18s ease",
         }}
-      />
+        onFocus={(e) => {
+          e.currentTarget.style.borderColor = error ? "#dc2626" : "var(--lg-violet)";
+          e.currentTarget.style.boxShadow = error ? "0 0 0 3px rgba(220,38,38,0.15)" : "0 0 0 3px var(--lg-violet-soft)";
+        }}
+        onBlur={(e) => {
+          e.currentTarget.style.borderColor = error ? "#dc2626" : "var(--lg-line)";
+          e.currentTarget.style.boxShadow = "none";
+        }}
+      >
+        <input
+          {...rest}
+          onInvalid={handleInvalid}
+          onInput={handleInput}
+          style={{
+            width: "100%",
+            border: "none",
+            background: "transparent",
+            borderRadius: "var(--lg-radius-sm)",
+            padding: "10px 14px",
+            fontSize: 14,
+            color: "var(--lg-ink)",
+            fontFamily: "var(--lg-font-body)",
+            outline: "none",
+            ...style,
+          }}
+        />
+      </div>
+      {error && <span style={{ display: "block", color: "#dc2626", fontSize: 12, fontWeight: 600, marginTop: 6 }}>{error}</span>}
     </div>
   );
 }

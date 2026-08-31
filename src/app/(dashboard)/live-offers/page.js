@@ -162,74 +162,122 @@ export default function CampaignsPage() {
           <span style={{ fontSize: 13, fontWeight: 600, color: "var(--lg-ink-soft)" }}>{filtered.length} Campaigns</span>
         </div>
 
-        {/* Campaign List */}
-        <div className="lg-table-scroll" style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 640 }}>
-            <thead>
-              <tr style={{ background: "var(--lg-paper-sunken)", borderBottom: "1px solid var(--lg-line)", textAlign: "left" }}>
-                <th style={{ padding: "14px 24px", fontSize: 11, fontWeight: 800, color: "var(--lg-ink-soft)", textTransform: "uppercase" }}>#</th>
-                <th style={{ padding: "14px 24px", fontSize: 11, fontWeight: 800, color: "var(--lg-ink-soft)", textTransform: "uppercase" }}>Campaign Name</th>
-                <th style={{ padding: "14px 24px", fontSize: 11, fontWeight: 800, color: "var(--lg-ink-soft)", textTransform: "uppercase" }}>Payout</th>
-                <th style={{ padding: "14px 24px", fontSize: 11, fontWeight: 800, color: "var(--lg-ink-soft)", textTransform: "uppercase" }}>Category</th>
-                <th style={{ padding: "14px 24px", fontSize: 11, fontWeight: 800, color: "var(--lg-ink-soft)", textTransform: "uppercase", textAlign: "right" }}>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {visible.length === 0 ? (
-                <tr>
-                  <td colSpan="5" style={{ padding: "48px 0", textAlign: "center", color: "var(--lg-ink-soft)", fontSize: 14 }}>
-                    No matching campaigns found.
-                  </td>
-                </tr>
-              ) : (
-                visible.map((c, i) => {
-                  const catStyle = CATEGORY_COLORS[c.category] || { bg: "var(--lg-paper-sunken)", text: "var(--lg-ink-soft)" };
-                  return (
-                    <tr key={c.id} style={{ borderBottom: "1px solid var(--lg-line)", transition: "background 0.15s ease" }}>
-                      <td style={{ padding: "16px 24px", fontSize: 13, fontWeight: 600, color: "var(--lg-ink-faint)" }}>{start + i + 1}</td>
-                      <td style={{ padding: "16px 24px" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                          <div style={{ width: 38, height: 38, borderRadius: "var(--lg-radius-sm)", display: "flex", alignItems: "center", justifyContent: "center", background: c.color, color: "#fff", fontWeight: 800, fontSize: 14, flexShrink: 0 }}>
-                            {c.initials}
+        {/* Campaign List — table on tablet/desktop, cards on mobile */}
+        {visible.length === 0 ? (
+          <div style={{ padding: "48px 0", textAlign: "center", color: "var(--lg-ink-soft)", fontSize: 14 }}>
+            No matching campaigns found.
+          </div>
+        ) : (
+          <>
+            <div className="lg-campaigns-table lg-table-scroll" style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 640 }}>
+                <thead>
+                  <tr style={{ background: "var(--lg-paper-sunken)", borderBottom: "1px solid var(--lg-line)", textAlign: "left" }}>
+                    <th style={{ padding: "14px 24px", fontSize: 11, fontWeight: 800, color: "var(--lg-ink-soft)", textTransform: "uppercase" }}>#</th>
+                    <th style={{ padding: "14px 24px", fontSize: 11, fontWeight: 800, color: "var(--lg-ink-soft)", textTransform: "uppercase" }}>Campaign Name</th>
+                    <th style={{ padding: "14px 24px", fontSize: 11, fontWeight: 800, color: "var(--lg-ink-soft)", textTransform: "uppercase" }}>Payout</th>
+                    <th style={{ padding: "14px 24px", fontSize: 11, fontWeight: 800, color: "var(--lg-ink-soft)", textTransform: "uppercase" }}>Category</th>
+                    <th style={{ padding: "14px 24px", fontSize: 11, fontWeight: 800, color: "var(--lg-ink-soft)", textTransform: "uppercase", textAlign: "right" }}>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {visible.map((c, i) => {
+                    const catStyle = CATEGORY_COLORS[c.category] || { bg: "var(--lg-paper-sunken)", text: "var(--lg-ink-soft)" };
+                    return (
+                      <tr key={c.id} style={{ borderBottom: "1px solid var(--lg-line)", transition: "background 0.15s ease" }}>
+                        <td style={{ padding: "16px 24px", fontSize: 13, fontWeight: 600, color: "var(--lg-ink-faint)" }}>{start + i + 1}</td>
+                        <td style={{ padding: "16px 24px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                            <div style={{ width: 38, height: 38, borderRadius: "var(--lg-radius-sm)", display: "flex", alignItems: "center", justifyContent: "center", background: c.color, color: "#fff", fontWeight: 800, fontSize: 14, flexShrink: 0 }}>
+                              {c.initials}
+                            </div>
+                            <span style={{ fontSize: 14, fontWeight: 700, color: "var(--lg-ink)" }}>{c.name}</span>
                           </div>
-                          <span style={{ fontSize: 14, fontWeight: 700, color: "var(--lg-ink)" }}>{c.name}</span>
-                        </div>
-                      </td>
-                      <td style={{ padding: "16px 24px" }}>
-                        <span style={{ fontSize: 15, fontWeight: 800, color: "var(--lg-ink)", fontFamily: "var(--lg-font-display)", fontVariantNumeric: "tabular-nums" }}>₹{c.payout.toLocaleString("en-IN")}</span>
-                      </td>
-                      <td style={{ padding: "16px 24px" }}>
-                        <span style={{ display: "inline-flex", padding: "4px 12px", borderRadius: "var(--lg-radius-pill)", background: catStyle.bg, color: catStyle.text, fontSize: 11, fontWeight: 800 }}>{c.category}</span>
-                      </td>
-                      <td style={{ padding: "16px 24px", textAlign: "right" }}>
-                        <a
-                          href={`/offer-detail?o=${c.id}`}
-                          style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: 6,
-                            padding: "8px 18px",
-                            borderRadius: "var(--lg-radius-pill)",
-                            background: "linear-gradient(135deg, var(--lg-violet), var(--lg-violet-deep))",
-                            color: "#fff",
-                            fontSize: 12.5,
-                            fontWeight: 700,
-                            textDecoration: "none",
-                            boxShadow: "0 4px 12px rgba(99, 102, 241, 0.3)"
-                          }}
-                        >
-                          View Offer
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
-                        </a>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
+                        </td>
+                        <td style={{ padding: "16px 24px" }}>
+                          <span style={{ fontSize: 15, fontWeight: 800, color: "var(--lg-ink)", fontFamily: "var(--lg-font-display)", fontVariantNumeric: "tabular-nums" }}>₹{c.payout.toLocaleString("en-IN")}</span>
+                        </td>
+                        <td style={{ padding: "16px 24px" }}>
+                          <span style={{ display: "inline-flex", padding: "4px 12px", borderRadius: "var(--lg-radius-pill)", background: catStyle.bg, color: catStyle.text, fontSize: 11, fontWeight: 800 }}>{c.category}</span>
+                        </td>
+                        <td style={{ padding: "16px 24px", textAlign: "right" }}>
+                          <a
+                            href={`/offer-detail?o=${c.id}`}
+                            style={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: 6,
+                              padding: "8px 18px",
+                              borderRadius: "var(--lg-radius-pill)",
+                              background: "linear-gradient(135deg, var(--lg-violet), var(--lg-violet-deep))",
+                              color: "#fff",
+                              fontSize: 12.5,
+                              fontWeight: 700,
+                              textDecoration: "none",
+                              boxShadow: "0 4px 12px rgba(99, 102, 241, 0.3)"
+                            }}
+                          >
+                            View Offer
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
+                          </a>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="lg-campaigns-cards">
+              {visible.map((c, i) => {
+                const catStyle = CATEGORY_COLORS[c.category] || { bg: "var(--lg-paper-sunken)", text: "var(--lg-ink-soft)" };
+                return (
+                  <div key={c.id} style={{ padding: "16px 20px", borderBottom: "1px solid var(--lg-line)", display: "flex", flexDirection: "column", gap: 12 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                      <div style={{ width: 38, height: 38, borderRadius: "var(--lg-radius-sm)", display: "flex", alignItems: "center", justifyContent: "center", background: c.color, color: "#fff", fontWeight: 800, fontSize: 14, flexShrink: 0 }}>
+                        {c.initials}
+                      </div>
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <div style={{ fontSize: 14, fontWeight: 700, color: "var(--lg-ink)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.name}</div>
+                        <span style={{ display: "inline-flex", marginTop: 4, padding: "3px 10px", borderRadius: "var(--lg-radius-pill)", background: catStyle.bg, color: catStyle.text, fontSize: 10.5, fontWeight: 800 }}>{c.category}</span>
+                      </div>
+                      <span style={{ fontSize: 15, fontWeight: 800, color: "var(--lg-ink)", fontFamily: "var(--lg-font-display)", fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>₹{c.payout.toLocaleString("en-IN")}</span>
+                    </div>
+                    <a
+                      href={`/offer-detail?o=${c.id}`}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 6,
+                        padding: "10px 18px",
+                        borderRadius: "var(--lg-radius-pill)",
+                        background: "linear-gradient(135deg, var(--lg-violet), var(--lg-violet-deep))",
+                        color: "#fff",
+                        fontSize: 13,
+                        fontWeight: 700,
+                        textDecoration: "none",
+                        boxShadow: "0 4px 12px rgba(99, 102, 241, 0.3)"
+                      }}
+                    >
+                      View Offer
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
+                    </a>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        )}
       </div>
+
+      <style jsx>{`
+        .lg-campaigns-cards { display: none; }
+        @media (max-width: 767px) {
+          .lg-campaigns-table { display: none; }
+          .lg-campaigns-cards { display: block; }
+        }
+      `}</style>
     </div>
   );
 }

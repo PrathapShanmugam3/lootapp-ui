@@ -37,8 +37,8 @@ export default function UserReportPage() {
   return (
     <div style={{ padding: "2rem", maxWidth: 1200, margin: "0 auto" }}>
       <AdminPageHeader title="User Report" subtitle="Search users by name, email, mobile, or UPI" />
-      <form onSubmit={handleSearch} style={{ display: "flex", gap: 8, marginBottom: 16 }}>
-        <TextInput placeholder="Name, email, mobile, UPI…" value={query} onChange={(e) => setQuery(e.target.value)} style={{ width: 320 }} />
+      <form onSubmit={handleSearch} style={{ display: "flex", gap: 8, marginBottom: 16 }} noValidate>
+        <TextInput placeholder="Name, email, mobile, UPI…" value={query} onChange={(e) => setQuery(e.target.value)} required style={{ width: 320 }} />
         <PrimaryButton type="submit" disabled={loading}>{loading ? <><InlineLoader style={{ marginRight: 8 }} />Searching…</> : "Search"}</PrimaryButton>
       </form>
       {data && (

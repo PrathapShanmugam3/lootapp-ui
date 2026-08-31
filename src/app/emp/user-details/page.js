@@ -68,15 +68,15 @@ function UserDetailsContent() {
           {message.text}
         </div>
       )}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         <AdminCard style={{ padding: 26 }}>
           <div style={row}>
-            <div style={field}><label style={label}>Name</label><TextInput value={user.name} onChange={(e) => set("name", e.target.value)} style={{ width: "100%" }} /></div>
-            <div style={field}><label style={label}>Email</label><TextInput value={user.email} onChange={(e) => set("email", e.target.value)} style={{ width: "100%" }} /></div>
+            <div style={field}><label style={label}>Name</label><TextInput required maxLength={100} value={user.name} onChange={(e) => set("name", e.target.value)} style={{ width: "100%" }} /></div>
+            <div style={field}><label style={label}>Email</label><TextInput type="email" required value={user.email} onChange={(e) => set("email", e.target.value)} style={{ width: "100%" }} /></div>
           </div>
           <div style={row}>
-            <div style={field}><label style={label}>Mobile</label><TextInput value={user.mobile} onChange={(e) => set("mobile", e.target.value)} style={{ width: "100%" }} /></div>
-            <div style={field}><label style={label}>UPI</label><TextInput value={user.upi || ""} onChange={(e) => set("upi", e.target.value)} style={{ width: "100%" }} /></div>
+            <div style={field}><label style={label}>Mobile</label><TextInput type="tel" required pattern="[0-9]{10}" maxLength={10} title="Enter a valid 10-digit mobile number" value={user.mobile} onChange={(e) => set("mobile", e.target.value)} style={{ width: "100%" }} /></div>
+            <div style={field}><label style={label}>UPI</label><TextInput pattern=".*@.*" title="Enter a valid UPI ID (must contain @)" value={user.upi || ""} onChange={(e) => set("upi", e.target.value)} style={{ width: "100%" }} /></div>
           </div>
           <div style={{ ...field, background: "var(--lg-paper-sunken)", padding: 14, borderRadius: "var(--lg-radius-sm)" }}>
             <label style={label}>Balance (view only — contact admin to adjust)</label>

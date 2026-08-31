@@ -15,6 +15,7 @@ const ICONS = {
   message: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z",
   cog: "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z",
   menu: "M3 6h18 M3 12h18 M3 18h18",
+  close: "M18 6 6 18 M6 6l12 12",
   chevron: "m6 9 6 6 6-6",
   logout: "m16 17 5-5-5-5 M21 12H9 M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4",
   wallet: "M21 12V7H5a2 2 0 0 1 0-4h14v4",
@@ -62,60 +63,63 @@ export default function SharedShell({ children, navGroups, basePath = "/home", r
   return (
     <div className={`loot-hat-admin-root ${isCollapsed ? "sidebar-collapsed" : ""}`}>
       <div className="loot-hat-admin">
+        <Link href={basePath} className="lh-header-brand" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+          <div style={{ width: 32, height: 32, borderRadius: 9, background: "linear-gradient(135deg, var(--lg-violet), var(--lg-pink))", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 800, fontSize: 15, flexShrink: 0 }}>
+            L
+          </div>
+          <span className="lh-header-brand-name hidden sm:inline" style={{ fontFamily: "var(--lg-font-display)", fontWeight: 800, fontSize: "1.05rem", background: "linear-gradient(135deg, var(--lg-violet), var(--lg-pink))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", letterSpacing: "-0.02em" }}>
+            Loot Hat
+          </span>
+        </Link>
+
         <header className="header">
           <div className="header__container">
-            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-              <div className="header__toggle" onClick={() => { setNavOpen((v) => !v); setIsCollapsed((v) => !v); }}>
-                <Icon path={ICONS.menu} />
-              </div>
             <h1 style={{ fontSize: "1.25rem", fontWeight: 700, margin: 0, fontFamily: "var(--lg-font-display)", color: "var(--lg-ink)", letterSpacing: "-0.01em" }}>
               {pageTitle}
             </h1>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <ThemeToggle style={{ background: "var(--lg-paper-sunken)", border: "1px solid var(--lg-line)", color: "var(--lg-ink)", borderRadius: "var(--lg-radius-sm)" }} />
-            
-            <div 
-              style={{ 
-                display: "flex", 
-                alignItems: "center", 
-                gap: 10, 
-                padding: "4px 12px 4px 4px", 
-                borderRadius: "var(--lg-radius-pill)", 
-                background: "var(--lg-paper-sunken)", 
-                border: "1px solid var(--lg-line)"
-              }} 
-            >
-              <div style={{ 
-                width: 30, 
-                height: 30, 
-                borderRadius: "50%", 
-                background: "linear-gradient(135deg, var(--lg-violet), var(--lg-pink))", 
-                color: "#fff", 
-                display: "flex", 
-                alignItems: "center", 
-                justifyContent: "center", 
-                fontWeight: 700, 
-                fontSize: 12,
-                boxShadow: "0 2px 8px rgba(99, 102, 241, 0.3)"
-              }}>
-                {role.charAt(0).toUpperCase()}
+            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+              <ThemeToggle style={{ background: "var(--lg-paper-sunken)", border: "1px solid var(--lg-line)", color: "var(--lg-ink)", borderRadius: "var(--lg-radius-sm)" }} />
+
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  padding: "4px 12px 4px 4px",
+                  borderRadius: "var(--lg-radius-pill)",
+                  background: "var(--lg-paper-sunken)",
+                  border: "1px solid var(--lg-line)"
+                }}
+              >
+                <div style={{
+                  width: 30,
+                  height: 30,
+                  borderRadius: "50%",
+                  background: "linear-gradient(135deg, var(--lg-violet), var(--lg-pink))",
+                  color: "#fff",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontWeight: 700,
+                  fontSize: 12,
+                  boxShadow: "0 2px 8px rgba(99, 102, 241, 0.3)"
+                }}>
+                  {role.charAt(0).toUpperCase()}
+                </div>
+                <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--lg-ink-soft)" }} className="hidden sm:block">{role}</span>
               </div>
-              <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--lg-ink-soft)" }} className="hidden sm:block">{role}</span>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
       <div className={`nav ${navOpen ? "show" : ""}`}>
         <nav className="nav__container">
           <div>
-            <Link href={basePath} className="nav__logo" style={{ textDecoration: "none" }}>
-              <div style={{ width: 34, height: 34, borderRadius: 10, background: "linear-gradient(135deg, var(--lg-violet), var(--lg-pink))", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 800, fontSize: 16 }}>
-                L
+            <div className="nav__collapse-row">
+              <div className="header__toggle" onClick={() => { setNavOpen((v) => !v); setIsCollapsed((v) => !v); }}>
+                <Icon path={navOpen ? ICONS.close : ICONS.menu} />
               </div>
-              <span className="nav__logo-name">Loot Hat</span>
-            </Link>
+            </div>
             <div className="nav__list">
               <div className="nav__items">
                 {navGroups.map((entry, i) =>

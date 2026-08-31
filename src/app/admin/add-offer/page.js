@@ -105,7 +105,7 @@ export default function AddOfferPage() {
           {message.text}
         </div>
       )}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         <AdminCard style={sectionCard}>
           <div style={sectionTitle}><span style={dot} />Basic Info</div>
           <div style={row}>
@@ -136,7 +136,7 @@ export default function AddOfferPage() {
             <div style={field}><label style={label}>Advertiser Name</label><TextInput value={form.advertiser} onChange={(e) => set("advertiser", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
             <div style={field}><label style={label}>Advertiser Payout</label><TextInput value={form.advertiser_po} onChange={(e) => set("advertiser_po", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
           </div>
-          <div style={field}><label style={label}>Offer URL (use {"{click_id}"} placeholder)</label><TextInput value={form.offer_url} onChange={(e) => set("offer_url", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
+          <div style={field}><label style={label}>Offer URL (use {"{click_id}"} placeholder)</label><TextInput type="url" required value={form.offer_url} onChange={(e) => set("offer_url", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
           <div style={row}>
             <div style={field}><label style={label}>Logo URL</label><TextInput value={form.logo} onChange={(e) => set("logo", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
             <div style={field}><label style={label}>Banner Image URL</label><TextInput value={form.banner_image} onChange={(e) => set("banner_image", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
@@ -149,8 +149,8 @@ export default function AddOfferPage() {
             <div key={n} style={{ ...row, gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", marginBottom: 12 }}>
               <TextInput placeholder={`Event ${n} slug`} value={form[`eve_${n}`]} onChange={(e) => set(`eve_${n}`, e.target.value)} onFocus={focusIn} onBlur={focusOut} style={inputStyle} />
               <TextInput placeholder="Display name" value={form[`eve_${n}_name`]} onChange={(e) => set(`eve_${n}_name`, e.target.value)} onFocus={focusIn} onBlur={focusOut} style={inputStyle} />
-              <TextInput type="number" placeholder="User payout" value={form[`eve_${n}_user_po`]} onChange={(e) => set(`eve_${n}_user_po`, e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ ...inputStyle, fontVariantNumeric: "tabular-nums" }} />
-              <TextInput type="number" placeholder="Refer payout" value={form[`eve_${n}_refer_po`]} onChange={(e) => set(`eve_${n}_refer_po`, e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ ...inputStyle, fontVariantNumeric: "tabular-nums" }} />
+              <TextInput type="number" min="0" step="0.01" placeholder="User payout" value={form[`eve_${n}_user_po`]} onChange={(e) => set(`eve_${n}_user_po`, e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ ...inputStyle, fontVariantNumeric: "tabular-nums" }} />
+              <TextInput type="number" min="0" step="0.01" placeholder="Refer payout" value={form[`eve_${n}_refer_po`]} onChange={(e) => set(`eve_${n}_refer_po`, e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ ...inputStyle, fontVariantNumeric: "tabular-nums" }} />
             </div>
           ))}
           <div style={field}><label style={label}>Conversion Event (terminal event slug)</label><TextInput value={form.conversion_event} onChange={(e) => set("conversion_event", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>

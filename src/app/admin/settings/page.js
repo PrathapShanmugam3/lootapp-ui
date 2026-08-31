@@ -100,10 +100,10 @@ export default function SettingsPage() {
         </div>
       )}
 
-      <form onSubmit={handleSave}>
+      <form onSubmit={handleSave} noValidate>
         <AdminCard style={cardStyle}>
           {sectionTitle("Default UPI Payment Settings")}
-          <div style={field}><label style={label}>Pay URL Template</label><TextInput value={settings.pay_url} onChange={(e) => set("pay_url", e.target.value)} style={inputBase} /></div>
+          <div style={field}><label style={label}>Pay URL Template</label><TextInput required value={settings.pay_url} onChange={(e) => set("pay_url", e.target.value)} style={inputBase} /></div>
           <div style={row}>
             <div style={field}><label style={label}>Status Var</label><TextInput value={settings.status_var} onChange={(e) => set("status_var", e.target.value)} style={inputBase} /></div>
             <div style={field}><label style={label}>Success Response</label><TextInput value={settings.success_response} onChange={(e) => set("success_response", e.target.value)} style={inputBase} /></div>
@@ -113,7 +113,7 @@ export default function SettingsPage() {
 
         <AdminCard style={cardStyle}>
           {sectionTitle("Callback Settings")}
-          <div style={field}><label style={label}>Callback URL</label><TextInput value={settings.callback_url} onChange={(e) => set("callback_url", e.target.value)} style={inputBase} /></div>
+          <div style={field}><label style={label}>Callback URL</label><TextInput required value={settings.callback_url} onChange={(e) => set("callback_url", e.target.value)} style={inputBase} /></div>
           <div style={row}>
             <div style={field}><label style={label}>Status Var 1 (parent)</label><TextInput value={settings.callback_status_var_1} onChange={(e) => set("callback_status_var_1", e.target.value)} style={inputBase} /></div>
             <div style={field}><label style={label}>Status Var 2 (child)</label><TextInput value={settings.callback_status_var_2} onChange={(e) => set("callback_status_var_2", e.target.value)} style={inputBase} /></div>

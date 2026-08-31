@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/apiClient";
 import Loader from "@/components/Loader";
+import { useFormValidation, FieldError } from "@/components/FormValidation";
 
 export default function CustomDomainsPage() {
   const [domains, setDomains] = useState(null);
@@ -10,6 +11,7 @@ export default function CustomDomainsPage() {
   const [message, setMessage] = useState(null);
   const [instructions, setInstructions] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const validation = useFormValidation();
 
   function load() {
     api.get("/api/custom-domains").then((res) => setDomains(res.domains)).catch(() => setDomains([]));
@@ -73,17 +75,22 @@ export default function CustomDomainsPage() {
       )}
 
       <div className="lh-card" style={{ padding: 20 }}>
-        <form onSubmit={handleSubmit} style={{ display: "flex", gap: 8 }}>
-          <div className="lh-input-wrap lh-icon-globe" style={{ flex: 1 }}>
+        <form onSubmit={handleSubmit} style={{ display: "flex", gap: 8, flexWrap: "wrap" }} noValidate>
+          <div className="lh-input-wrap lh-icon-globe" style={{ flex: 1, minWidth: 200 }}>
             <input
+              type="text"
               value={domain}
               onChange={(e) => setDomain(e.target.value)}
               placeholder="yourdomain.com"
+              pattern="^(?!-)[A-Za-z0-9-]{1,63}(?<!-)(\.[A-Za-z0-9-]{1,63})+$"
+              title="Enter a valid domain name (e.g. example.com)"
               style={{ fontSize: 13 }}
               required
+              {...validation.fieldProps("domain")}
             />
+            <FieldError message={validation.errors.domain} />
           </div>
-          <button type="submit" disabled={submitting} style={{ background: "linear-gradient(135deg,var(--lg-violet),var(--lg-violet-deep))", color: "#fff", border: "none", borderRadius: "var(--lg-radius-pill)", padding: "10px 20px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+          <button type="submit" disabled={submitting} style={{ background: "linear-gradient(135deg,var(--lg-violet),var(--lg-violet-deep))", color: "#fff", border: "none", borderRadius: "var(--lg-radius-pill)", padding: "10px 20px", fontSize: 13, fontWeight: 600, cursor: "pointer", height: "fit-content" }}>
             {submitting ? "Adding…" : "Add Domain"}
           </button>
         </form>

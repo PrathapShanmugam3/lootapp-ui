@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { api } from "@/lib/apiClient";
+import { useFormValidation, FieldError } from "@/components/FormValidation";
 
 function LeadsContent() {
   const searchParams = useSearchParams();
@@ -16,8 +17,9 @@ function LeadsContent() {
   const [upi, setUpi] = useState("");
   const [bank, setBank] = useState({ mobile: "", accNo: "", ifsc: "", holderName: "" });
   const [telegram, setTelegram] = useState("");
-  
+
   const [submitting, setSubmitting] = useState(false);
+  const validation = useFormValidation();
 
   useEffect(() => {
     if (!code) {
@@ -90,38 +92,90 @@ function LeadsContent() {
   const title = (offer.offer_title || offer.offer_name || "").replace("{amount}", totalUserPayout);
   
   const renderForm = (inputClass, labelClass, buttonClass) => (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full" noValidate>
       {paymentMethod === "upi" ? (
         <div>
           <label className={labelClass}>UPI ID to receive payout</label>
-          <input type="text" value={upi} onChange={(e) => setUpi(e.target.value)} required className={inputClass} placeholder="e.g. name@okhdfcbank" />
+          <input
+            type="text"
+            value={upi}
+            onChange={(e) => setUpi(e.target.value)}
+            required
+            pattern=".*@.*"
+            title="Enter a valid UPI ID (must contain @)"
+            className={inputClass}
+            placeholder="e.g. name@okhdfcbank"
+            {...validation.fieldProps("upi")}
+          />
+          <FieldError message={validation.errors.upi} />
         </div>
       ) : (
         <>
           <div>
             <label className={labelClass}>Mobile Number</label>
-            <input type="text" value={bank.mobile} onChange={(e) => setBank({ ...bank, mobile: e.target.value })} required className={inputClass} />
+            <input
+              type="tel"
+              value={bank.mobile}
+              onChange={(e) => setBank({ ...bank, mobile: e.target.value })}
+              required
+              pattern="[0-9]{10}"
+              maxLength={10}
+              title="Enter a valid 10-digit mobile number"
+              className={inputClass}
+              {...validation.fieldProps("mobile")}
+            />
+            <FieldError message={validation.errors.mobile} />
           </div>
           <div>
             <label className={labelClass}>Account Number</label>
-            <input type="text" value={bank.accNo} onChange={(e) => setBank({ ...bank, accNo: e.target.value })} required className={inputClass} />
+            <input
+              type="text"
+              value={bank.accNo}
+              onChange={(e) => setBank({ ...bank, accNo: e.target.value })}
+              required
+              pattern="[0-9]{9,18}"
+              title="Enter a valid account number (9-18 digits)"
+              className={inputClass}
+              {...validation.fieldProps("accNo")}
+            />
+            <FieldError message={validation.errors.accNo} />
           </div>
           <div>
             <label className={labelClass}>IFSC Code</label>
-            <input type="text" value={bank.ifsc} onChange={(e) => setBank({ ...bank, ifsc: e.target.value })} required className={inputClass} />
+            <input
+              type="text"
+              value={bank.ifsc}
+              onChange={(e) => setBank({ ...bank, ifsc: e.target.value.toUpperCase() })}
+              required
+              pattern="[A-Z]{4}0[A-Z0-9]{6}"
+              maxLength={11}
+              title="Enter a valid IFSC code (e.g. HDFC0001234)"
+              className={inputClass}
+              {...validation.fieldProps("ifsc")}
+            />
+            <FieldError message={validation.errors.ifsc} />
           </div>
           <div>
             <label className={labelClass}>Account Holder Name</label>
-            <input type="text" value={bank.holderName} onChange={(e) => setBank({ ...bank, holderName: e.target.value })} required className={inputClass} />
+            <input
+              type="text"
+              value={bank.holderName}
+              onChange={(e) => setBank({ ...bank, holderName: e.target.value })}
+              required
+              maxLength={100}
+              className={inputClass}
+              {...validation.fieldProps("holderName")}
+            />
+            <FieldError message={validation.errors.holderName} />
           </div>
         </>
       )}
-      
+
       <div>
         <label className={labelClass}>Telegram User ID (Optional)</label>
         <input type="text" value={telegram} onChange={(e) => setTelegram(e.target.value)} className={inputClass} placeholder="@username" />
       </div>
-      
+
       <button disabled={submitting} type="submit" className={buttonClass}>
         {submitting ? "Processing..." : "Continue to Offer"}
       </button>

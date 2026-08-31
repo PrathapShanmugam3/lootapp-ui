@@ -131,22 +131,22 @@ function EditUserContent() {
           {message.text}
         </div>
       )}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         <AdminCard style={{ padding: 24 }}>
           <div style={row}>
-            <div style={field}><label style={label}>Name</label><TextInput value={user.name} onChange={(e) => set("name", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
-            <div style={field}><label style={label}>Email</label><TextInput value={user.email} onChange={(e) => set("email", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
+            <div style={field}><label style={label}>Name</label><TextInput required maxLength={100} value={user.name} onChange={(e) => set("name", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
+            <div style={field}><label style={label}>Email</label><TextInput type="email" required value={user.email} onChange={(e) => set("email", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
           </div>
           <div style={row}>
-            <div style={field}><label style={label}>Mobile</label><TextInput value={user.mobile} onChange={(e) => set("mobile", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
-            <div style={field}><label style={label}>UPI</label><TextInput value={user.upi || ""} onChange={(e) => set("upi", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
+            <div style={field}><label style={label}>Mobile</label><TextInput type="tel" required pattern="[0-9]{10}" title="Enter a valid 10-digit mobile number" maxLength={10} value={user.mobile} onChange={(e) => set("mobile", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
+            <div style={field}><label style={label}>UPI</label><TextInput pattern=".*@.*" title="Enter a valid UPI ID (must contain @)" value={user.upi || ""} onChange={(e) => set("upi", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
           </div>
           <div style={row}>
-            <div style={field}><label style={label}>Account Number</label><TextInput value={user.acc_no || ""} onChange={(e) => set("acc_no", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
-            <div style={field}><label style={label}>IFSC</label><TextInput value={user.ifsc || ""} onChange={(e) => set("ifsc", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
+            <div style={field}><label style={label}>Account Number</label><TextInput pattern="[0-9]{9,18}" title="Enter a valid account number (9-18 digits)" value={user.acc_no || ""} onChange={(e) => set("acc_no", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
+            <div style={field}><label style={label}>IFSC</label><TextInput pattern="[A-Z]{4}0[A-Z0-9]{6}" maxLength={11} title="Enter a valid IFSC code (e.g. HDFC0001234)" value={user.ifsc || ""} onChange={(e) => set("ifsc", e.target.value.toUpperCase())} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
           </div>
           <div style={row}>
-            <div style={field}><label style={label}>Balance (₹)</label><TextInput type="number" step="0.01" value={user.balance} onChange={(e) => set("balance", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle, fontVariantNumeric: "tabular-nums" }} /></div>
+            <div style={field}><label style={label}>Balance (₹)</label><TextInput type="number" step="0.01" min="0" required value={user.balance} onChange={(e) => set("balance", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle, fontVariantNumeric: "tabular-nums" }} /></div>
             <div style={field}>
               <label style={label}>Status</label>
               <select value={user.status} onChange={(e) => set("status", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ ...inputStyle, cursor: "pointer" }}>

@@ -101,7 +101,7 @@ function WithdrawModal({ balance, onClose, onSuccess, pushToast }) {
           <button onClick={onClose} style={{ background: "var(--lg-paper-sunken)", border: "none", width: 32, height: 32, borderRadius: "50%", cursor: "pointer", color: "var(--lg-ink-soft)" }}>✕</button>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 20 }}>
             <button
               type="button"
@@ -145,6 +145,9 @@ function WithdrawModal({ balance, onClose, onSuccess, pushToast }) {
                 value={upiId}
                 onChange={(e) => setUpiId(e.target.value)}
                 placeholder="name@okaxis"
+                required
+                pattern=".*@.*"
+                title="Enter a valid UPI ID (must contain @)"
                 style={{ width: "100%", padding: "12px 16px", borderRadius: "var(--lg-radius-sm)", border: "1px solid var(--lg-line)", background: "var(--lg-paper-sunken)", fontSize: 13.5, color: "var(--lg-ink)", outline: "none" }}
               />
             </div>
@@ -157,6 +160,9 @@ function WithdrawModal({ balance, onClose, onSuccess, pushToast }) {
                   value={accountNo}
                   onChange={(e) => setAccountNo(e.target.value)}
                   placeholder="Enter Account Number"
+                  required
+                  pattern="[0-9]{9,18}"
+                  title="Enter a valid account number (9-18 digits)"
                   style={{ width: "100%", padding: "12px 16px", borderRadius: "var(--lg-radius-sm)", border: "1px solid var(--lg-line)", background: "var(--lg-paper-sunken)", fontSize: 13.5, color: "var(--lg-ink)", outline: "none" }}
                 />
               </div>
@@ -165,8 +171,12 @@ function WithdrawModal({ balance, onClose, onSuccess, pushToast }) {
                 <input
                   type="text"
                   value={ifscCode}
-                  onChange={(e) => setIfscCode(e.target.value)}
+                  onChange={(e) => setIfscCode(e.target.value.toUpperCase())}
                   placeholder="Enter IFSC Code"
+                  required
+                  pattern="[A-Z]{4}0[A-Z0-9]{6}"
+                  maxLength={11}
+                  title="Enter a valid IFSC code (e.g. HDFC0001234)"
                   style={{ width: "100%", padding: "12px 16px", borderRadius: "var(--lg-radius-sm)", border: "1px solid var(--lg-line)", background: "var(--lg-paper-sunken)", fontSize: 13.5, color: "var(--lg-ink)", outline: "none" }}
                 />
               </div>

@@ -53,10 +53,10 @@ function EditPaymentContent() {
           {message.text}
         </div>
       )}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         <AdminCard style={{ padding: 26, borderRadius: "var(--lg-radius)", boxShadow: "var(--lg-shadow-md)", border: "none" }}>
-          <div style={field}><label style={label}>Pay ID</label><TextInput value={record.pay_id} onChange={(e) => set("pay_id", e.target.value)} style={{ width: "100%", borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent", padding: "11px 14px" }} /></div>
-          <div style={field}><label style={label}>Amount</label><TextInput type="number" value={record.pay_amount} onChange={(e) => set("pay_amount", e.target.value)} style={{ width: "100%", borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent", padding: "11px 14px", fontVariantNumeric: "tabular-nums" }} /></div>
+          <div style={field}><label style={label}>Pay ID</label><TextInput required value={record.pay_id} onChange={(e) => set("pay_id", e.target.value)} style={{ width: "100%", borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent", padding: "11px 14px" }} /></div>
+          <div style={field}><label style={label}>Amount</label><TextInput type="number" min="0" step="0.01" required value={record.pay_amount} onChange={(e) => set("pay_amount", e.target.value)} style={{ width: "100%", borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent", padding: "11px 14px", fontVariantNumeric: "tabular-nums" }} /></div>
           <div style={field}>
             <label style={label}>Status</label>
             <div style={{ position: "relative" }}>

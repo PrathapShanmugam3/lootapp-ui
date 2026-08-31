@@ -52,11 +52,11 @@ function EditClickContent() {
           {message.text}
         </div>
       )}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         <AdminCard style={{ padding: 24, borderRadius: "var(--lg-radius)", boxShadow: "var(--lg-shadow-sm)" }}>
           <div style={field}><label style={label}>Click ID (read-only)</label><TextInput value={click.click_id} disabled style={{ width: "100%", background: "var(--lg-paper-sunken)", borderRadius: "var(--lg-radius-sm)", border: "1.5px solid transparent" }} /></div>
-          <div style={field}><label style={label}>Affiliate ID</label><TextInput value={click.aff_id} onChange={(e) => set("aff_id", e.target.value)} style={{ width: "100%", borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent" }} /></div>
-          <div style={field}><label style={label}>Offer Name</label><TextInput value={click.off_name} onChange={(e) => set("off_name", e.target.value)} style={{ width: "100%", borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent" }} /></div>
+          <div style={field}><label style={label}>Affiliate ID</label><TextInput required value={click.aff_id} onChange={(e) => set("aff_id", e.target.value)} style={{ width: "100%", borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent" }} /></div>
+          <div style={field}><label style={label}>Offer Name</label><TextInput required value={click.off_name} onChange={(e) => set("off_name", e.target.value)} style={{ width: "100%", borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent" }} /></div>
           <div style={field}><label style={label}>Sub1 (User UPI)</label><TextInput value={click.aff_sub_1} onChange={(e) => set("aff_sub_1", e.target.value)} style={{ width: "100%", borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent" }} /></div>
           <div style={field}><label style={label}>Sub2 (Refer UPI)</label><TextInput value={click.aff_sub_2} onChange={(e) => set("aff_sub_2", e.target.value)} style={{ width: "100%", borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent" }} /></div>
           <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 600, color: "var(--lg-ink-soft)", margin: "12px 0 16px", cursor: "pointer" }}>

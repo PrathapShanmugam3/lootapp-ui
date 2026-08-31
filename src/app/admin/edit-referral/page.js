@@ -49,7 +49,7 @@ function EditReferralContent() {
           {message.text}
         </div>
       )}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         <AdminCard style={{ padding: 24, borderRadius: "var(--lg-radius)", boxShadow: "var(--lg-shadow-sm)" }}>
           <div style={row}>
             <div style={field}><label style={label}>Offer ID</label><TextInput value={referral.offer_id} onChange={(e) => set("offer_id", e.target.value)} style={{ width: "100%", borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent" }} /></div>
@@ -64,8 +64,8 @@ function EditReferralContent() {
           <h3 style={{ fontSize: 14, fontWeight: 600, margin: "16px 0 10px", fontFamily: "var(--lg-font-display)", color: "var(--lg-ink)" }}>Payout Split</h3>
           {[1, 2, 3, 4, 5].map((n) => (
             <div key={n} style={{ ...row, marginBottom: 8 }}>
-              <TextInput type="number" placeholder={`Event ${n} User Payout`} value={referral[`eve_${n}_user_po`] || ""} onChange={(e) => set(`eve_${n}_user_po`, e.target.value)} style={{ borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent", fontVariantNumeric: "tabular-nums" }} />
-              <TextInput type="number" placeholder={`Event ${n} Refer Payout`} value={referral[`eve_${n}_refer_po`] || ""} onChange={(e) => set(`eve_${n}_refer_po`, e.target.value)} style={{ borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent", fontVariantNumeric: "tabular-nums" }} />
+              <TextInput type="number" min="0" step="0.01" placeholder={`Event ${n} User Payout`} value={referral[`eve_${n}_user_po`] || ""} onChange={(e) => set(`eve_${n}_user_po`, e.target.value)} style={{ borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent", fontVariantNumeric: "tabular-nums" }} />
+              <TextInput type="number" min="0" step="0.01" placeholder={`Event ${n} Refer Payout`} value={referral[`eve_${n}_refer_po`] || ""} onChange={(e) => set(`eve_${n}_refer_po`, e.target.value)} style={{ borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent", fontVariantNumeric: "tabular-nums" }} />
             </div>
           ))}
 

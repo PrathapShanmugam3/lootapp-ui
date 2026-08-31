@@ -143,18 +143,18 @@ function OfferDetailContent() {
       )}
 
       {tab === "edit" && (
-        <form onSubmit={handleSave}>
+        <form onSubmit={handleSave} noValidate>
           <AdminCard style={{ padding: 24, marginBottom: 16 }}>
             <div style={row}>
-              <div style={field}><label style={label}>Offer Name</label><TextInput value={offer.offer_name} onChange={(e) => set("offer_name", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
+              <div style={field}><label style={label}>Offer Name</label><TextInput required value={offer.offer_name} onChange={(e) => set("offer_name", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
               <div style={field}><label style={label}>Caps</label><TextInput value={offer.caps} onChange={(e) => set("caps", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
             </div>
             {[1, 2, 3, 4, 5].map((n) => (
               <div key={n} style={{ ...row, gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", marginBottom: 12 }}>
                 <TextInput placeholder={`Event ${n} slug`} value={offer[`eve_${n}`] || ""} onChange={(e) => set(`eve_${n}`, e.target.value)} onFocus={focusIn} onBlur={focusOut} style={inputStyle} />
                 <TextInput placeholder="Display name" value={offer[`eve_${n}_name`] || ""} onChange={(e) => set(`eve_${n}_name`, e.target.value)} onFocus={focusIn} onBlur={focusOut} style={inputStyle} />
-                <TextInput type="number" placeholder="User payout" value={offer[`eve_${n}_user_po`] || ""} onChange={(e) => set(`eve_${n}_user_po`, e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ ...inputStyle, fontVariantNumeric: "tabular-nums" }} />
-                <TextInput type="number" placeholder="Refer payout" value={offer[`eve_${n}_refer_po`] || ""} onChange={(e) => set(`eve_${n}_refer_po`, e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ ...inputStyle, fontVariantNumeric: "tabular-nums" }} />
+                <TextInput type="number" min="0" step="0.01" placeholder="User payout" value={offer[`eve_${n}_user_po`] || ""} onChange={(e) => set(`eve_${n}_user_po`, e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ ...inputStyle, fontVariantNumeric: "tabular-nums" }} />
+                <TextInput type="number" min="0" step="0.01" placeholder="Refer payout" value={offer[`eve_${n}_refer_po`] || ""} onChange={(e) => set(`eve_${n}_refer_po`, e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ ...inputStyle, fontVariantNumeric: "tabular-nums" }} />
               </div>
             ))}
             <div style={field}>

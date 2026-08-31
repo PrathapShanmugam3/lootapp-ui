@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Script from "next/script";
 import { api } from "@/lib/apiClient";
 import ThemeToggle from "@/components/ThemeToggle";
+import { useFormValidation, FieldError } from "@/components/FormValidation";
 import "./login.css";
 
 export default function LoginPage() {
@@ -17,6 +18,8 @@ export default function LoginPage() {
   const [terms, setTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState(null);
+  const loginValidation = useFormValidation();
+  const signupValidation = useFormValidation();
 
   const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
@@ -160,21 +163,25 @@ export default function LoginPage() {
                 <p className="auth-form-subtitle">Enter your details to sign in to your dashboard</p>
               </div>
 
-              <form onSubmit={handleLogin}>
+              <form onSubmit={handleLogin} noValidate>
                 <div className="auth-field">
                   <label className="auth-label">Mobile Number</label>
                   <div className="auth-input-group">
-                    <input 
-                      type="tel" 
-                      name="mobile" 
-                      className="auth-input" 
-                      placeholder="Enter mobile number" 
-                      required 
+                    <input
+                      type="tel"
+                      className="auth-input"
+                      placeholder="Enter mobile number"
+                      pattern="[0-9]{10}"
+                      title="Enter a valid 10-digit mobile number"
+                      maxLength={10}
+                      required
+                      {...loginValidation.fieldProps("mobile")}
                     />
                     <span className="auth-input-icon">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                     </span>
                   </div>
+                  <FieldError message={loginValidation.errors.mobile} />
                 </div>
 
                 <div className="auth-field">
@@ -183,12 +190,13 @@ export default function LoginPage() {
                     <a href="/forgot-password" style={{ fontSize: 12, fontWeight: 700, color: "var(--violet)", textDecoration: "none" }}>Forgot?</a>
                   </div>
                   <div className="auth-input-group">
-                    <input 
-                      type={showLoginPass ? "text" : "password"} 
-                      name="password" 
-                      className="auth-input" 
-                      placeholder="Enter password" 
-                      required 
+                    <input
+                      type={showLoginPass ? "text" : "password"}
+                      className="auth-input"
+                      placeholder="Enter password"
+                      minLength={6}
+                      required
+                      {...loginValidation.fieldProps("password")}
                     />
                     <span className="auth-input-icon">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -197,6 +205,7 @@ export default function LoginPage() {
                       {showLoginPass ? "Hide" : "Show"}
                     </button>
                   </div>
+                  <FieldError message={loginValidation.errors.password} />
                 </div>
 
                 {siteKey && <div className="g-recaptcha" data-sitekey={siteKey} style={{ marginTop: 20, marginBottom: 20 }} />}
@@ -213,59 +222,64 @@ export default function LoginPage() {
                 <p className="auth-form-subtitle">Create your account and start earning today</p>
               </div>
 
-              <form onSubmit={handleSignup}>
+              <form onSubmit={handleSignup} noValidate>
                 <div className="auth-field">
                   <label className="auth-label">Full Name</label>
                   <div className="auth-input-group">
-                    <input type="text" name="name" className="auth-input" placeholder="Enter your full name" required />
+                    <input type="text" className="auth-input" placeholder="Enter your full name" minLength={2} maxLength={100} required {...signupValidation.fieldProps("name")} />
                     <span className="auth-input-icon">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                     </span>
                   </div>
+                  <FieldError message={signupValidation.errors.name} />
                 </div>
 
                 <div className="auth-field">
                   <label className="auth-label">Mobile Number</label>
                   <div className="auth-input-group">
-                    <input type="tel" name="mobile" className="auth-input" placeholder="Enter mobile number" required />
+                    <input type="tel" className="auth-input" placeholder="Enter mobile number" pattern="[0-9]{10}" title="Enter a valid 10-digit mobile number" maxLength={10} required {...signupValidation.fieldProps("mobile")} />
                     <span className="auth-input-icon">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                     </span>
                   </div>
+                  <FieldError message={signupValidation.errors.mobile} />
                 </div>
 
                 <div className="auth-field">
                   <label className="auth-label">Email Address</label>
                   <div className="auth-input-group">
-                    <input type="email" name="email" className="auth-input" placeholder="Enter email address" required />
+                    <input type="email" className="auth-input" placeholder="Enter email address" required {...signupValidation.fieldProps("email")} />
                     <span className="auth-input-icon">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                     </span>
                   </div>
+                  <FieldError message={signupValidation.errors.email} />
                 </div>
 
                 <div className="auth-field">
                   <label className="auth-label">Password</label>
                   <div className="auth-input-group">
-                    <input type={showSignupPass ? "text" : "password"} name="password" className="auth-input" placeholder="Create password" required />
+                    <input type={showSignupPass ? "text" : "password"} className="auth-input" placeholder="Create password" minLength={6} required {...signupValidation.fieldProps("password")} />
                     <span className="auth-input-icon">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                     </span>
                   </div>
+                  <FieldError message={signupValidation.errors.password} />
                 </div>
 
                 <div className="auth-field">
                   <label className="auth-label">Confirm Password</label>
                   <div className="auth-input-group">
-                    <input type={showSignupConfirm ? "text" : "password"} name="confirm_password" className="auth-input" placeholder="Confirm password" required />
+                    <input type={showSignupConfirm ? "text" : "password"} className="auth-input" placeholder="Confirm password" minLength={6} required {...signupValidation.fieldProps("confirm_password")} />
                     <span className="auth-input-icon">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                     </span>
                   </div>
+                  <FieldError message={signupValidation.errors.confirm_password} />
                 </div>
 
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20, cursor: "pointer" }} onClick={() => setTerms(!terms)}>
-                  <input type="checkbox" checked={terms} onChange={() => {}} style={{ width: 18, height: 18, accentColor: "var(--violet)" }} />
+                  <input type="checkbox" checked={terms} onChange={(e) => setTerms(e.target.checked)} required style={{ width: 18, height: 18, accentColor: "var(--violet)" }} />
                   <span style={{ fontSize: 13, color: "var(--ink-soft)" }}>I agree to the <a href="#" style={{ color: "var(--violet)", fontWeight: 700 }}>Terms &amp; Conditions</a></span>
                 </div>
 

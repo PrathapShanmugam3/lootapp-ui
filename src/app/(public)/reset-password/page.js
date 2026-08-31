@@ -4,18 +4,20 @@ import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "@/lib/apiClient";
 import ThemeToggle from "@/components/ThemeToggle";
+import { useFormValidation, FieldError } from "@/components/FormValidation";
 import "../login/login.css";
 
 function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
-  
+
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState(null);
   const [success, setSuccess] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const validation = useFormValidation();
 
   async function handleReset(e) {
     e.preventDefault();
@@ -108,16 +110,17 @@ function ResetPasswordContent() {
                 <p className="auth-form-subtitle">Please enter your new password below.</p>
               </div>
 
-              <form onSubmit={handleReset}>
+              <form onSubmit={handleReset} noValidate>
                 <div className="auth-field">
                   <label className="auth-label">New Password</label>
                   <div className="auth-input-group">
-                    <input 
-                      type={showPass ? "text" : "password"} 
-                      name="password" 
-                      className="auth-input" 
-                      placeholder="Enter new password" 
-                      required 
+                    <input
+                      type={showPass ? "text" : "password"}
+                      className="auth-input"
+                      placeholder="Enter new password"
+                      minLength={6}
+                      required
+                      {...validation.fieldProps("password")}
                     />
                     <span className="auth-input-icon">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -126,17 +129,19 @@ function ResetPasswordContent() {
                       {showPass ? "Hide" : "Show"}
                     </button>
                   </div>
+                  <FieldError message={validation.errors.password} />
                 </div>
 
                 <div className="auth-field">
                   <label className="auth-label">Confirm New Password</label>
                   <div className="auth-input-group">
-                    <input 
-                      type={showConfirm ? "text" : "password"} 
-                      name="confirm_password" 
-                      className="auth-input" 
-                      placeholder="Confirm new password" 
-                      required 
+                    <input
+                      type={showConfirm ? "text" : "password"}
+                      className="auth-input"
+                      placeholder="Confirm new password"
+                      minLength={6}
+                      required
+                      {...validation.fieldProps("confirm_password")}
                     />
                     <span className="auth-input-icon">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -145,6 +150,7 @@ function ResetPasswordContent() {
                       {showConfirm ? "Hide" : "Show"}
                     </button>
                   </div>
+                  <FieldError message={validation.errors.confirm_password} />
                 </div>
 
                 <button type="submit" className="auth-btn-primary" disabled={loading} style={{ marginTop: 20 }}>

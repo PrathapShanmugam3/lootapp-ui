@@ -12,6 +12,7 @@ export default function ReferReportPage() {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+  const [error, setError] = useState("");
 
   function fetchClicks(searchVal, pageVal, limitVal) {
     setLoading(true);
@@ -29,7 +30,11 @@ export default function ReferReportPage() {
 
   async function handleSearch(e) {
     e.preventDefault();
-    if (!affId) return;
+    if (!affId.trim()) {
+      setError("Search query is missing.");
+      return;
+    }
+    setError("");
     setPage(1);
     setActiveAffId(affId);
   }
@@ -37,8 +42,17 @@ export default function ReferReportPage() {
   return (
     <div style={{ padding: "2rem", maxWidth: 1200, margin: "0 auto" }}>
       <AdminPageHeader title="Referrer Report" subtitle="Search clicks by affiliate ID or UPI" />
-      <form onSubmit={handleSearch} style={{ display: "flex", gap: 8, marginBottom: 16 }}>
-        <TextInput placeholder="Affiliate ID, UPI, or click ID…" value={affId} onChange={(e) => setAffId(e.target.value)} style={{ width: 320 }} />
+      <form onSubmit={handleSearch} style={{ display: "flex", gap: 8, marginBottom: 16, alignItems: "flex-start" }} noValidate>
+        <div>
+          <TextInput
+            placeholder="Affiliate ID, UPI, or click ID…"
+            value={affId}
+            onChange={(e) => { setAffId(e.target.value); if (error) setError(""); }}
+            required
+            style={{ width: 320 }}
+          />
+          {error && <span style={{ display: "block", color: "#dc2626", fontSize: 12, fontWeight: 600, marginTop: 6 }}>{error}</span>}
+        </div>
         <PrimaryButton type="submit" disabled={loading}>{loading ? <><InlineLoader style={{ marginRight: 8 }} />Searching…</> : "Search"}</PrimaryButton>
       </form>
       {data && (

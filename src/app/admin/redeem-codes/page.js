@@ -62,14 +62,14 @@ export default function RedeemCodesPage() {
           <span style={{ width: 8, height: 8, borderRadius: "50%", background: "linear-gradient(135deg, var(--lg-violet), var(--lg-pink))", display: "inline-block" }} />
           Generate Code
         </h3>
-        <form onSubmit={handleCreate} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12, alignItems: "end" }}>
+        <form onSubmit={handleCreate} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12, alignItems: "end" }} noValidate>
           <div>
             <label style={{ fontSize: 12.5, fontWeight: 700, color: "var(--lg-ink-soft)", display: "block", marginBottom: 7 }}>Value (₹)</label>
-            <TextInput type="number" required value={value} onChange={(e) => setValue(e.target.value)} style={{ width: "100%", borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent", padding: "11px 14px", fontVariantNumeric: "tabular-nums" }} />
+            <TextInput type="number" min="1" step="0.01" required value={value} onChange={(e) => setValue(e.target.value)} style={{ width: "100%", borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent", padding: "11px 14px", fontVariantNumeric: "tabular-nums" }} />
           </div>
           <div>
             <label style={{ fontSize: 12.5, fontWeight: 700, color: "var(--lg-ink-soft)", display: "block", marginBottom: 7 }}>Max Uses</label>
-            <TextInput type="number" min="1" value={maxUses} onChange={(e) => setMaxUses(e.target.value)} style={{ width: "100%", borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent", padding: "11px 14px", fontVariantNumeric: "tabular-nums" }} />
+            <TextInput type="number" min="1" required value={maxUses} onChange={(e) => setMaxUses(e.target.value)} style={{ width: "100%", borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent", padding: "11px 14px", fontVariantNumeric: "tabular-nums" }} />
           </div>
           <div>
             <label style={{ fontSize: 12.5, fontWeight: 700, color: "var(--lg-ink-soft)", display: "block", marginBottom: 7 }}>Expires (optional)</label>

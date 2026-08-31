@@ -50,8 +50,16 @@ export default function IpWhitelistingPage() {
       )}
 
       <AdminCard style={{ padding: 20, marginBottom: 20, borderRadius: "var(--lg-radius)", boxShadow: "var(--lg-shadow-sm)" }}>
-        <form onSubmit={handleSubmit} style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          <TextInput placeholder="IP address" value={ip} onChange={(e) => setIp(e.target.value)} required style={{ flex: 1, borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent" }} />
+        <form onSubmit={handleSubmit} style={{ display: "flex", gap: 8, flexWrap: "wrap" }} noValidate>
+          <TextInput
+            placeholder="IP address"
+            value={ip}
+            onChange={(e) => setIp(e.target.value)}
+            required
+            pattern="^(([0-9]{1,3}\.){3}[0-9]{1,3}|[0-9a-fA-F:]+)$"
+            title="Enter a valid IPv4 or IPv6 address"
+            style={{ flex: 1, borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent" }}
+          />
           <TextInput placeholder="Label" value={ipLabel} onChange={(e) => setIpLabel(e.target.value)} style={{ flex: 1, borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent" }} />
           <PrimaryButton type="submit">Add IP</PrimaryButton>
         </form>

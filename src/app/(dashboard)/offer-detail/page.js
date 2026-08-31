@@ -294,9 +294,9 @@ function OfferDetailContent() {
                 <label className="block text-xs font-bold uppercase tracking-wider mb-2.5 ml-1" style={{ color: "var(--lg-ink-soft)" }}>Your Offer URL</label>
                 <div className="flex items-center gap-3 rounded-2xl p-2 transition-colors shadow-inner border" style={{ background: "var(--lg-paper-sunken)", borderColor: "var(--lg-line)" }}>
                   <div className="flex-1 overflow-hidden pl-3">
-                    <p className="truncate text-sm font-mono select-all" style={{ color: "var(--lg-ink)" }}>{referralLink.offerLink}</p>
+                    <p className="truncate text-sm font-mono select-all" style={{ color: "var(--lg-ink)" }}>{`${typeof window !== "undefined" ? window.location.origin : ""}/leads?o=${referralLink.referCode}`}</p>
                   </div>
-                  <CopyButton value={referralLink.offerLink} />
+                  <CopyButton value={`${typeof window !== "undefined" ? window.location.origin : ""}/leads?o=${referralLink.referCode}`} />
                 </div>
               </div>
 
@@ -304,9 +304,9 @@ function OfferDetailContent() {
                 <label className="block text-xs font-bold uppercase tracking-wider mb-2.5 ml-1" style={{ color: "var(--lg-ink-soft)" }}>Sub Refer URL</label>
                 <div className="flex items-center gap-3 rounded-2xl p-2 transition-colors shadow-inner border" style={{ background: "var(--lg-paper-sunken)", borderColor: "var(--lg-line)" }}>
                   <div className="flex-1 overflow-hidden pl-3">
-                    <p className="truncate text-sm font-mono select-all" style={{ color: "var(--lg-ink)" }}>{referralLink.referLink}</p>
+                    <p className="truncate text-sm font-mono select-all" style={{ color: "var(--lg-ink)" }}>{`${typeof window !== "undefined" ? window.location.origin : ""}/referral?o=${referralLink.referCode}`}</p>
                   </div>
-                  <CopyButton value={referralLink.referLink} />
+                  <CopyButton value={`${typeof window !== "undefined" ? window.location.origin : ""}/referral?o=${referralLink.referCode}`} />
                 </div>
               </div>
             </div>
