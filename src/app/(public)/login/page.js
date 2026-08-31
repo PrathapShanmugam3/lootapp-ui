@@ -43,7 +43,7 @@ export default function LoginPage() {
         password: form.get("password"),
         recaptchaToken: getRecaptchaToken(),
       });
-      router.push(res.redirectTo || "/home");
+      router.replace(res.redirectTo || "/home");
     } catch (err) {
       setNotification({ type: "error", text: err.message });
     } finally {
