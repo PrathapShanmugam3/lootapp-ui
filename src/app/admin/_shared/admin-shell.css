@@ -18,73 +18,9 @@ body {
     padding: 0;
 }
 
-/* Header Styling */
-.header {
-    background: var(--lg-paper-raised);
-    border-bottom: 1.5px solid var(--lg-line);
-    color: var(--lg-ink);
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 100;
-    box-shadow: var(--lg-shadow-sm);
-}
-
-.header__container {
-    padding: 1.2rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.header__img {
-    font-weight: 700;
-    font-size: 1.35rem;
-    color: var(--lg-ink);
-    text-decoration: none;
-    letter-spacing: 0.01em;
-    font-family: var(--lg-font-display);
-}
-
-.header__toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 38px;
-    height: 38px;
-    border-radius: var(--lg-radius-pill);
-    border: 1.5px solid var(--lg-line);
-    background: var(--lg-paper-raised);
-    box-shadow: var(--lg-shadow-sm);
-}
-
-.header__toggle i {
-    font-size: 1.35rem;
-    color: var(--lg-ink-soft);
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    .header__toggle {
-        transition: transform 150ms ease, box-shadow 150ms ease;
-    }
-    .header__toggle:hover {
-        transform: translateY(-1px);
-    }
-    .header__toggle i:hover {
-        color: var(--lg-violet);
-    }
-}
-
 /* Nav position/width/spacing is owned entirely by admin-nav.css (which
-   loads after this file) — --nav-width there is 260px, and body's
-   left padding is calc(var(--nav-width) + 1rem). This file previously
-   redefined .nav with a different width (280px) and an unused .body-pd
-   offset class, which fought admin-nav.css's numbers and produced a
-   left/right layout imbalance. Only non-positional nav container
-   styling stays here. */
+   loads after this file) — all nav layout is defined there.
+   This file only defines non-positional nav container styling. */
 
 .nav__container {
     height: 100%;
@@ -167,23 +103,4 @@ body {
 
 .show-nav {
     left: 0;
-}
-
-/* Media Queries */
-@media screen and (max-width: 768px) {
-    .header__container {
-        padding: 1rem 1.2rem;
-    }
-}
-
-/* Main content column: capped width + centered, so the page doesn't
-   read as lopsided (all whitespace piling up on one side) on wide
-   viewports. Sidebar offset itself comes from admin-nav.css's
-   body padding-left. Individual page.js files already apply their
-   own padding (max-width + margin auto, no padding here to avoid
-   doubling up with that). */
-#admin-main {
-    max-width: 1320px;
-    margin: 0 auto;
-    padding-top: calc(var(--header-height) + 1.5rem);
 }

@@ -31,7 +31,7 @@ export default function AdminChatPage() {
     if (!text.trim() || !activeUserId) return;
     const form = new FormData();
     form.append("text", text.trim());
-    await fetch(`${API_URL}/api/admin/support/chat/${activeUserId}`, { method: "POST", credentials: "include", body: form });
+    await api.post(`/api/admin/support/chat/${activeUserId}`, form);
     setText("");
     const res = await api.get(`/api/admin/support/chat/${activeUserId}?type=initial`);
     setMessages(res.messages);

@@ -31,7 +31,7 @@ export default function HomeShell({ children }) {
   return (
     <UserContext.Provider value={user}>
       <SharedShell navGroups={USER_NAV} basePath="/home" role={user?.name || "User"}>
-        <div style={{ padding: "1.5rem" }}>
+        <div className="dashboard-content-wrapper">
           {children}
         </div>
       </SharedShell>

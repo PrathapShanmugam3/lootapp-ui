@@ -1,24 +1,34 @@
+import axios from 'axios';
+
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return "";
   return process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 };
 
+const axiosInstance = axios.create({
+  withCredentials: true, // send/receive the httpOnly session cookie
+});
+
 async function request(path, { method = "GET", body, ...rest } = {}) {
   const API_URL = getBaseUrl();
-  const res = await fetch(`${API_URL}${path}`, {
-    method,
-    credentials: "include", // send/receive the httpOnly session cookie
-    headers: body ? { "Content-Type": "application/json" } : undefined,
-    body: body ? JSON.stringify(body) : undefined,
-    ...rest,
-  });
-
-  const data = await res.json().catch(() => null);
-  if (!res.ok) {
-    const message = data?.message || `Request failed with status ${res.status}`;
-    throw Object.assign(new Error(message), { status: res.status, data });
+  try {
+    const res = await axiosInstance({
+      url: `${API_URL}${path}`,
+      method,
+      data: body,
+      ...rest,
+    });
+    return res.data;
+  } catch (error) {
+    if (error.response) {
+      const message = error.response.data?.message || `Request failed with status ${error.response.status}`;
+      throw Object.assign(new Error(message), { 
+        status: error.response.status, 
+        data: error.response.data 
+      });
+    }
+    throw error;
   }
-  return data;
 }
 
 export const api = {

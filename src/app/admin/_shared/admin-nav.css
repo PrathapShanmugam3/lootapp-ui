@@ -44,10 +44,6 @@ body {
   color: var(--text-color);
 }
 
-.loot-hat-admin {
-  padding: 1.5rem 1.5rem 0;
-}
-
 h3 {
   margin: 0;
   font-family: var(--lg-font-display);
@@ -57,7 +53,13 @@ a {
   text-decoration: none;
 }
 
-/*========== HEADER ==========*/
+/*========== MAIN SHELL ==========*/
+.loot-hat-admin {
+  padding: calc(var(--header-height) + 0.5rem) 1rem 0;
+  min-height: 100vh;
+}
+
+/*========== BRAND (fixed top-left) ==========*/
 .lh-header-brand {
   position: fixed;
   top: 0;
@@ -69,6 +71,11 @@ a {
   z-index: calc(var(--z-fixed) + 2);
 }
 
+.lh-header-brand-name {
+  white-space: nowrap;
+}
+
+/*========== HEADER ==========*/
 .header {
   position: fixed;
   top: 0;
@@ -91,10 +98,34 @@ a {
   display: flex;
   align-items: center;
   height: 100%;
-  padding: 0 1.5rem 0 6.5rem;
+  padding: 0 1rem 0 3.5rem;
   justify-content: space-between;
+  gap: 0.75rem;
 }
 
+/* Mobile hamburger button in header */
+.mobile-menu-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--lg-radius-sm);
+  border: 1px solid var(--border-color);
+  background: var(--lg-paper-sunken);
+  color: var(--title-color);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.mobile-menu-toggle:hover {
+  background: var(--lg-violet-soft);
+  color: var(--lg-violet);
+  border-color: var(--lg-violet);
+}
+
+/* Desktop sidebar toggle (inside sidebar) */
 .header__toggle {
   display: flex;
   align-items: center;
@@ -116,8 +147,33 @@ a {
   border-color: var(--lg-violet);
 }
 
+/* Desktop collapse row — hidden on mobile */
 .nav__collapse-row {
   display: none;
+}
+
+/* Role label text — hidden on small screens */
+.role-label-text {
+  display: none;
+}
+
+/*========== MOBILE NAV OVERLAY ==========*/
+.nav-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: calc(var(--z-fixed) - 1);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /*========== NAV SIDEBAR ==========*/
@@ -125,12 +181,22 @@ a {
   position: fixed;
   top: 0;
   left: -100%;
+  width: 280px;
   height: 100vh;
-  padding: 1.25rem 1rem 1rem;
+  padding: calc(var(--header-height) + 0.5rem) 1rem 1rem;
   background-color: var(--container-color);
   border-right: 1px solid var(--border-color);
   z-index: var(--z-fixed);
-  transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.25s ease, width 0.25s cubic-bezier(0.4, 0, 0.2, 1), padding 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              background-color 0.25s ease,
+              width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              padding 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: none;
+}
+
+.nav.show {
+  left: 0;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1);
 }
 
 .nav__container {
@@ -145,10 +211,6 @@ a {
 
 .nav__container::-webkit-scrollbar {
   display: none;
-}
-
-.lh-header-brand-name {
-  white-space: nowrap;
 }
 
 .nav__list {
@@ -247,10 +309,6 @@ a {
   color: var(--text-color-light);
 }
 
-.show-menu, .show {
-  left: 0;
-}
-
 /* Active Link Styling - Glowing Gradient */
 .active {
   color: #ffffff !important;
@@ -262,7 +320,45 @@ a {
   color: #ffffff !important;
 }
 
-/* ========== DESKTOP RESPONSIVE ==========*/
+/*========== MAIN CONTENT ==========*/
+#admin-main {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 1rem 0;
+}
+
+/* ========== RESPONSIVE: SMALL PHONES (< 480px) ========== */
+@media screen and (max-width: 479px) {
+  .header__container {
+    padding: 0 0.75rem 0 3rem;
+    gap: 0.5rem;
+  }
+
+  .header__container h1 {
+    font-size: 1rem !important;
+  }
+
+  .nav {
+    width: 260px;
+  }
+
+  .lh-header-brand-name {
+    display: none;
+  }
+}
+
+/* ========== RESPONSIVE: TABLETS (480–767px) ========== */
+@media screen and (min-width: 480px) and (max-width: 767px) {
+  .role-label-text {
+    display: inline;
+  }
+
+  .header__container {
+    padding: 0 1.25rem 0 10rem;
+  }
+}
+
+/* ========== RESPONSIVE: DESKTOP (768px+) ========== */
 @media screen and (min-width: 768px) {
   body {
     padding: 0;
@@ -278,25 +374,43 @@ a {
     transition: padding 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .header__container .header__toggle {
+  .header__container {
+    padding: 0 1.5rem 0 0;
+  }
+
+  /* Hide mobile hamburger on desktop */
+  .mobile-menu-toggle {
     display: none;
   }
 
+  /* Show role text on desktop */
+  .role-label-text {
+    display: inline;
+  }
+
+  /* Sidebar always visible on desktop */
   .nav {
     left: 0;
     top: var(--header-height);
     height: calc(100vh - var(--header-height));
     padding: 1.5rem 1.25rem 0;
     width: var(--nav-width);
+    box-shadow: none;
   }
 
+  /* Show desktop collapse toggle inside sidebar */
   .nav__collapse-row {
     display: flex;
     justify-content: flex-end;
     margin-bottom: 1rem;
   }
 
-  /* Sidebar collapsed overrides (Show icons only) */
+  #admin-main {
+    padding: 0;
+    padding-top: calc(var(--header-height) + 1.5rem);
+  }
+
+  /* ===== Sidebar collapsed overrides (icons only) ===== */
   .sidebar-collapsed .nav {
     width: 84px;
     padding: 1.5rem 0.75rem 0;
@@ -321,8 +435,7 @@ a {
     padding: 0.85rem 0;
   }
 
-  /* Collapsed dropdowns become a flyout instead of an inline collapse,
-     so the submenu links stay reachable when the group is open. */
+  /* Collapsed dropdowns become a flyout */
   .sidebar-collapsed .nav__dropdown {
     position: relative;
   }
@@ -368,5 +481,3 @@ a {
     padding-left: calc(84px + 2rem);
   }
 }
-
-

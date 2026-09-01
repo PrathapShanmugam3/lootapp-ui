@@ -31,7 +31,7 @@ export default function SupportPage() {
     if (!text.trim() || !activeUserId) return;
     const form = new FormData();
     form.append("text", text.trim());
-    await fetch(`${API_URL}/api/emp/support/chat/${activeUserId}`, { method: "POST", credentials: "include", body: form });
+    await api.post(`/api/emp/support/chat/${activeUserId}`, form);
     setText("");
     const res = await api.get(`/api/emp/support/chat/${activeUserId}?type=initial`);
     setMessages(res.messages);

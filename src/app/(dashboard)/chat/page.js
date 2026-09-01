@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { api } from "@/lib/apiClient";
 import Loader from "@/components/Loader";
+import Swal from "sweetalert2";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
@@ -118,12 +119,12 @@ export default function ChatPage() {
         const form = new FormData();
         form.append("image", imageFile);
         if (!trimmed) form.append("text", "");
-        await fetch(`${API_URL}/api/chat`, { method: "POST", credentials: "include", body: form });
+        await api.post("/api/chat", form);
       }
       if (trimmed) {
         const form = new FormData();
         form.append("text", trimmed);
-        await fetch(`${API_URL}/api/chat`, { method: "POST", credentials: "include", body: form });
+        await api.post("/api/chat", form);
       }
       setText("");
       setImageFile(null);
@@ -136,7 +137,12 @@ export default function ChatPage() {
       }
       setTimeout(scrollToBottom, 50);
     } catch {
-      alert("Failed to send message. Please try again.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: 'Failed to send message. Please try again.',
+        confirmButtonColor: 'var(--lg-violet)'
+      });
     } finally {
       setSending(false);
     }

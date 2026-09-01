@@ -197,15 +197,15 @@ export default function AffiliateDashboard() {
   const topCampaigns = Array.isArray(data.topCampaigns) ? data.topCampaigns : [];
 
   return (
-    <div style={{ maxWidth: 1240, margin: "0 auto", paddingBottom: 40 }}>
+    <div className="dashboard-page-root">
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 28, fontWeight: 800, marginBottom: 6, fontFamily: "var(--lg-font-display)", color: "var(--lg-ink)", letterSpacing: "-0.02em" }}>Welcome back, {userName} 👋</h1>
+        <h1 className="dashboard-welcome-title">Welcome back, {userName} 👋</h1>
         <p style={{ color: "var(--lg-ink-soft)", fontSize: 14, margin: 0 }}>
           <span style={{ color: "var(--lg-violet)", fontWeight: 700 }}>{liveOffers} Live offers</span> available for promotion today
         </p>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24, marginBottom: 32 }}>
+      <div className="kpi-cards-grid">
         <KpiCard
           label="Clicks"
           value={kpis.clicks?.value ?? 0}
@@ -232,17 +232,17 @@ export default function AffiliateDashboard() {
         />
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: 24, alignItems: "start" }}>
+      <div className="chart-campaigns-grid">
         <div style={panelStyle}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+          <div className="chart-header-row">
             <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0, fontFamily: "var(--lg-font-display)", color: "var(--lg-ink)" }}>7-Day Performance</h2>
-            <div style={{ display: "flex", gap: 16 }}>
-              <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11.5, fontWeight: 600, color: "var(--lg-ink-soft)" }}><span style={{ width: 8, height: 8, borderRadius: "50%", background: "#6366f1" }} />Clicks</span>
-              <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11.5, fontWeight: 600, color: "var(--lg-ink-soft)" }}><span style={{ width: 8, height: 8, borderRadius: "50%", background: "#ec4899" }} />Conversions</span>
-              <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11.5, fontWeight: 600, color: "var(--lg-ink-soft)" }}><span style={{ width: 8, height: 8, borderRadius: "50%", background: "#f59e0b" }} />Earnings</span>
+            <div className="chart-legend">
+              <span className="chart-legend-item"><span style={{ width: 8, height: 8, borderRadius: "50%", background: "#6366f1", flexShrink: 0 }} />Clicks</span>
+              <span className="chart-legend-item"><span style={{ width: 8, height: 8, borderRadius: "50%", background: "#ec4899", flexShrink: 0 }} />Conversions</span>
+              <span className="chart-legend-item"><span style={{ width: 8, height: 8, borderRadius: "50%", background: "#f59e0b", flexShrink: 0 }} />Earnings</span>
             </div>
           </div>
-          <div style={{ height: 320 }}>
+          <div className="chart-canvas-wrapper">
             <canvas ref={chartRef} />
           </div>
         </div>

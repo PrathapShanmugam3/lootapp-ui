@@ -294,9 +294,9 @@ export default function WalletPage() {
   const balanceCents = Math.round((summary.balance - balanceInt) * 100);
 
   return (
-    <div style={{ maxWidth: 1040, margin: "0 auto", paddingBottom: 40 }}>
+    <div className="wallet-page-root">
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 28, fontWeight: 800, margin: 0, fontFamily: "var(--lg-font-display)", color: "var(--lg-ink)", letterSpacing: "-0.02em" }}>Wallet & Payouts</h1>
+        <h1 className="dashboard-welcome-title">Wallet & Payouts</h1>
         <p style={{ color: "var(--lg-ink-soft)", fontSize: 14, marginTop: 4 }}>Manage available earnings and withdraw directly to your account</p>
       </div>
 
@@ -305,7 +305,7 @@ export default function WalletPage() {
         style={{
           background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%)",
           borderRadius: "var(--lg-radius-lg)",
-          padding: "36px 40px",
+          padding: "28px 24px",
           color: "#ffffff",
           boxShadow: "0 20px 40px -10px rgba(99, 102, 241, 0.4)",
           position: "relative",
@@ -316,8 +316,8 @@ export default function WalletPage() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 24 }}>
           <div>
             <span style={{ fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "rgba(255, 255, 255, 0.8)" }}>Available Balance</span>
-            <p style={{ fontSize: 44, fontWeight: 900, fontFamily: "var(--lg-font-display)", margin: "8px 0 24px 0", letterSpacing: "-0.03em" }}>
-              ₹{balanceInt.toLocaleString("en-IN")}.<span style={{ fontSize: 28, opacity: 0.85 }}>{String(balanceCents).padStart(2, "0")}</span>
+            <p className="wallet-balance-amount">
+              ₹{balanceInt.toLocaleString("en-IN")}.<span style={{ fontSize: "0.65em", opacity: 0.85 }}>{String(balanceCents).padStart(2, "0")}</span>
             </p>
 
             <button
@@ -341,7 +341,7 @@ export default function WalletPage() {
             </button>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 16, textAlign: "right" }}>
+          <div className="wallet-stats-col">
             <div>
               <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: "rgba(255, 255, 255, 0.7)" }}>Total Earned</span>
               <p style={{ fontSize: 20, fontWeight: 800, margin: "2px 0 0 0", fontFamily: "var(--lg-font-display)" }}>₹{summary.totalEarned.toLocaleString("en-IN")}</p>

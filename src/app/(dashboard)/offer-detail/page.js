@@ -138,7 +138,7 @@ function PayoutModal({ offer, referralLink, onClose, onSaved }) {
             <button onClick={onClose} style={{ background: "none", border: "none", fontSize: 24, color: "var(--lg-ink-soft)", cursor: "pointer" }}>×</button>
           </div>
           <div style={{ maxHeight: 400, overflowY: "auto", display: "flex", flexDirection: "column" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr 1fr", gap: 15, padding: "12px 20px", background: "var(--lg-paper-sunken)", borderBottom: "2px dashed var(--lg-line)", position: "sticky", top: 0 }}>
+            <div className="payout-modal-grid" style={{ gap: 15, padding: "12px 20px", background: "var(--lg-paper-sunken)", borderBottom: "2px dashed var(--lg-line)", position: "sticky", top: 0 }}>
               <div style={{ fontWeight: 600, color: "var(--lg-ink-soft)", fontSize: 13 }}>Event</div>
               <div style={{ fontWeight: 600, color: "var(--lg-ink-soft)", fontSize: 13 }}>User</div>
               <div style={{ fontWeight: 600, color: "var(--lg-ink-soft)", fontSize: 13 }}>Refer</div>
@@ -150,7 +150,7 @@ function PayoutModal({ offer, referralLink, onClose, onSaved }) {
               rows.map((row, i) => {
                 const profit = row.totalPayout - row.userPayout - row.referPayout;
                 return (
-                  <div key={row.eventIndex} style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr 1fr", gap: 15, alignItems: "center", padding: "10px 20px", borderBottom: "1px solid var(--lg-line-soft)" }}>
+                  <div key={row.eventIndex} className="payout-modal-grid" style={{ gap: 15, alignItems: "center", padding: "10px 20px", borderBottom: "1px solid var(--lg-line-soft)" }}>
                     <div style={{ fontWeight: 500, color: "var(--lg-ink-soft)", fontSize: 13 }}>{row.name}</div>
                     <div style={{ width: "100%" }}>
                       <input type="number" value={row.userPayout} min={0} max={row.totalPayout} onChange={(e) => updateValue(i, "userPayout", e.target.value)} style={{ fontSize: 13, width: "100%", padding: "6px 10px", borderRadius: "6px", border: "1px solid var(--lg-line)", background: "var(--lg-paper)", color: "var(--lg-ink)", outline: "none", transition: "border-color 0.2s" }} onFocus={(e) => e.target.style.borderColor = "var(--lg-violet)"} onBlur={(e) => e.target.style.borderColor = "var(--lg-line)"} />
@@ -226,7 +226,7 @@ function OfferDetailContent() {
   return (
     <main className="flex-1 px-4 sm:px-8 py-8 max-w-7xl mx-auto w-full space-y-8" style={{ position: "relative", zIndex: 1 }}>
       {/* Breadcrumb */}
-      <div className="flex items-center gap-3 mb-2">
+      <div className="flex items-center gap-3 mb-2 flex-wrap">
         <a href="/live-offers" className="flex items-center gap-2 text-[14px] font-semibold transition-colors cursor-pointer px-3 py-1.5 rounded-full" style={{ color: "var(--lg-violet)", background: "var(--lg-violet-soft)" }}>
           <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
           Back to Campaigns
