@@ -345,7 +345,7 @@ function OfferDetailContent() {
                         </div>
                       </button>
                       <a
-                        href={`${referralLink.offerLink}&preview_theme=${t.key}`}
+                        href={`${typeof window !== "undefined" ? window.location.origin : ""}/leads?o=${referralLink.referCode}&preview_theme=${t.key}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center justify-center w-8 h-8 rounded-lg transition-colors"

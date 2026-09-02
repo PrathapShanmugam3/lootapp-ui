@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/apiClient";
-import { AdminPageHeader, AdminCard, AdminTable, Pagination } from "@/components/AdminPage";
+import { AdminPageHeader, AdminCard, AdminTable, Pagination, CsvExportButton } from "@/components/AdminPage";
 import Loader from "@/components/Loader";
 
 const MEDALS = ["🥇", "🥈", "🥉"];
@@ -23,7 +23,19 @@ export default function TopEarnersPage() {
 
   return (
     <div style={{ padding: "2rem", maxWidth: 900, margin: "0 auto" }}>
-      <AdminPageHeader title="Top Earners" subtitle="This month, ranked by total earnings" />
+      <AdminPageHeader
+        title="Top Earners"
+        subtitle="This month, ranked by total earnings"
+        action={
+          data?.earners?.length > 0 && (
+            <CsvExportButton
+              headers={["Rank", "UPI/Pay ID", "User", "Total Earnings", "Payments", "Last Payment"]}
+              rows={data.earners.map((e, i) => [(page - 1) * limit + i + 1, e.pay_id, e.name || e.aff_id, e.total_earnings, e.total_payments, e.last_payment])}
+              filename="top-earners.csv"
+            />
+          )
+        }
+      />
       <AdminCard style={{ borderRadius: "var(--lg-radius)", boxShadow: "var(--lg-shadow-sm)" }}>
         <AdminTable columns={["Rank", "UPI/Pay ID", "User", "Total Earnings", "Payments", "Last Payment"]}>
           {data.earners.map((e, i) => (

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/apiClient";
-import { AdminPageHeader, AdminCard, AdminTable, StatusBadge } from "@/components/AdminPage";
+import { AdminPageHeader, AdminCard, AdminTable, StatusBadge, CsvExportButton } from "@/components/AdminPage";
 import Loader from "@/components/Loader";
 
 export default function OfferReportsPage() {
@@ -16,7 +16,19 @@ export default function OfferReportsPage() {
 
   return (
     <div style={{ padding: "2rem", maxWidth: 1100, margin: "0 auto" }}>
-      <AdminPageHeader title="Offer Reports" subtitle={`${offers.length} offers`} />
+      <AdminPageHeader
+        title="Offer Reports"
+        subtitle={`${offers.length} offers`}
+        action={
+          offers.length > 0 && (
+            <CsvExportButton
+              headers={["Offer", "Status", "Clicks", "Conversions", "Payout"]}
+              rows={offers.map(o => [o.offer_name, o.offer_status, o.clicks, o.conversions, o.payout])}
+              filename="offer-reports.csv"
+            />
+          )
+        }
+      />
       <AdminCard style={{ borderRadius: "var(--lg-radius)", boxShadow: "var(--lg-shadow-sm)" }}>
         <AdminTable columns={["#", "Offer", "Status", "Clicks", "Conversions", "Payout", "Action"]}>
           {offers.map((o, i) => (

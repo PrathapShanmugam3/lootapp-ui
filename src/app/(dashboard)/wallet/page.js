@@ -302,17 +302,22 @@ export default function WalletPage() {
 
       {/* Main Balance Hero Card */}
       <div 
+        className="lg-animated-gradient"
         style={{
-          background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%)",
+          background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 25%, #db2777 50%, #6366f1 75%, #4f46e5 100%)",
+          backgroundSize: "300% 300%",
           borderRadius: "var(--lg-radius-lg)",
           padding: "28px 24px",
           color: "#ffffff",
-          boxShadow: "0 20px 40px -10px rgba(99, 102, 241, 0.4)",
+          boxShadow: "0 20px 40px -10px rgba(99, 102, 241, 0.4), var(--lg-glow-violet)",
           position: "relative",
           overflow: "hidden",
           marginBottom: 28
         }}
       >
+        {/* Decorative glow orbs */}
+        <div style={{ position: "absolute", top: "-40px", right: "-40px", width: 160, height: 160, borderRadius: "50%", background: "rgba(255,255,255,0.08)", filter: "blur(40px)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", bottom: "-30px", left: "30%", width: 120, height: 120, borderRadius: "50%", background: "rgba(236, 72, 153, 0.15)", filter: "blur(40px)", pointerEvents: "none" }} />
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 24 }}>
           <div>
             <span style={{ fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "rgba(255, 255, 255, 0.8)" }}>Available Balance</span>
@@ -334,8 +339,11 @@ export default function WalletPage() {
                 fontSize: 14,
                 fontWeight: 800,
                 cursor: "pointer",
-                boxShadow: "0 8px 20px rgba(0, 0, 0, 0.2)"
+                boxShadow: "0 8px 20px rgba(0, 0, 0, 0.2), 0 0 20px rgba(255,255,255,0.15)",
+                transition: "transform 200ms ease, box-shadow 200ms ease",
               }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px) scale(1.03)"; e.currentTarget.style.boxShadow = "0 12px 28px rgba(0,0,0,0.25), 0 0 30px rgba(255,255,255,0.25)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0) scale(1)"; e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.2), 0 0 20px rgba(255,255,255,0.15)"; }}
             >
               ⚡ Withdraw Funds
             </button>

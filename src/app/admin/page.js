@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { api } from "@/lib/apiClient";
 import { AdminPageHeader } from "@/components/AdminPage";
 import Loader from "@/components/Loader";
@@ -11,6 +11,14 @@ const ICON_GRADIENTS = [
   "linear-gradient(135deg, #06b6d4, #38bdf8)",
   "linear-gradient(135deg, #f59e0b, #fbbf24)",
   "linear-gradient(135deg, #3b82f6, #60a5fa)",
+];
+
+const GLOW_COLORS = [
+  "var(--lg-glow-violet)",
+  "var(--lg-glow-pink)",
+  "var(--lg-glow-cyan)",
+  "var(--lg-glow-warning)",
+  "var(--lg-glow-violet)",
 ];
 
 const ICONS = {
@@ -29,7 +37,7 @@ function Icon({ name }) {
   );
 }
 
-function StatCard({ label, value, sub, icon, gradient }) {
+function StatCard({ label, value, sub, icon, gradient, glow }) {
   return (
     <div
       style={{
@@ -38,12 +46,14 @@ function StatCard({ label, value, sub, icon, gradient }) {
         padding: "20px 22px",
         boxShadow: "var(--lg-shadow-md)",
         border: "1px solid var(--lg-line)",
-        transition: "transform 200ms ease, boxShadow 200ms ease, borderColor 200ms ease",
+        transition: "transform 250ms ease, box-shadow 300ms ease, border-color 250ms ease",
+        position: "relative",
+        overflow: "hidden",
       }}
       onMouseEnter={(e) => { 
-        e.currentTarget.style.transform = "translateY(-4px)"; 
+        e.currentTarget.style.transform = "translateY(-6px)"; 
         e.currentTarget.style.borderColor = "var(--lg-violet)";
-        e.currentTarget.style.boxShadow = "var(--lg-shadow-lg)";
+        e.currentTarget.style.boxShadow = `var(--lg-shadow-lg), ${glow || "var(--lg-glow-violet)"}`;
       }}
       onMouseLeave={(e) => { 
         e.currentTarget.style.transform = "translateY(0)"; 
@@ -51,9 +61,19 @@ function StatCard({ label, value, sub, icon, gradient }) {
         e.currentTarget.style.boxShadow = "var(--lg-shadow-md)";
       }}
     >
+      {/* Shimmer overlay */}
+      <div style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        height: "2px",
+        background: gradient,
+        opacity: 0.7,
+      }} />
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
         <p style={{ fontSize: 12, fontWeight: 700, color: "var(--lg-ink-soft)", margin: 0, textTransform: "uppercase", letterSpacing: "0.04em" }}>{label}</p>
-        <div style={{ width: 38, height: 38, borderRadius: "var(--lg-radius-sm)", display: "flex", alignItems: "center", justifyContent: "center", background: gradient, boxShadow: "0 4px 12px rgba(0,0,0,0.15)" }}>
+        <div style={{ width: 38, height: 38, borderRadius: "var(--lg-radius-sm)", display: "flex", alignItems: "center", justifyContent: "center", background: gradient, boxShadow: `0 4px 12px rgba(0,0,0,0.15), ${glow || "var(--lg-glow-violet)"}` }}>
           <Icon name={icon} />
         </div>
       </div>
@@ -73,10 +93,45 @@ const panelStyle = {
 
 export default function AdminDashboardPage() {
   const [data, setData] = useState(null);
+  const chartRef = useRef(null);
+  const chartInstance = useRef(null);
 
   useEffect(() => {
     api.get("/api/admin/dashboard").then((res) => setData(res.data)).catch(() => setData(null));
   }, []);
+
+  useEffect(() => {
+    if (!data?.chart || !chartRef.current) return;
+    import("chart.js/auto").then(({ default: Chart }) => {
+      if (chartInstance.current) chartInstance.current.destroy();
+      const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+      const textColor = isDark ? "#94a3b8" : "#475569";
+      const gridColor = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)";
+      chartInstance.current = new Chart(chartRef.current.getContext("2d"), {
+        type: "line",
+        data: {
+          labels: data.chart.map(c => c.date),
+          datasets: [
+            { label: "Clicks", data: data.chart.map(c => c.clicks), borderColor: "#6366f1", backgroundColor: "rgba(99,102,241,0.1)", borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: "#fff", tension: 0.4, fill: true },
+            { label: "Conversions", data: data.chart.map(c => c.conversions), borderColor: "#ec4899", backgroundColor: "rgba(236,72,153,0.1)", borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: "#fff", tension: 0.4, fill: true },
+            { label: "Payouts (₹)", data: data.chart.map(c => c.payouts), borderColor: "#f59e0b", backgroundColor: "rgba(245,158,11,0.1)", borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: "#fff", tension: 0.4, fill: true },
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: { backgroundColor: isDark ? "#131b2e" : "#fff", titleColor: isDark ? "#fff" : "#0f172a", bodyColor: textColor, borderColor: isDark ? "#1e293b" : "#e2e8f0", borderWidth: 1, padding: 12, displayColors: true, boxPadding: 4 }
+          },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: textColor, font: { size: 11, weight: '600' } } },
+            y: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 11, weight: '600' } } }
+          }
+        }
+      });
+    });
+    return () => { if (chartInstance.current) chartInstance.current.destroy(); };
+  }, [data]);
 
   if (!data) return <Loader style={{ padding: 40, color: "var(--lg-violet)" }} />;
 
@@ -104,17 +159,33 @@ export default function AdminDashboardPage() {
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: 20, marginBottom: 24 }}>
         {stats1.map((s, i) => (
-          <StatCard key={s.label} {...s} gradient={ICON_GRADIENTS[i % ICON_GRADIENTS.length]} />
+          <StatCard key={s.label} {...s} gradient={ICON_GRADIENTS[i % ICON_GRADIENTS.length]} glow={GLOW_COLORS[i % GLOW_COLORS.length]} />
         ))}
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: 20, marginBottom: 32 }}>
         {stats2.map((s, i) => (
-          <StatCard key={s.label} {...s} gradient={ICON_GRADIENTS[(i + 2) % ICON_GRADIENTS.length]} />
+          <StatCard key={s.label} {...s} gradient={ICON_GRADIENTS[(i + 2) % ICON_GRADIENTS.length]} glow={GLOW_COLORS[(i + 2) % GLOW_COLORS.length]} />
         ))}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 24, alignItems: "start" }}>
+      {/* 7-Day Trend Chart */}
+      <div style={{ ...panelStyle, marginBottom: 24, position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", background: "linear-gradient(90deg, var(--lg-violet), var(--lg-pink), var(--lg-cyan))", opacity: 0.7 }} />
+        <div className="chart-header-row">
+          <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0, fontFamily: "var(--lg-font-display)", color: "var(--lg-ink)" }}>7-Day Trend</h2>
+          <div className="chart-legend">
+            <span className="chart-legend-item"><span style={{ width: 8, height: 8, borderRadius: "50%", background: "#6366f1", flexShrink: 0, boxShadow: "0 0 6px rgba(99,102,241,0.5)" }} />Clicks</span>
+            <span className="chart-legend-item"><span style={{ width: 8, height: 8, borderRadius: "50%", background: "#ec4899", flexShrink: 0, boxShadow: "0 0 6px rgba(236,72,153,0.5)" }} />Conversions</span>
+            <span className="chart-legend-item"><span style={{ width: 8, height: 8, borderRadius: "50%", background: "#f59e0b", flexShrink: 0, boxShadow: "0 0 6px rgba(245,158,11,0.5)" }} />Payouts</span>
+          </div>
+        </div>
+        <div className="chart-canvas-wrapper">
+          <canvas ref={chartRef} />
+        </div>
+      </div>
+
+      <div className="chart-campaigns-grid">
         <div style={panelStyle}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
             <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0, fontFamily: "var(--lg-font-display)", color: "var(--lg-ink)" }}>Top Offers by Conversion Rate</h2>

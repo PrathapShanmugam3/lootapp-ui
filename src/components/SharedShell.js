@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { api } from "@/lib/apiClient";
 import ThemeToggle from "@/components/ThemeToggle";
+import NotificationDropdown from "@/components/NotificationDropdown";
 
 const ICONS = {
   home: "M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z",
@@ -82,7 +83,7 @@ export default function SharedShell({ children, navGroups, basePath = "/home", r
       <div className="loot-hat-admin">
         {/* Brand logo — fixed top-left */}
         <Link href={basePath} className="lh-header-brand" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-          <div style={{ width: 32, height: 32, borderRadius: 9, background: "linear-gradient(135deg, var(--lg-violet), var(--lg-pink))", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 800, fontSize: 15, flexShrink: 0 }}>
+          <div style={{ width: 32, height: 32, borderRadius: 9, background: "linear-gradient(135deg, var(--lg-violet), var(--lg-pink))", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 800, fontSize: 15, flexShrink: 0, boxShadow: "var(--lg-glow-brand)" }}>
             L
           </div>
           <span className="lh-header-brand-name" style={{ fontFamily: "var(--lg-font-display)", fontWeight: 800, fontSize: "1.05rem", background: "linear-gradient(135deg, var(--lg-violet), var(--lg-pink))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", letterSpacing: "-0.02em" }}>
@@ -103,11 +104,21 @@ export default function SharedShell({ children, navGroups, basePath = "/home", r
               <Icon path={mobileNavOpen ? ICONS.close : ICONS.menu} />
             </button>
 
+            {/* Desktop collapse toggle — visible only on desktop */}
+            <button
+              className="desktop-menu-toggle"
+              onClick={() => setIsCollapsed(v => !v)}
+              aria-label="Toggle sidebar"
+            >
+              <Icon path={isCollapsed ? ICONS.menu : ICONS.menu} />
+            </button>
+
             <h1 style={{ fontSize: "1.25rem", fontWeight: 700, margin: 0, fontFamily: "var(--lg-font-display)", color: "var(--lg-ink)", letterSpacing: "-0.01em" }}>
               {pageTitle}
             </h1>
             <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
               <ThemeToggle style={{ background: "var(--lg-paper-sunken)", border: "1px solid var(--lg-line)", color: "var(--lg-ink)", borderRadius: "var(--lg-radius-sm)" }} />
+              <NotificationDropdown />
 
               <div
                 style={{
@@ -150,12 +161,6 @@ export default function SharedShell({ children, navGroups, basePath = "/home", r
         <div className={`nav ${mobileNavOpen ? "show" : ""}`}>
           <nav className="nav__container">
             <div>
-              {/* Desktop collapse toggle — inside sidebar, hidden on mobile */}
-              <div className="nav__collapse-row">
-                <div className="header__toggle" onClick={() => setIsCollapsed(v => !v)}>
-                  <Icon path={isCollapsed ? ICONS.menu : ICONS.close} />
-                </div>
-              </div>
               <div className="nav__list">
                 <div className="nav__items">
                   {navGroups.map((entry, i) =>

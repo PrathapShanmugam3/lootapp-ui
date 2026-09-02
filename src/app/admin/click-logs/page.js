@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/apiClient";
-import { AdminPageHeader, AdminCard, AdminTable, StatusBadge, Pagination, TextInput } from "@/components/AdminPage";
+import { AdminPageHeader, AdminCard, AdminTable, StatusBadge, Pagination, TextInput, CsvExportButton } from "@/components/AdminPage";
 import Loader from "@/components/Loader";
 
 export default function ClickLogsPage() {
@@ -28,7 +28,19 @@ export default function ClickLogsPage() {
 
   return (
     <div style={{ padding: "2rem", maxWidth: 1300, margin: "0 auto" }}>
-      <AdminPageHeader title="Click Logs" subtitle={data ? `${data.totalRecords.toLocaleString("en-IN")} clicks` : ""} />
+      <AdminPageHeader
+        title="Click Logs"
+        subtitle={data ? `${data.totalRecords.toLocaleString("en-IN")} clicks` : ""}
+        action={
+          data?.clicks?.length > 0 && (
+            <CsvExportButton
+              headers={["Click ID", "Offer", "Affiliate", "Event", "IP", "Date", "Time", "Status"]}
+              rows={data.clicks.map(c => [c.click_id, c.off_name, c.aff_id, c.current_event, c.ip, c.date, c.time, c.click_status === "1" ? "Converted" : "Pending"])}
+              filename="click-logs.csv"
+            />
+          )
+        }
+      />
       <div style={{ display: "flex", gap: 10, marginBottom: 16, flexWrap: "wrap" }}>
         <TextInput placeholder="Search click ID, affiliate, UPI…" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} style={{ width: "100%", maxWidth: 260, borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent" }} />
         <select

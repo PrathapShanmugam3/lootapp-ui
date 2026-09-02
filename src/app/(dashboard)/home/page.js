@@ -10,9 +10,16 @@ const ICON_GRADIENTS = {
   earnings: "linear-gradient(135deg, #f59e0b, #fbbf24)"
 };
 
-function KpiCard({ label, value, trend, mtd, icon, gradient }) {
+const KPI_GLOWS = {
+  clicks: "var(--lg-glow-violet)",
+  conversions: "var(--lg-glow-pink)",
+  earnings: "var(--lg-glow-warning)"
+};
+
+function KpiCard({ label, value, trend, mtd, icon, gradient, glowKey }) {
   const trendPct = typeof trend === "object" ? trend?.trend ?? 0 : trend;
   const dir = typeof trend === "object" ? trend?.direction ?? "flat" : "flat";
+  const glow = KPI_GLOWS[glowKey] || "var(--lg-glow-violet)";
 
   return (
     <div
@@ -22,12 +29,14 @@ function KpiCard({ label, value, trend, mtd, icon, gradient }) {
         padding: "22px 24px",
         boxShadow: "var(--lg-shadow-md)",
         border: "1px solid var(--lg-line)",
-        transition: "transform 200ms ease, boxShadow 200ms ease, borderColor 200ms ease",
+        transition: "transform 250ms ease, box-shadow 300ms ease, border-color 250ms ease",
+        position: "relative",
+        overflow: "hidden",
       }}
       onMouseEnter={(e) => { 
-        e.currentTarget.style.transform = "translateY(-4px)"; 
+        e.currentTarget.style.transform = "translateY(-6px)"; 
         e.currentTarget.style.borderColor = "var(--lg-violet)";
-        e.currentTarget.style.boxShadow = "var(--lg-shadow-lg)";
+        e.currentTarget.style.boxShadow = `var(--lg-shadow-lg), ${glow}`;
       }}
       onMouseLeave={(e) => { 
         e.currentTarget.style.transform = "translateY(0)"; 
@@ -35,9 +44,19 @@ function KpiCard({ label, value, trend, mtd, icon, gradient }) {
         e.currentTarget.style.boxShadow = "var(--lg-shadow-md)";
       }}
     >
+      {/* Colored accent bar at top */}
+      <div style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        height: "3px",
+        background: gradient,
+        borderRadius: "var(--lg-radius) var(--lg-radius) 0 0",
+      }} />
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
         <p style={{ fontSize: 12, fontWeight: 700, color: "var(--lg-ink-soft)", margin: 0, textTransform: "uppercase", letterSpacing: "0.04em" }}>{label}</p>
-        <div style={{ width: 40, height: 40, borderRadius: "var(--lg-radius-sm)", display: "flex", alignItems: "center", justifyContent: "center", background: gradient, color: "#fff", boxShadow: "0 4px 12px rgba(0,0,0,0.12)" }}>
+        <div style={{ width: 40, height: 40, borderRadius: "var(--lg-radius-sm)", display: "flex", alignItems: "center", justifyContent: "center", background: gradient, color: "#fff", boxShadow: `0 4px 12px rgba(0,0,0,0.12), ${glow}` }}>
           {icon}
         </div>
       </div>
@@ -212,6 +231,7 @@ export default function AffiliateDashboard() {
           trend={kpis.clicks}
           mtd={kpis.clicks?.mtd ?? 0}
           gradient={ICON_GRADIENTS.clicks}
+          glowKey="clicks"
           icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg>}
         />
         <KpiCard
@@ -220,6 +240,7 @@ export default function AffiliateDashboard() {
           trend={kpis.conversions}
           mtd={kpis.conversions?.mtd ?? 0}
           gradient={ICON_GRADIENTS.conversions}
+          glowKey="conversions"
           icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="m2 9 3-3 3 3" /><path d="M13 18H7a4 4 0 0 1-4-4V6" /><path d="m22 15-3 3-3-3" /><path d="M11 6h6a4 4 0 0 1 4 4v8" /></svg>}
         />
         <KpiCard
@@ -228,6 +249,7 @@ export default function AffiliateDashboard() {
           trend={kpis.earnings}
           mtd={`₹${kpis.earnings?.mtd ?? 0}`}
           gradient={ICON_GRADIENTS.earnings}
+          glowKey="earnings"
           icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 3h12" /><path d="M6 8h12" /><path d="m6 13 8.5 8" /><path d="M6 13h3" /><path d="M9 13c6.667 0 6.667-10 0-10" /></svg>}
         />
       </div>

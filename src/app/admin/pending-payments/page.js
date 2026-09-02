@@ -10,6 +10,8 @@ export default function PendingPaymentsPage() {
   const [busyId, setBusyId] = useState(null);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+  const [selected, setSelected] = useState(new Set());
+  const [isBulkBusy, setIsBulkBusy] = useState(false);
 
   function load() {
     api.get(`/api/admin/pending-payments?page=${page}&limit=${limit}`).then(setData).catch(() => setData(null));
@@ -17,6 +19,7 @@ export default function PendingPaymentsPage() {
 
   useEffect(() => {
     load();
+    setSelected(new Set());
   }, [page, limit]);
 
   async function resolve(trxId, approve) {
@@ -26,14 +29,45 @@ export default function PendingPaymentsPage() {
       const res = await api.post("/api/admin/pending-payments/resolve", { trxId, approve });
       alert(res.status ? `Status: ${res.status}` : res.message || "Done");
       load();
+      setSelected(new Set());
     } finally {
       setBusyId(null);
     }
   }
 
+  async function resolveBulk(approve) {
+    if (selected.size === 0) return;
+    if (approve && !window.confirm(`Approve ${selected.size} payouts? This will attempt real gateway transfers.`)) return;
+    
+    setIsBulkBusy(true);
+    try {
+      const res = await api.post("/api/admin/pending-payments/resolve-bulk", { 
+        trxIds: Array.from(selected), 
+        approve 
+      });
+      alert(res.success ? `Processed ${selected.size} items.` : res.message || "Bulk action failed");
+      load();
+      setSelected(new Set());
+    } finally {
+      setIsBulkBusy(false);
+    }
+  }
+
   return (
     <div style={{ padding: "2rem", maxWidth: 1200, margin: "0 auto" }}>
-      <AdminPageHeader title="Pending Payments" subtitle={data ? `${data.totalRecords} awaiting approval` : ""} />
+      <AdminPageHeader 
+        title="Pending Payments" 
+        subtitle={data ? `${data.totalRecords} awaiting approval` : ""} 
+        action={
+          selected.size > 0 && (
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: "var(--lg-ink-soft)", marginRight: 8 }}>{selected.size} selected</span>
+              <button disabled={isBulkBusy} onClick={() => resolveBulk(false)} style={{ background: "var(--lg-error-soft)", color: "var(--lg-error)", border: "none", borderRadius: "var(--lg-radius-pill)", padding: "9px 20px", fontWeight: 700, fontSize: 13, cursor: isBulkBusy ? "not-allowed" : "pointer", opacity: isBulkBusy ? 0.6 : 1, transition: "all 150ms ease" }}>Reject All</button>
+              <button disabled={isBulkBusy} onClick={() => resolveBulk(true)} style={{ background: "var(--lg-success-soft)", color: "var(--lg-success)", border: "none", borderRadius: "var(--lg-radius-pill)", padding: "9px 20px", fontWeight: 700, fontSize: 13, cursor: isBulkBusy ? "not-allowed" : "pointer", opacity: isBulkBusy ? 0.6 : 1, transition: "all 150ms ease" }}>Approve All</button>
+            </div>
+          )
+        }
+      />
       <AdminCard style={{ borderRadius: "var(--lg-radius)", boxShadow: "var(--lg-shadow-md)", border: "none" }}>
         {!data ? (
           <Loader style={{ padding: 32, color: "var(--lg-ink-faint)" }} />
@@ -41,9 +75,33 @@ export default function PendingPaymentsPage() {
           <div style={{ padding: 32, color: "var(--lg-ink-faint)", fontSize: 13 }}>No pending payments.</div>
         ) : (
           <>
-          <AdminTable columns={["#", "Offer", "Pay To", "Pay ID", "Amount", "User Balance", "Event", "Action"]}>
+          <AdminTable columns={[
+            <input 
+              type="checkbox" 
+              checked={data.payments.length > 0 && selected.size === data.payments.length}
+              onChange={(e) => {
+                if (e.target.checked) setSelected(new Set(data.payments.map(p => p.trx_id)));
+                else setSelected(new Set());
+              }}
+              style={{ cursor: "pointer" }}
+            />, 
+            "#", "Offer", "Pay To", "Pay ID", "Amount", "User Balance", "Event", "Action"
+          ]}>
             {data.payments.map((p, i) => (
-              <tr key={p.id} style={{ borderTop: "1px solid var(--lg-line-soft)", transition: "background-color 140ms ease" }} onMouseEnter={(e) => (e.currentTarget.style.background = "var(--lg-paper-sunken)")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+              <tr key={p.id} style={{ borderTop: "1px solid var(--lg-line-soft)", transition: "background-color 140ms ease", background: selected.has(p.trx_id) ? "var(--lg-violet-soft)" : "transparent" }} onMouseEnter={(e) => { if(!selected.has(p.trx_id)) e.currentTarget.style.background = "var(--lg-paper-sunken)" }} onMouseLeave={(e) => { if(!selected.has(p.trx_id)) e.currentTarget.style.background = "transparent" }}>
+                <td style={{ padding: "12px 16px" }}>
+                  <input 
+                    type="checkbox" 
+                    checked={selected.has(p.trx_id)}
+                    onChange={(e) => {
+                      const next = new Set(selected);
+                      if (e.target.checked) next.add(p.trx_id);
+                      else next.delete(p.trx_id);
+                      setSelected(next);
+                    }}
+                    style={{ cursor: "pointer" }}
+                  />
+                </td>
                 <td style={{ padding: "12px 16px", color: "var(--lg-ink-faint)", fontSize: 12.5, fontWeight: 600 }}>{(page - 1) * limit + i + 1}</td>
                 <td style={{ padding: "12px 16px", fontWeight: 700, color: "var(--lg-ink)" }}>{p.off_name}</td>
                 <td style={{ padding: "12px 16px" }}>{p.pay_to}</td>

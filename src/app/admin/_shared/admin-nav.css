@@ -147,6 +147,28 @@ a {
   border-color: var(--lg-violet);
 }
 
+/* Desktop sidebar toggle in header */
+.desktop-menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--lg-radius-sm);
+  border: 1px solid var(--border-color);
+  background: var(--lg-paper-sunken);
+  color: var(--title-color);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.desktop-menu-toggle:hover {
+  background: var(--lg-violet-soft);
+  color: var(--lg-violet);
+  border-color: var(--lg-violet);
+}
+
 /* Desktop collapse row — hidden on mobile */
 .nav__collapse-row {
   display: none;
@@ -237,8 +259,9 @@ a {
 
 .nav__link:hover {
   color: var(--title-color);
-  background-color: var(--lg-paper-sunken);
-  transform: translateX(2px);
+  background: linear-gradient(135deg, var(--lg-violet-soft), rgba(236, 72, 153, 0.06));
+  transform: translateX(3px);
+  box-shadow: inset 3px 0 0 var(--lg-violet);
 }
 
 .nav__icon {
@@ -313,7 +336,17 @@ a {
 .active {
   color: #ffffff !important;
   background: linear-gradient(135deg, var(--lg-violet), var(--lg-violet-deep)) !important;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35), var(--lg-glow-violet);
+  position: relative;
+}
+
+.active::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+  pointer-events: none;
 }
 
 .active .nav__icon, .active .nav__dropdown-icon {
@@ -381,6 +414,11 @@ a {
   /* Hide mobile hamburger on desktop */
   .mobile-menu-toggle {
     display: none;
+  }
+
+  /* Show desktop toggle */
+  .desktop-menu-toggle {
+    display: flex;
   }
 
   /* Show role text on desktop */

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/apiClient";
-import { AdminPageHeader, AdminCard, AdminTable, StatusBadge, TextInput, Pagination } from "@/components/AdminPage";
+import { AdminPageHeader, AdminCard, AdminTable, StatusBadge, TextInput, Pagination, CsvExportButton } from "@/components/AdminPage";
 import Loader from "@/components/Loader";
 
 export default function PaymentLogsPage() {
@@ -21,7 +21,19 @@ export default function PaymentLogsPage() {
 
   return (
     <div style={{ padding: "2rem", maxWidth: 1200, margin: "0 auto" }}>
-      <AdminPageHeader title="Payment Logs" subtitle={data ? `${data.totalRecords} records` : ""} />
+      <AdminPageHeader
+        title="Payment Logs"
+        subtitle={data ? `${data.totalRecords} records` : ""}
+        action={
+          data?.logs?.length > 0 && (
+            <CsvExportButton
+              headers={["Offer", "Pay To", "Pay ID", "Amount", "Status", "Date", "Time"]}
+              rows={data.logs.map(l => [l.off_name, l.pay_to, l.pay_id, l.pay_amount, l.pay_status, l.date, l.time])}
+              filename="payment-logs.csv"
+            />
+          )
+        }
+      />
       <div style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap" }}>
         <TextInput placeholder="Search pay ID, TRX ID…" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} style={{ width: "100%", maxWidth: 280, borderRadius: "var(--lg-radius-pill)" }} />
         <div style={{ position: "relative", display: "inline-flex", alignItems: "center" }}>

@@ -222,3 +222,61 @@ export function TextInput(props) {
     </div>
   );
 }
+
+export function CsvExportButton({ headers, rows, filename = "export.csv", label = "Export CSV" }) {
+  function handleExport() {
+    const csvContent = [
+      headers.join(","),
+      ...rows.map((row) =>
+        row.map((cell) => {
+          const str = String(cell ?? "").replace(/"/g, '""');
+          return str.includes(",") || str.includes('"') || str.includes("\n") ? `"${str}"` : str;
+        }).join(",")
+      )
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  return (
+    <button
+      onClick={handleExport}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 6,
+        background: "var(--lg-paper-raised)",
+        color: "var(--lg-violet)",
+        border: "1px solid var(--lg-violet)",
+        borderRadius: "var(--lg-radius-pill)",
+        padding: "8px 18px",
+        fontSize: 12.5,
+        fontWeight: 700,
+        cursor: "pointer",
+        transition: "all 200ms ease",
+        fontFamily: "var(--lg-font-body)",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = "linear-gradient(135deg, var(--lg-violet), var(--lg-violet-deep))";
+        e.currentTarget.style.color = "#fff";
+        e.currentTarget.style.boxShadow = "var(--lg-glow-violet)";
+        e.currentTarget.style.borderColor = "transparent";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = "var(--lg-paper-raised)";
+        e.currentTarget.style.color = "var(--lg-violet)";
+        e.currentTarget.style.boxShadow = "none";
+        e.currentTarget.style.borderColor = "var(--lg-violet)";
+      }}
+    >
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      {label}
+    </button>
+  );
+}
