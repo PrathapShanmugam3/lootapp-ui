@@ -26,6 +26,7 @@ const ADMIN_NAV = [
       { href: "/admin/payment-logs", label: "Payment Logs" },
       { href: "/admin/pending-payments", label: "Pending Payments" },
       { href: "/admin/failed-payments", label: "Failed Payments" },
+      { href: "/admin/upload-report", label: "Upload Report" },
     ],
   },
   {
@@ -46,6 +47,7 @@ const ADMIN_NAV = [
       { href: "/admin/settings", label: "Settings" },
       { href: "/admin/gateway", label: "Gateway" },
       { href: "/admin/redeem-codes", label: "Redeem Codes" },
+      { href: "/admin/account-delete-requests", label: "Account Delete Requests" },
     ],
   },
 ];

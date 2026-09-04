@@ -23,7 +23,16 @@ export function AdminCard({ children, style }) {
         border: "1px solid var(--lg-line)",
         boxShadow: "var(--lg-shadow-md)",
         overflow: "hidden",
+        transition: "box-shadow 220ms ease, border-color 220ms ease",
         ...style,
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = "var(--lg-glow-violet), var(--lg-shadow-md)";
+        e.currentTarget.style.borderColor = "var(--lg-violet-soft)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = style?.boxShadow || "var(--lg-shadow-md)";
+        e.currentTarget.style.borderColor = style?.border ? "" : "var(--lg-line)";
       }}
     >
       {children}
@@ -81,7 +90,7 @@ export function Pagination({ page, totalPages, onChange }) {
               cursor: "pointer",
               background: p === page ? "linear-gradient(135deg, var(--lg-violet), var(--lg-violet-deep))" : "var(--lg-paper-raised)",
               color: p === page ? "#ffffff" : "var(--lg-ink)",
-              boxShadow: p === page ? "0 4px 14px rgba(99, 102, 241, 0.4)" : "none",
+              boxShadow: p === page ? "var(--lg-glow-violet), 0 4px 14px rgba(99, 102, 241, 0.4)" : "none",
               transition: "all 0.18s ease",
             }}
           >
@@ -95,15 +104,16 @@ export function Pagination({ page, totalPages, onChange }) {
 
 export function StatusBadge({ status }) {
   const map = {
-    live: { bg: "var(--lg-success-soft)", text: "var(--lg-success)" },
-    active: { bg: "var(--lg-success-soft)", text: "var(--lg-success)" },
-    success: { bg: "var(--lg-success-soft)", text: "var(--lg-success)" },
+    live: { bg: "var(--lg-success-soft)", text: "var(--lg-success)", glow: "var(--lg-glow-success)" },
+    active: { bg: "var(--lg-success-soft)", text: "var(--lg-success)", glow: "var(--lg-glow-success)" },
+    success: { bg: "var(--lg-success-soft)", text: "var(--lg-success)", glow: "var(--lg-glow-success)" },
+    approved: { bg: "var(--lg-success-soft)", text: "var(--lg-success)", glow: "var(--lg-glow-success)" },
     inactive: { bg: "var(--lg-line-soft)", text: "var(--lg-ink-faint)" },
-    paused: { bg: "var(--lg-warning-soft)", text: "var(--lg-warning)" },
-    pending: { bg: "var(--lg-warning-soft)", text: "var(--lg-warning)" },
+    paused: { bg: "var(--lg-warning-soft)", text: "var(--lg-warning)", glow: "var(--lg-glow-warning)" },
+    pending: { bg: "var(--lg-warning-soft)", text: "var(--lg-warning)", glow: "var(--lg-glow-warning)" },
     processing: { bg: "var(--lg-info-soft)", text: "var(--lg-info)" },
-    failed: { bg: "var(--lg-error-soft)", text: "var(--lg-error)" },
-    rejected: { bg: "var(--lg-error-soft)", text: "var(--lg-error)" },
+    failed: { bg: "var(--lg-error-soft)", text: "var(--lg-error)", glow: "var(--lg-glow-error)" },
+    rejected: { bg: "var(--lg-error-soft)", text: "var(--lg-error)", glow: "var(--lg-glow-error)" },
   };
   const style = map[(status || "").toLowerCase()] || { bg: "var(--lg-line-soft)", text: "var(--lg-ink-faint)" };
   return (
@@ -119,6 +129,7 @@ export function StatusBadge({ status }) {
         borderRadius: "var(--lg-radius-pill)",
         textTransform: "uppercase",
         letterSpacing: "0.04em",
+        boxShadow: style.glow ? `${style.glow.split(",")[0]}` : "none",
       }}
     >
       {status}
@@ -145,18 +156,18 @@ export function PrimaryButton({ children, ...props }) {
         letterSpacing: "0.01em",
         cursor: "pointer",
         boxShadow: "0 4px 14px rgba(99, 102, 241, 0.35)",
-        transition: "transform 0.18s ease, boxShadow 0.18s ease",
+        transition: "transform 0.18s ease, box-shadow 0.18s ease",
         fontFamily: "var(--lg-font-body)",
         ...props.style,
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = "translateY(-2px)";
-        e.currentTarget.style.boxShadow = "0 6px 20px rgba(99, 102, 241, 0.45)";
+        e.currentTarget.style.boxShadow = "var(--lg-glow-violet), 0 6px 20px rgba(99, 102, 241, 0.45)";
         props.onMouseEnter?.(e);
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = "translateY(0)";
-        e.currentTarget.style.boxShadow = "0 4px 14px rgba(99, 102, 241, 0.35)";
+        e.currentTarget.style.boxShadow = props.style?.boxShadow || "0 4px 14px rgba(99, 102, 241, 0.35)";
         props.onMouseLeave?.(e);
       }}
     >
