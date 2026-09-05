@@ -25,6 +25,9 @@ function CopyButton({ value }) {
   const [copied, setCopied] = useState(false);
   return (
     <button
+      type="button"
+      title="Copy link"
+      aria-label="Copy link"
       className="flex h-[34px] w-[34px] flex-shrink-0 items-center justify-center rounded-[10px] transition-colors hover:opacity-80"
       style={{ background: "var(--lg-violet-soft)", color: "var(--lg-violet)" }}
       onClick={() => {
@@ -37,6 +40,45 @@ function CopyButton({ value }) {
         <svg className="h-[15px] w-[15px] text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12" /></svg>
       ) : (
         <svg className="h-[15px] w-[15px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg>
+      )}
+    </button>
+  );
+}
+
+function ShareButton({ value, title }) {
+  const [copied, setCopied] = useState(false);
+
+  async function handleShare() {
+    // Native share sheet on mobile (and supported desktop browsers) — falls
+    // back to copying the link when the Web Share API isn't available
+    // (most desktop browsers) so the button still does something useful
+    // everywhere instead of silently failing.
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({ title: title || "Loot Hat", url: value });
+      } catch {
+        // user cancelled the share sheet — not an error
+      }
+      return;
+    }
+    navigator.clipboard.writeText(value);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1800);
+  }
+
+  return (
+    <button
+      type="button"
+      title="Share link"
+      aria-label="Share link"
+      className="flex h-[34px] w-[34px] flex-shrink-0 items-center justify-center rounded-[10px] transition-colors hover:opacity-80"
+      style={{ background: "var(--lg-violet-soft)", color: "var(--lg-violet)" }}
+      onClick={handleShare}
+    >
+      {copied ? (
+        <svg className="h-[15px] w-[15px] text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12" /></svg>
+      ) : (
+        <svg className="h-[15px] w-[15px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></svg>
       )}
     </button>
   );
@@ -324,21 +366,23 @@ function OfferDetailContent() {
 
               <div className="group">
                 <label className="block text-xs font-bold uppercase tracking-wider mb-2.5 ml-1" style={{ color: "var(--lg-ink-soft)" }}>Your Offer URL</label>
-                <div className="flex items-center gap-3 rounded-2xl p-2 transition-colors shadow-inner border" style={{ background: "var(--lg-paper-sunken)", borderColor: "var(--lg-line)" }}>
-                  <div className="flex-1 overflow-hidden pl-3">
+                <div className="flex items-center gap-2 rounded-2xl p-2 transition-colors shadow-inner border" style={{ background: "var(--lg-paper-sunken)", borderColor: "var(--lg-line)" }}>
+                  <div className="flex-1 min-w-0 overflow-hidden pl-3">
                     <p className="truncate text-sm font-mono select-all" style={{ color: "var(--lg-ink)" }}>{`${linkOrigin}/leads?o=${referralLink.referCode}`}</p>
                   </div>
                   <CopyButton value={`${linkOrigin}/leads?o=${referralLink.referCode}`} />
+                  <ShareButton value={`${linkOrigin}/leads?o=${referralLink.referCode}`} title={offer.offerName} />
                 </div>
               </div>
 
               <div className="group">
                 <label className="block text-xs font-bold uppercase tracking-wider mb-2.5 ml-1" style={{ color: "var(--lg-ink-soft)" }}>Sub Refer URL</label>
-                <div className="flex items-center gap-3 rounded-2xl p-2 transition-colors shadow-inner border" style={{ background: "var(--lg-paper-sunken)", borderColor: "var(--lg-line)" }}>
-                  <div className="flex-1 overflow-hidden pl-3">
+                <div className="flex items-center gap-2 rounded-2xl p-2 transition-colors shadow-inner border" style={{ background: "var(--lg-paper-sunken)", borderColor: "var(--lg-line)" }}>
+                  <div className="flex-1 min-w-0 overflow-hidden pl-3">
                     <p className="truncate text-sm font-mono select-all" style={{ color: "var(--lg-ink)" }}>{`${linkOrigin}/referral?o=${referralLink.referCode}`}</p>
                   </div>
                   <CopyButton value={`${linkOrigin}/referral?o=${referralLink.referCode}`} />
+                  <ShareButton value={`${linkOrigin}/referral?o=${referralLink.referCode}`} title={offer.offerName} />
                 </div>
               </div>
             </div>
