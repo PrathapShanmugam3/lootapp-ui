@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { api } from "@/lib/apiClient";
 import { AdminPageHeader, AdminCard, PrimaryButton, TextInput } from "@/components/AdminPage";
 import Loader from "@/components/Loader";
+import { showSuccess, showError } from "@/lib/toast";
 
 const label = { fontSize: 12.5, fontWeight: 700, color: "var(--lg-ink-soft)", display: "block", marginBottom: 7 };
 const field = { marginBottom: 18 };
@@ -67,7 +68,6 @@ function EditUserContent() {
   const id = useSearchParams().get("id");
   const [user, setUser] = useState(null);
   const [comment, setComment] = useState("");
-  const [message, setMessage] = useState(null);
   const [saving, setSaving] = useState(false);
   const [auditLog, setAuditLog] = useState(null);
   const [stateReason, setStateReason] = useState("");
@@ -116,15 +116,15 @@ function EditUserContent() {
   async function handleSubmit(e) {
     e.preventDefault();
     setSaving(true);
-    setMessage(null);
     try {
       const res = await api.put(`/api/admin/users/${id}`, {
         name: user.name, email: user.email, mobile: user.mobile, upi: user.upi,
         accNo: user.acc_no, ifsc: user.ifsc, balance: Number(user.balance), status: user.status, comment,
       });
-      setMessage(res.success ? { type: "success", text: "User updated." } : { type: "error", text: res.message });
+      if (res.success) showSuccess("User updated.");
+      else showError(res.message);
     } catch (err) {
-      setMessage({ type: "error", text: err.data?.message || err.message });
+      showError(err.data?.message || err.message);
     } finally {
       setSaving(false);
     }
@@ -135,11 +135,6 @@ function EditUserContent() {
   return (
     <div style={{ padding: "2rem", maxWidth: 600, margin: "0 auto" }}>
       <AdminPageHeader title="Edit User" subtitle={`User ID: ${user.user_id} · Last login: ${user.last_login || "never"}`} />
-      {message && (
-        <div style={{ padding: 12, borderRadius: "var(--lg-radius-sm)", marginBottom: 16, background: message.type === "error" ? "var(--lg-error-soft)" : "var(--lg-success-soft)", color: message.type === "error" ? "var(--lg-error)" : "var(--lg-success)", fontSize: 13, fontWeight: 600 }}>
-          {message.text}
-        </div>
-      )}
       <form onSubmit={handleSubmit} noValidate>
         <AdminCard style={{ padding: 24 }}>
           <div style={row}>

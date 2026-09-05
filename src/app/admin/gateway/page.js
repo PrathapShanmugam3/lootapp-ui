@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { api } from "@/lib/apiClient";
 import { AdminPageHeader, AdminCard, AdminTable, PrimaryButton, TextInput } from "@/components/AdminPage";
 import Loader from "@/components/Loader";
+import { showSuccess, showError } from "@/lib/toast";
 
 const emptyForm = {
   id: null, gtype: "upi", gname: "", gurl: "", statusVar: "", successResponse: "", trxIdVar: "", priority: 0, isActive: true,
@@ -24,7 +25,6 @@ function focusOff(e) { e.target.style.borderColor = "transparent"; e.target.styl
 export default function GatewayPage() {
   const [gateways, setGateways] = useState(null);
   const [form, setForm] = useState(emptyForm);
-  const [message, setMessage] = useState(null);
 
   function load() {
     api.get("/api/admin/gateways").then((res) => setGateways(res.gateways)).catch(() => setGateways([]));
@@ -40,14 +40,13 @@ export default function GatewayPage() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setMessage(null);
     try {
       await api.post("/api/admin/gateways", form);
-      setMessage({ type: "success", text: form.id ? "Gateway updated." : "Gateway added." });
+      showSuccess(form.id ? "Gateway updated." : "Gateway added.");
       setForm(emptyForm);
       load();
     } catch (err) {
-      setMessage({ type: "error", text: err.data?.message || err.message });
+      showError(err.data?.message || err.message);
     }
   }
 
@@ -60,12 +59,6 @@ export default function GatewayPage() {
   return (
     <div style={{ padding: "2rem", maxWidth: 900, margin: "0 auto" }}>
       <AdminPageHeader title="Payment Gateways" subtitle="Manage UPI/Bank payout gateway configurations" />
-
-      {message && (
-        <div style={{ padding: 14, borderRadius: "var(--lg-radius-sm)", marginBottom: 16, background: message.type === "error" ? "var(--lg-error-soft)" : "var(--lg-success-soft)", color: message.type === "error" ? "var(--lg-error)" : "var(--lg-success)", fontSize: 13, fontWeight: 600 }}>
-          {message.text}
-        </div>
-      )}
 
       <AdminCard style={{ padding: 26, marginBottom: 24, borderRadius: "var(--lg-radius)", boxShadow: "var(--lg-shadow-md)", border: "none" }}>
         <h3 style={{ fontSize: 15, fontWeight: 700, fontFamily: "var(--lg-font-display)", marginBottom: 18, display: "flex", alignItems: "center", gap: 10 }}>

@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/apiClient";
 import { AdminPageHeader, AdminCard, AdminTable, PrimaryButton, TextInput } from "@/components/AdminPage";
 import Loader from "@/components/Loader";
+import { showSuccess, showError } from "@/lib/toast";
 
 export default function IpWhitelistingPage() {
   const [ips, setIps] = useState(null);
   const [ip, setIp] = useState("");
   const [ipLabel, setIpLabel] = useState("");
-  const [message, setMessage] = useState(null);
 
   function load() {
     api.get("/api/admin/ip-whitelist").then((res) => setIps(res.ips)).catch(() => setIps([]));
@@ -21,15 +21,14 @@ export default function IpWhitelistingPage() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setMessage(null);
     try {
       await api.post("/api/admin/ip-whitelist", { ip, label: ipLabel });
-      setMessage({ type: "success", text: "IP added to whitelist." });
+      showSuccess("IP added to whitelist.");
       setIp("");
       setIpLabel("");
       load();
     } catch (err) {
-      setMessage({ type: "error", text: err.data?.message || err.message });
+      showError(err.data?.message || err.message);
     }
   }
 
@@ -42,12 +41,6 @@ export default function IpWhitelistingPage() {
   return (
     <div style={{ padding: "2rem", maxWidth: 700, margin: "0 auto" }}>
       <AdminPageHeader title="IP Whitelisting" subtitle="IPs allowed to call the postback/conversion API" />
-
-      {message && (
-        <div style={{ padding: 12, borderRadius: "var(--lg-radius-sm)", marginBottom: 16, background: message.type === "error" ? "var(--lg-error-soft)" : "var(--lg-success-soft)", color: message.type === "error" ? "var(--lg-error)" : "var(--lg-success)", fontSize: 13, fontWeight: 600 }}>
-          {message.text}
-        </div>
-      )}
 
       <AdminCard style={{ padding: 20, marginBottom: 20, borderRadius: "var(--lg-radius)", boxShadow: "var(--lg-shadow-sm)" }}>
         <form onSubmit={handleSubmit} style={{ display: "flex", gap: 8, flexWrap: "wrap" }} noValidate>

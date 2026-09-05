@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/apiClient";
 import Loader from "@/components/Loader";
 import { useFormValidation, FieldError } from "@/components/FormValidation";
+import { showSuccess, showError } from "@/lib/toast";
 
 export default function CustomDomainsPage() {
   const [domains, setDomains] = useState(null);
   const [domain, setDomain] = useState("");
-  const [message, setMessage] = useState(null);
   const [instructions, setInstructions] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const validation = useFormValidation();
@@ -24,7 +24,6 @@ export default function CustomDomainsPage() {
   async function handleSubmit(e) {
     e.preventDefault();
     setSubmitting(true);
-    setMessage(null);
     setInstructions(null);
     try {
       const res = await api.post("/api/custom-domains", { domain });
@@ -33,10 +32,10 @@ export default function CustomDomainsPage() {
         setDomain("");
         load();
       } else {
-        setMessage({ type: "error", text: res.message });
+        showError(res.message);
       }
     } catch (err) {
-      setMessage({ type: "error", text: err.data?.message || err.message });
+      showError(err.data?.message || err.message);
     } finally {
       setSubmitting(false);
     }
@@ -44,7 +43,8 @@ export default function CustomDomainsPage() {
 
   async function handleVerify(id) {
     const res = await api.post(`/api/custom-domains/${id}/verify`);
-    setMessage(res.success ? { type: "success", text: res.alreadyVerified ? "Already verified." : "Domain verified!" } : { type: "error", text: res.message });
+    if (res.success) showSuccess(res.alreadyVerified ? "Already verified." : "Domain verified!");
+    else showError(res.message);
     load();
   }
 
@@ -61,11 +61,6 @@ export default function CustomDomainsPage() {
         <p className="text-[13px] mt-0.5" style={{ color: "var(--lg-ink-soft)" }}>Serve your tracking links under your own domain</p>
       </div>
 
-      {message && (
-        <div style={{ padding: 12, borderRadius: "var(--lg-radius-sm)", background: message.type === "error" ? "var(--lg-error-soft)" : "var(--lg-success-soft)", color: message.type === "error" ? "var(--lg-error)" : "var(--lg-success)", fontSize: 13 }}>
-          {message.text}
-        </div>
-      )}
       {instructions && (
         <div style={{ padding: 16, borderRadius: "var(--lg-radius)", background: "var(--lg-violet-soft)", border: "1px solid var(--lg-line)", fontSize: 13 }}>
           <p style={{ fontWeight: 700, marginBottom: 6, color: "var(--lg-ink)" }}>Add this DNS TXT record to verify {instructions.domain}:</p>

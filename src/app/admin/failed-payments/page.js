@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/apiClient";
 import { AdminPageHeader, AdminCard, AdminTable, Pagination } from "@/components/AdminPage";
 import Loader from "@/components/Loader";
+import { showSuccess, showError } from "@/lib/toast";
 
 export default function FailedPaymentsPage() {
   const [data, setData] = useState(null);
@@ -11,7 +12,6 @@ export default function FailedPaymentsPage() {
   const [limit, setLimit] = useState(10);
   const [selected, setSelected] = useState([]);
   const [repaying, setRepaying] = useState(false);
-  const [message, setMessage] = useState(null);
 
   function load() {
     api.get(`/api/admin/failed-payments?page=${page}&limit=${limit}`)
@@ -33,13 +33,13 @@ export default function FailedPaymentsPage() {
 
   async function handleRepay(id) {
     setRepaying(true);
-    setMessage(null);
     try {
       const res = await api.post(`/api/admin/pay-records/${id}/repay`);
-      setMessage(res.success ? { type: "success", text: `Repay attempted: ${res.result?.status || "done"}.` } : { type: "error", text: res.message });
+      if (res.success) showSuccess(`Repay attempted: ${res.result?.status || "done"}.`);
+      else showError(res.message);
       load();
     } catch (err) {
-      setMessage({ type: "error", text: err.data?.message || err.message });
+      showError(err.data?.message || err.message);
     } finally {
       setRepaying(false);
     }
@@ -49,16 +49,17 @@ export default function FailedPaymentsPage() {
     if (selected.length === 0) return;
     if (!window.confirm(`Repay ${selected.length} failed payment(s)? This will attempt to move real money again.`)) return;
     setRepaying(true);
-    setMessage(null);
     try {
       const res = await api.post("/api/admin/pay-records/repay-bulk", { ids: selected });
       const succeeded = res.results?.filter((r) => r.success).length || 0;
       const failed = (res.results?.length || 0) - succeeded;
-      setMessage({ type: failed ? "error" : "success", text: `${succeeded} repaid, ${failed} could not be repaid.` });
+      const text = `${succeeded} repaid, ${failed} could not be repaid.`;
+      if (failed) showError(text);
+      else showSuccess(text);
       setSelected([]);
       load();
     } catch (err) {
-      setMessage({ type: "error", text: err.data?.message || err.message });
+      showError(err.data?.message || err.message);
     } finally {
       setRepaying(false);
     }
@@ -75,11 +76,6 @@ export default function FailedPaymentsPage() {
           </button>
         )}
       />
-      {message && (
-        <div style={{ padding: 12, borderRadius: "var(--lg-radius-sm)", marginBottom: 16, background: message.type === "error" ? "var(--lg-error-soft)" : "var(--lg-success-soft)", color: message.type === "error" ? "var(--lg-error)" : "var(--lg-success)", fontSize: 13, fontWeight: 600 }}>
-          {message.text}
-        </div>
-      )}
       <AdminCard style={{ borderRadius: "var(--lg-radius)", boxShadow: "var(--lg-shadow-md)", border: "none" }}>
         {!data ? (
           <Loader style={{ padding: 32, color: "var(--lg-ink-faint)" }} />

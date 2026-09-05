@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/apiClient";
 import { AdminPageHeader, AdminCard, PrimaryButton, TextInput } from "@/components/AdminPage";
+import { showError } from "@/lib/toast";
 
 const label = { fontSize: 12.5, fontWeight: 700, color: "var(--lg-ink-soft)", display: "block", marginBottom: 7 };
 const field = { marginBottom: 18 };
@@ -75,7 +76,6 @@ export default function AddOfferPage() {
     input_1: "", input_1_type: "text", input_2: "", input_2_type: "text", input_3: "", input_3_type: "text",
   });
   const [conversionEvents, setConversionEvents] = useState([]);
-  const [message, setMessage] = useState(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -89,17 +89,16 @@ export default function AddOfferPage() {
   async function handleSubmit(e) {
     e.preventDefault();
     setSaving(true);
-    setMessage(null);
     try {
       const payload = { ...form, conversion_event: conversionEvents.join(",") };
       const res = await api.post("/api/admin/offers", payload);
       if (res.success) {
         router.push(`/admin/offer-detail?o=${res.offId}`);
       } else {
-        setMessage({ type: "error", text: res.message });
+        showError(res.message);
       }
     } catch (err) {
-      setMessage({ type: "error", text: err.data?.message || err.message });
+      showError(err.data?.message || err.message);
     } finally {
       setSaving(false);
     }
@@ -108,11 +107,6 @@ export default function AddOfferPage() {
   return (
     <div style={{ padding: "2rem", maxWidth: 900, margin: "0 auto" }}>
       <AdminPageHeader title="Add Offer" subtitle="Create a new campaign" />
-      {message && (
-        <div style={{ padding: 12, borderRadius: "var(--lg-radius-sm)", marginBottom: 16, background: message.type === "error" ? "var(--lg-error-soft)" : "var(--lg-success-soft)", color: message.type === "error" ? "var(--lg-error)" : "var(--lg-success)", fontSize: 13, fontWeight: 600 }}>
-          {message.text}
-        </div>
-      )}
       <form onSubmit={handleSubmit} noValidate>
         <AdminCard style={sectionCard}>
           <div style={sectionTitle}><span style={dot} />Basic Info</div>

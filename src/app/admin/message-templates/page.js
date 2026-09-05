@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/apiClient";
 import { AdminPageHeader, AdminCard, PrimaryButton, TextInput } from "@/components/AdminPage";
 import Loader from "@/components/Loader";
+import { showError } from "@/lib/toast";
 
 const ROLE_LABELS = { admin: "Admin Chat", emp: "Manager Chat" };
 const emptyForm = { role: "admin", label: "", text: "" };
@@ -12,7 +13,6 @@ export default function MessageTemplatesPage() {
   const [templates, setTemplates] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
-  const [message, setMessage] = useState(null);
   const [saving, setSaving] = useState(false);
 
   function load() {
@@ -40,7 +40,6 @@ export default function MessageTemplatesPage() {
   async function handleSubmit(e) {
     e.preventDefault();
     setSaving(true);
-    setMessage(null);
     try {
       const res = editingId
         ? await api.put(`/api/admin/message-templates/${editingId}`, { label: form.label, text: form.text })
@@ -49,10 +48,10 @@ export default function MessageTemplatesPage() {
         cancelEdit();
         load();
       } else {
-        setMessage({ type: "error", text: res.message });
+        showError(res.message);
       }
     } catch (err) {
-      setMessage({ type: "error", text: err.data?.message || err.message });
+      showError(err.data?.message || err.message);
     } finally {
       setSaving(false);
     }
@@ -72,12 +71,6 @@ export default function MessageTemplatesPage() {
   return (
     <div style={{ padding: "2rem", maxWidth: 900, margin: "0 auto" }}>
       <AdminPageHeader title="Message Templates" subtitle="Preset replies available in Admin Chat and Manager Chat" />
-
-      {message && (
-        <div style={{ padding: 12, borderRadius: "var(--lg-radius-sm)", marginBottom: 16, background: "var(--lg-error-soft)", color: "var(--lg-error)", fontSize: 13, fontWeight: 600 }}>
-          {message.text}
-        </div>
-      )}
 
       <AdminCard style={{ padding: 20, marginBottom: 20, borderRadius: "var(--lg-radius)", boxShadow: "var(--lg-shadow-sm)" }}>
         <h3 style={{ fontSize: 14, fontWeight: 800, marginBottom: 14, fontFamily: "var(--lg-font-display)" }}>{editingId ? "Edit Template" : "Add Template"}</h3>

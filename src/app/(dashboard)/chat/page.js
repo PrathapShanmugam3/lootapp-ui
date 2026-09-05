@@ -65,15 +65,18 @@ export default function ChatPage() {
   useEffect(() => {
     const interval = setInterval(async () => {
       if (firstLoadRef.current) return;
-      const el = scrollRef.current;
-      const isNearBottom = el ? el.scrollTop + el.clientHeight >= el.scrollHeight - 150 : true;
-      if (!isNearBottom) return;
       try {
         const res = await api.get(`/api/chat?type=after&afterId=${lastIdRef.current}`);
         if (res.messages.length > 0) {
+          // Only auto-scroll if the user was already near the bottom — but
+          // always fetch and append new messages regardless of scroll
+          // position, otherwise incoming replies are silently dropped
+          // whenever the user has scrolled up to read older messages.
+          const el = scrollRef.current;
+          const isNearBottom = el ? el.scrollTop + el.clientHeight >= el.scrollHeight - 150 : true;
           setMessages((prev) => [...prev, ...res.messages]);
           lastIdRef.current = res.messages[res.messages.length - 1].id;
-          setTimeout(scrollToBottom, 50);
+          if (isNearBottom) setTimeout(scrollToBottom, 50);
         }
       } catch {
         // ignore
@@ -221,7 +224,12 @@ export default function ChatPage() {
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={`${API_URL}${item.imagePath}`} alt="attachment" style={{ maxWidth: "100%", borderRadius: 10, marginTop: 8 }} />
                   )}
-                  <span style={{ display: "block", fontSize: 10.5, fontWeight: 700, marginTop: 4, textAlign: "right", opacity: 0.75 }}>{item.time}</span>
+                  <span style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 4, fontSize: 10.5, fontWeight: 700, marginTop: 4, opacity: 0.75 }}>
+                    {item.time}
+                    {item.from === "user" && (
+                      <span title={item.isRead ? "Seen" : "Sent"}>{item.isRead ? "✓✓" : "✓"}</span>
+                    )}
+                  </span>
                 </div>
               )
             )

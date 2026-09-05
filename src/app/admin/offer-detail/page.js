@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { api } from "@/lib/apiClient";
 import { AdminPageHeader, AdminCard, PrimaryButton, TextInput, StatusBadge } from "@/components/AdminPage";
 import Loader from "@/components/Loader";
+import { showSuccess, showError } from "@/lib/toast";
 
 const label = { fontSize: 12.5, fontWeight: 700, color: "var(--lg-ink-soft)", display: "block", marginBottom: 7 };
 const field = { marginBottom: 18 };
@@ -89,7 +90,6 @@ function OfferDetailContent() {
   const offId = useSearchParams().get("o");
   const [offer, setOffer] = useState(null);
   const [tab, setTab] = useState("view");
-  const [message, setMessage] = useState(null);
   const [saving, setSaving] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [gateways, setGateways] = useState([]);
@@ -111,13 +111,13 @@ function OfferDetailContent() {
   async function handleSave(e) {
     e.preventDefault();
     setSaving(true);
-    setMessage(null);
     try {
       const payload = { ...offer, conversion_event: conversionEvents.join(",") };
       const res = await api.put(`/api/admin/offers/${offId}`, payload);
-      setMessage(res.success ? { type: "success", text: "Offer updated." } : { type: "error", text: res.message });
+      if (res.success) showSuccess("Offer updated.");
+      else showError(res.message);
     } catch (err) {
-      setMessage({ type: "error", text: err.data?.message || err.message });
+      showError(err.data?.message || err.message);
     } finally {
       setSaving(false);
     }
@@ -143,12 +143,6 @@ function OfferDetailContent() {
           </TabButton>
         ))}
       </div>
-
-      {message && (
-        <div style={{ padding: 12, borderRadius: "var(--lg-radius-sm)", marginBottom: 16, background: message.type === "error" ? "var(--lg-error-soft)" : "var(--lg-success-soft)", color: message.type === "error" ? "var(--lg-error)" : "var(--lg-success)", fontSize: 13, fontWeight: 600 }}>
-          {message.text}
-        </div>
-      )}
 
       {tab === "view" && (
         <AdminCard style={{ padding: 24 }}>

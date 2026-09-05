@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/apiClient";
 import { AdminPageHeader, AdminCard, AdminTable, StatusBadge, PrimaryButton, TextInput } from "@/components/AdminPage";
 import Loader from "@/components/Loader";
+import { showSuccess, showError } from "@/lib/toast";
 
 const EMPLOYEE_STATUS = "9";
 
@@ -12,7 +13,6 @@ const emptyForm = { name: "", email: "", mobile: "", password: "" };
 export default function ManagersPage() {
   const [data, setData] = useState(null);
   const [form, setForm] = useState(emptyForm);
-  const [message, setMessage] = useState(null);
   const [creating, setCreating] = useState(false);
 
   function load() {
@@ -30,18 +30,17 @@ export default function ManagersPage() {
   async function handleCreate(e) {
     e.preventDefault();
     setCreating(true);
-    setMessage(null);
     try {
       const res = await api.post("/api/admin/users", { ...form, status: EMPLOYEE_STATUS });
       if (res.success) {
-        setMessage({ type: "success", text: `Manager account created (ID: ${res.userId}).` });
+        showSuccess(`Manager account created (ID: ${res.userId}).`);
         setForm(emptyForm);
         load();
       } else {
-        setMessage({ type: "error", text: res.message });
+        showError(res.message);
       }
     } catch (err) {
-      setMessage({ type: "error", text: err.data?.message || err.message });
+      showError(err.data?.message || err.message);
     } finally {
       setCreating(false);
     }
@@ -54,22 +53,16 @@ export default function ManagersPage() {
       if (res.success) {
         load();
       } else {
-        setMessage({ type: "error", text: res.message });
+        showError(res.message);
       }
     } catch (err) {
-      setMessage({ type: "error", text: err.data?.message || err.message });
+      showError(err.data?.message || err.message);
     }
   }
 
   return (
     <div style={{ padding: "2rem", maxWidth: 900, margin: "0 auto" }}>
       <AdminPageHeader title="Managers" subtitle="Manager (EMP portal) accounts" />
-
-      {message && (
-        <div style={{ padding: 12, borderRadius: "var(--lg-radius-sm)", marginBottom: 16, background: message.type === "error" ? "var(--lg-error-soft)" : "var(--lg-success-soft)", color: message.type === "error" ? "var(--lg-error)" : "var(--lg-success)", fontSize: 13, fontWeight: 600 }}>
-          {message.text}
-        </div>
-      )}
 
       <AdminCard style={{ padding: 20, marginBottom: 20, borderRadius: "var(--lg-radius)", boxShadow: "var(--lg-shadow-sm)" }}>
         <h3 style={{ fontSize: 14, fontWeight: 800, marginBottom: 14, fontFamily: "var(--lg-font-display)" }}>Add Manager</h3>

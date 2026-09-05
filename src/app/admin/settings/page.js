@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/apiClient";
 import { AdminPageHeader, AdminCard, PrimaryButton, TextInput } from "@/components/AdminPage";
 import Loader from "@/components/Loader";
+import { showSuccess, showError } from "@/lib/toast";
 
 const label = { fontSize: 12.5, fontWeight: 700, color: "var(--lg-ink-soft)", display: "block", marginBottom: 7 };
 const field = { marginBottom: 18 };
@@ -57,7 +58,6 @@ function ActiveToggle({ checked, onChange, label: toggleLabel }) {
 export default function SettingsPage() {
   const [settings, setSettings] = useState(null);
   const [gateways, setGateways] = useState([]);
-  const [message, setMessage] = useState(null);
   const [saving, setSaving] = useState(false);
   const [resetting, setResetting] = useState(false);
 
@@ -73,12 +73,12 @@ export default function SettingsPage() {
   async function handleSave(e) {
     e.preventDefault();
     setSaving(true);
-    setMessage(null);
     try {
       const res = await api.put("/api/admin/settings", settings);
-      setMessage(res.success ? { type: "success", text: "Settings saved." } : { type: "error", text: res.message });
+      if (res.success) showSuccess("Settings saved.");
+      else showError(res.message);
     } catch (err) {
-      setMessage({ type: "error", text: err.data?.message || err.message });
+      showError(err.data?.message || err.message);
     } finally {
       setSaving(false);
     }
@@ -90,7 +90,7 @@ export default function SettingsPage() {
     try {
       const res = await api.post("/api/admin/settings/reset-api-key");
       set("valid_api", res.apiKey);
-      setMessage({ type: "success", text: "API key reset." });
+      showSuccess("API key reset.");
     } finally {
       setResetting(false);
     }
@@ -109,11 +109,6 @@ export default function SettingsPage() {
   return (
     <div style={{ padding: "2rem", maxWidth: 800, margin: "0 auto" }}>
       <AdminPageHeader title="Settings" subtitle="Global payment gateway and automation config" />
-      {message && (
-        <div style={{ padding: 14, borderRadius: "var(--lg-radius-sm)", marginBottom: 16, background: message.type === "error" ? "var(--lg-error-soft)" : "var(--lg-success-soft)", color: message.type === "error" ? "var(--lg-error)" : "var(--lg-success)", fontSize: 13, fontWeight: 600 }}>
-          {message.text}
-        </div>
-      )}
 
       <form onSubmit={handleSave} noValidate>
         <AdminCard style={cardStyle}>

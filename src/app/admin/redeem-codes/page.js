@@ -4,14 +4,14 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/apiClient";
 import { AdminPageHeader, AdminCard, AdminTable, PrimaryButton, TextInput, Pagination } from "@/components/AdminPage";
 import Loader from "@/components/Loader";
+import { showError } from "@/lib/toast";
+import Swal from "sweetalert2";
 
 export default function RedeemCodesPage() {
   const [data, setData] = useState(null);
   const [value, setValue] = useState("");
   const [maxUses, setMaxUses] = useState(1);
   const [expiresAt, setExpiresAt] = useState("");
-  const [newCode, setNewCode] = useState(null);
-  const [message, setMessage] = useState(null);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
@@ -25,17 +25,23 @@ export default function RedeemCodesPage() {
 
   async function handleCreate(e) {
     e.preventDefault();
-    setMessage(null);
-    setNewCode(null);
     try {
       const res = await api.post("/api/admin/redeem-codes", { value: Number(value), maxUses: Number(maxUses), expiresAt: expiresAt || null });
-      setNewCode(res.code);
       setValue("");
       setMaxUses(1);
       setExpiresAt("");
       load();
+      await Swal.fire({
+        icon: "success",
+        title: "Code created",
+        html: `<code style="font-size:18px;background:var(--lg-paper-sunken);padding:4px 10px;border-radius:6px;">${res.code}</code>`,
+        confirmButtonText: "Copy & Close",
+        confirmButtonColor: "var(--lg-violet)",
+      }).then((result) => {
+        if (result.isConfirmed) navigator.clipboard?.writeText(res.code);
+      });
     } catch (err) {
-      setMessage({ type: "error", text: err.data?.message || err.message });
+      showError(err.data?.message || err.message);
     }
   }
 
@@ -47,15 +53,6 @@ export default function RedeemCodesPage() {
   return (
     <div style={{ padding: "2rem", maxWidth: 900, margin: "0 auto" }}>
       <AdminPageHeader title="Redeem Codes" subtitle="Generate wallet-credit codes for affiliates" />
-
-      {newCode && (
-        <div style={{ padding: 16, borderRadius: "var(--lg-radius-sm)", marginBottom: 16, background: "var(--lg-success-soft)", color: "var(--lg-success)", fontSize: 14, fontWeight: 700 }}>
-          Code created: <code style={{ fontSize: 16, background: "rgba(255,255,255,0.5)", padding: "2px 8px", borderRadius: 6 }}>{newCode}</code>
-        </div>
-      )}
-      {message && (
-        <div style={{ padding: 14, borderRadius: "var(--lg-radius-sm)", marginBottom: 16, background: "var(--lg-error-soft)", color: "var(--lg-error)", fontSize: 13, fontWeight: 600 }}>{message.text}</div>
-      )}
 
       <AdminCard style={{ padding: 26, marginBottom: 24, borderRadius: "var(--lg-radius)", boxShadow: "var(--lg-shadow-md)", border: "none" }}>
         <h3 style={{ fontSize: 15, fontWeight: 800, fontFamily: "var(--lg-font-display)", marginBottom: 18, display: "flex", alignItems: "center", gap: 10 }}>

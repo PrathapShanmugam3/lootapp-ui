@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/apiClient";
 import { AdminPageHeader, AdminCard, AdminTable, PrimaryButton, TextInput } from "@/components/AdminPage";
 import Loader from "@/components/Loader";
+import { showError } from "@/lib/toast";
 
 export default function LinkDomainsPage() {
   const [domains, setDomains] = useState(null);
   const [domain, setDomain] = useState("");
   const [label, setLabel] = useState("");
-  const [message, setMessage] = useState(null);
 
   function load() {
     api.get("/api/link-domains/admin/all").then((res) => setDomains(res.domains)).catch(() => setDomains([]));
@@ -21,7 +21,6 @@ export default function LinkDomainsPage() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setMessage(null);
     try {
       const res = await api.post("/api/link-domains/admin", { domain, label });
       if (res.success) {
@@ -29,10 +28,10 @@ export default function LinkDomainsPage() {
         setLabel("");
         load();
       } else {
-        setMessage({ type: "error", text: res.message });
+        showError(res.message);
       }
     } catch (err) {
-      setMessage({ type: "error", text: err.data?.message || err.message });
+      showError(err.data?.message || err.message);
     }
   }
 
@@ -59,12 +58,6 @@ export default function LinkDomainsPage() {
         subtitle="Domains affiliates can choose from when generating offer / referral links"
       />
 
-      {message && (
-        <div style={{ padding: 12, borderRadius: "var(--lg-radius-sm)", marginBottom: 16, background: "var(--lg-error-soft)", color: "var(--lg-error)", fontSize: 13, fontWeight: 600 }}>
-          {message.text}
-        </div>
-      )}
-
       <AdminCard style={{ padding: 20, marginBottom: 20, borderRadius: "var(--lg-radius)", boxShadow: "var(--lg-shadow-sm)" }}>
         <form onSubmit={handleSubmit} style={{ display: "flex", gap: 8, flexWrap: "wrap" }} noValidate>
           <TextInput
@@ -85,7 +78,7 @@ export default function LinkDomainsPage() {
           <PrimaryButton type="submit">Add Domain</PrimaryButton>
         </form>
         <p style={{ marginTop: 10, fontSize: 12, color: "var(--lg-ink-faint)" }}>
-          Point each domain&apos;s DNS at this app before adding it here — adding a domain to this pool does not configure DNS or hosting.
+          Before adding a domain here, point its DNS (A/CNAME record) at the server this app is hosted on. Adding it to this pool only makes it selectable in the offer/refer link generator — it does not configure DNS or hosting for you. Once DNS is pointed correctly, the app will automatically serve pages and API calls on that domain (no extra setup needed).
         </p>
       </AdminCard>
 

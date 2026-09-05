@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/apiClient";
 import { AdminPageHeader, AdminCard, AdminTable, TextInput, Pagination } from "@/components/AdminPage";
 import Loader from "@/components/Loader";
+import { showError } from "@/lib/toast";
 
 const STATUS_COLORS = {
   pending: { bg: "var(--lg-warning-soft)", fg: "var(--lg-warning)" },
@@ -17,7 +18,6 @@ export default function AccountDeleteRequestsPage() {
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(20);
-  const [message, setMessage] = useState(null);
 
   function load() {
     const params = new URLSearchParams({ page: String(page), limit: String(limit) });
@@ -31,22 +31,17 @@ export default function AccountDeleteRequestsPage() {
   }, [search, status, page, limit]);
 
   async function handleAction(id, newStatus) {
-    setMessage(null);
     try {
       await api.put(`/api/admin/account-delete-requests/${id}`, { status: newStatus });
       load();
     } catch (err) {
-      setMessage({ type: "error", text: err.data?.message || err.message });
+      showError(err.data?.message || err.message);
     }
   }
 
   return (
     <div style={{ padding: "2rem", maxWidth: 1100, margin: "0 auto" }}>
       <AdminPageHeader title="Account Delete Requests" subtitle={data ? `${data.totalRecords} requests` : ""} />
-
-      {message && (
-        <div style={{ padding: 14, borderRadius: "var(--lg-radius-sm)", marginBottom: 16, background: "var(--lg-error-soft)", color: "var(--lg-error)", fontSize: 13, fontWeight: 600 }}>{message.text}</div>
-      )}
 
       <div style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap" }}>
         <TextInput placeholder="Search by email…" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} style={{ width: "100%", maxWidth: 280, borderRadius: "var(--lg-radius-pill)" }} />

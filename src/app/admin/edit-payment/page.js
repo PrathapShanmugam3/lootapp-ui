@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { api } from "@/lib/apiClient";
 import { AdminPageHeader, AdminCard, PrimaryButton, TextInput } from "@/components/AdminPage";
 import Loader from "@/components/Loader";
+import { showSuccess, showError } from "@/lib/toast";
 
 const label = { fontSize: 12.5, fontWeight: 700, color: "var(--lg-ink-soft)", display: "block", marginBottom: 7 };
 const field = { marginBottom: 18 };
@@ -17,7 +18,6 @@ const selectStyle = {
 function EditPaymentContent() {
   const id = useSearchParams().get("id");
   const [record, setRecord] = useState(null);
-  const [message, setMessage] = useState(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -32,12 +32,12 @@ function EditPaymentContent() {
   async function handleSubmit(e) {
     e.preventDefault();
     setSaving(true);
-    setMessage(null);
     try {
       const res = await api.put(`/api/admin/pay-records/${id}`, { payId: record.pay_id, payAmount: record.pay_amount, payStatus: record.pay_status });
-      setMessage(res.success ? { type: "success", text: "Payment record updated." } : { type: "error", text: res.message });
+      if (res.success) showSuccess("Payment record updated.");
+      else showError(res.message);
     } catch (err) {
-      setMessage({ type: "error", text: err.data?.message || err.message });
+      showError(err.data?.message || err.message);
     } finally {
       setSaving(false);
     }
@@ -48,11 +48,6 @@ function EditPaymentContent() {
   return (
     <div style={{ padding: "2rem", maxWidth: 500, margin: "0 auto" }}>
       <AdminPageHeader title="Edit Payment" subtitle={record.off_name} />
-      {message && (
-        <div style={{ padding: 14, borderRadius: "var(--lg-radius-sm)", marginBottom: 16, background: message.type === "error" ? "var(--lg-error-soft)" : "var(--lg-success-soft)", color: message.type === "error" ? "var(--lg-error)" : "var(--lg-success)", fontSize: 13, fontWeight: 600 }}>
-          {message.text}
-        </div>
-      )}
       <form onSubmit={handleSubmit} noValidate>
         <AdminCard style={{ padding: 26, borderRadius: "var(--lg-radius)", boxShadow: "var(--lg-shadow-md)", border: "none" }}>
           <div style={field}><label style={label}>Pay ID</label><TextInput required value={record.pay_id} onChange={(e) => set("pay_id", e.target.value)} style={{ width: "100%", borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent", padding: "11px 14px" }} /></div>

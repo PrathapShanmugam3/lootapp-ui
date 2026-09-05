@@ -14,38 +14,80 @@ export default function AdminChatPage() {
   const [file, setFile] = useState(null);
   const [showTemplates, setShowTemplates] = useState(false);
   const [templates, setTemplates] = useState([]);
+  const [sendError, setSendError] = useState(null);
   const fileInputRef = useRef(null);
   const scrollRef = useRef(null);
+  const lastIdRef = useRef(0);
+
+  function loadConversations() {
+    api.get("/api/admin/support/conversations").then((res) => setConversations(res.conversations)).catch(() => setConversations([]));
+  }
 
   useEffect(() => {
-    api.get("/api/admin/support/conversations").then((res) => setConversations(res.conversations)).catch(() => setConversations([]));
+    loadConversations();
     api.get("/api/admin/message-templates/by-role?role=admin").then((res) => setTemplates(res.templates || [])).catch(() => setTemplates([]));
+
+    // Poll for new activity across all conversations (unread badges) even
+    // when no conversation is open — this was missing entirely before,
+    // which is why an incoming user message only ever showed up if/when the
+    // admin happened to reopen that conversation manually.
+    const interval = setInterval(loadConversations, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
     if (!activeUserId) return;
     api.get(`/api/admin/support/chat/${activeUserId}?type=initial`).then((res) => {
       setMessages(res.messages);
+      lastIdRef.current = res.messages.length > 0 ? res.messages[res.messages.length - 1].id : 0;
       setTimeout(() => {
         if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
       }, 50);
     });
+
+    // Poll the open conversation for new messages from the user — this was
+    // entirely missing before, so an admin looking at an already-open
+    // conversation never saw the user's new messages appear live.
+    const interval = setInterval(async () => {
+      try {
+        const res = await api.get(`/api/admin/support/chat/${activeUserId}?type=after&afterId=${lastIdRef.current}`);
+        if (res.messages.length > 0) {
+          const el = scrollRef.current;
+          const isNearBottom = el ? el.scrollTop + el.clientHeight >= el.scrollHeight - 150 : true;
+          setMessages((prev) => [...prev, ...res.messages]);
+          lastIdRef.current = res.messages[res.messages.length - 1].id;
+          if (isNearBottom) {
+            setTimeout(() => {
+              if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+            }, 50);
+          }
+        }
+      } catch {
+        // ignore transient poll failures
+      }
+    }, 5000);
+    return () => clearInterval(interval);
   }, [activeUserId]);
 
   async function handleSend() {
     if ((!text.trim() && !file) || !activeUserId) return;
+    setSendError(null);
     const form = new FormData();
     form.append("text", text.trim());
     if (file) form.append("image", file);
-    await api.post(`/api/admin/support/chat/${activeUserId}`, form);
-    setText("");
-    setFile(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-    const res = await api.get(`/api/admin/support/chat/${activeUserId}?type=initial`);
-    setMessages(res.messages);
-    setTimeout(() => {
-      if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }, 50);
+    try {
+      await api.post(`/api/admin/support/chat/${activeUserId}`, form);
+      setText("");
+      setFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      const res = await api.get(`/api/admin/support/chat/${activeUserId}?type=initial`);
+      setMessages(res.messages);
+      setTimeout(() => {
+        if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      }, 50);
+    } catch (err) {
+      setSendError(err.data?.message || err.message || "Failed to send message.");
+    }
   }
 
   function applyTemplate(t) {
@@ -77,7 +119,11 @@ export default function AdminChatPage() {
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ fontWeight: 700, fontSize: 13, color: "var(--lg-ink)" }}>{c.name}</span>
-                {c.unread && <span style={{ width: 8, height: 8, borderRadius: "50%", background: "linear-gradient(135deg, var(--lg-violet), var(--lg-pink))" }} />}
+                {c.unread && (
+                  <span style={{ minWidth: 18, height: 18, padding: "0 5px", borderRadius: 9, background: "linear-gradient(135deg, var(--lg-violet), var(--lg-pink))", color: "#fff", fontSize: 10.5, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    {c.unreadCount}
+                  </span>
+                )}
               </div>
               <p style={{ fontSize: 12, color: "var(--lg-ink-faint)", margin: "2px 0 0", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.lastMessage}</p>
             </div>
@@ -112,6 +158,11 @@ export default function AdminChatPage() {
                 </div>
               ))}
             </div>
+            {sendError && (
+              <div style={{ padding: "8px 16px", fontSize: 12.5, fontWeight: 600, color: "var(--lg-error)", background: "var(--lg-error-soft)", borderTop: "1px solid var(--lg-line-soft)" }}>
+                {sendError}
+              </div>
+            )}
             {file && (
               <div style={{ padding: "8px 16px", fontSize: 12, color: "var(--lg-ink-soft)", borderTop: "1px solid var(--lg-line-soft)", background: "var(--lg-paper-raised)", display: "flex", alignItems: "center", gap: 8 }}>
                 📎 {file.name}

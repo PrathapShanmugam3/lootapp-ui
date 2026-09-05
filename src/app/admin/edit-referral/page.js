@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { api } from "@/lib/apiClient";
 import { AdminPageHeader, AdminCard, PrimaryButton, TextInput } from "@/components/AdminPage";
 import Loader from "@/components/Loader";
+import { showSuccess, showError } from "@/lib/toast";
 
 const label = { fontSize: 12, fontWeight: 600, color: "var(--lg-ink-soft)", display: "block", marginBottom: 4 };
 const field = { marginBottom: 14 };
@@ -13,7 +14,6 @@ const row = { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220
 function EditReferralContent() {
   const id = useSearchParams().get("id");
   const [referral, setReferral] = useState(null);
-  const [message, setMessage] = useState(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -28,12 +28,12 @@ function EditReferralContent() {
   async function handleSubmit(e) {
     e.preventDefault();
     setSaving(true);
-    setMessage(null);
     try {
       const res = await api.put(`/api/admin/referrals/${id}`, referral);
-      setMessage(res.success ? { type: "success", text: "Referral updated." } : { type: "error", text: res.message });
+      if (res.success) showSuccess("Referral updated.");
+      else showError(res.message);
     } catch (err) {
-      setMessage({ type: "error", text: err.data?.message || err.message });
+      showError(err.data?.message || err.message);
     } finally {
       setSaving(false);
     }
@@ -44,11 +44,6 @@ function EditReferralContent() {
   return (
     <div style={{ padding: "2rem", maxWidth: 700, margin: "0 auto" }}>
       <AdminPageHeader title="Edit Referral" subtitle={`Referral #${referral.id}`} />
-      {message && (
-        <div style={{ padding: 12, borderRadius: "var(--lg-radius-sm)", marginBottom: 16, background: message.type === "error" ? "var(--lg-error-soft)" : "var(--lg-success-soft)", color: message.type === "error" ? "var(--lg-error)" : "var(--lg-success)", fontSize: 13, fontWeight: 600 }}>
-          {message.text}
-        </div>
-      )}
       <form onSubmit={handleSubmit} noValidate>
         <AdminCard style={{ padding: 24, borderRadius: "var(--lg-radius)", boxShadow: "var(--lg-shadow-sm)" }}>
           <div style={row}>

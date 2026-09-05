@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { api } from "@/lib/apiClient";
 import { AdminPageHeader, AdminCard, PrimaryButton, TextInput } from "@/components/AdminPage";
 import Loader, { InlineLoader } from "@/components/Loader";
+import { showSuccess, showError } from "@/lib/toast";
 
 const label = { fontSize: 12.5, fontWeight: 700, color: "var(--lg-ink-soft)", display: "block", marginBottom: 7 };
 const field = { marginBottom: 18 };
@@ -14,7 +15,6 @@ function UserDetailsContent() {
   const userId = useSearchParams().get("user_id");
   const [user, setUser] = useState(null);
   const [dbId, setDbId] = useState(null);
-  const [message, setMessage] = useState(null);
   const [saving, setSaving] = useState(false);
   const [loadError, setLoadError] = useState(null);
 
@@ -39,14 +39,14 @@ function UserDetailsContent() {
   async function handleSubmit(e) {
     e.preventDefault();
     setSaving(true);
-    setMessage(null);
     try {
       const res = await api.put(`/api/emp/users/${dbId}`, {
         name: user.name, email: user.email, mobile: user.mobile, upi: user.upi, status: user.status,
       });
-      setMessage(res.success ? { type: "success", text: "User updated." } : { type: "error", text: res.message });
+      if (res.success) showSuccess("User updated.");
+      else showError(res.message);
     } catch (err) {
-      setMessage({ type: "error", text: err.data?.message || err.message });
+      showError(err.data?.message || err.message);
     } finally {
       setSaving(false);
     }
@@ -67,21 +67,6 @@ function UserDetailsContent() {
   return (
     <div style={{ padding: "2rem", maxWidth: 600, margin: "0 auto" }}>
       <AdminPageHeader title="User Details" subtitle={`User ID: ${user.user_id}`} />
-      {message && (
-        <div
-          style={{
-            padding: 14,
-            borderRadius: "var(--lg-radius-sm)",
-            marginBottom: 16,
-            background: message.type === "error" ? "var(--lg-error-soft)" : "var(--lg-success-soft)",
-            color: message.type === "error" ? "var(--lg-error)" : "var(--lg-success)",
-            fontSize: 13,
-            fontWeight: 600,
-          }}
-        >
-          {message.text}
-        </div>
-      )}
       <form onSubmit={handleSubmit} noValidate>
         <AdminCard style={{ padding: 26 }}>
           <div style={row}>

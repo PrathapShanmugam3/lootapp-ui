@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { api } from "@/lib/apiClient";
 import { AdminPageHeader, AdminCard, PrimaryButton, TextInput } from "@/components/AdminPage";
 import Loader from "@/components/Loader";
+import { showSuccess, showError } from "@/lib/toast";
 
 const label = { fontSize: 12, fontWeight: 600, color: "var(--lg-ink-soft)", display: "block", marginBottom: 4 };
 const field = { marginBottom: 14 };
@@ -12,7 +13,6 @@ const field = { marginBottom: 14 };
 function EditClickContent() {
   const id = useSearchParams().get("id");
   const [click, setClick] = useState(null);
-  const [message, setMessage] = useState(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -27,16 +27,16 @@ function EditClickContent() {
   async function handleSubmit(e) {
     e.preventDefault();
     setSaving(true);
-    setMessage(null);
     try {
       const res = await api.put(`/api/admin/clicks/${id}`, {
         affId: click.aff_id, offName: click.off_name,
         affSub1: click.aff_sub_1, affSub2: click.aff_sub_2, affSub3: click.aff_sub_3, affSub4: click.aff_sub_4, affSub5: click.aff_sub_5,
         clickStatus: click.click_status,
       });
-      setMessage(res.success ? { type: "success", text: "Click updated." } : { type: "error", text: res.message });
+      if (res.success) showSuccess("Click updated.");
+      else showError(res.message);
     } catch (err) {
-      setMessage({ type: "error", text: err.data?.message || err.message });
+      showError(err.data?.message || err.message);
     } finally {
       setSaving(false);
     }
@@ -47,11 +47,6 @@ function EditClickContent() {
   return (
     <div style={{ padding: "2rem", maxWidth: 600, margin: "0 auto" }}>
       <AdminPageHeader title="Edit Click" subtitle={click.click_id} />
-      {message && (
-        <div style={{ padding: 12, borderRadius: "var(--lg-radius-sm)", marginBottom: 16, background: message.type === "error" ? "var(--lg-error-soft)" : "var(--lg-success-soft)", color: message.type === "error" ? "var(--lg-error)" : "var(--lg-success)", fontSize: 13, fontWeight: 600 }}>
-          {message.text}
-        </div>
-      )}
       <form onSubmit={handleSubmit} noValidate>
         <AdminCard style={{ padding: 24, borderRadius: "var(--lg-radius)", boxShadow: "var(--lg-shadow-sm)" }}>
           <div style={field}><label style={label}>Click ID (read-only)</label><TextInput value={click.click_id} disabled style={{ width: "100%", background: "var(--lg-paper-sunken)", borderRadius: "var(--lg-radius-sm)", border: "1.5px solid transparent" }} /></div>
