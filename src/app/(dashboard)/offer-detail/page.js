@@ -330,9 +330,9 @@ function OfferDetailContent() {
       </div>
 
       {/* Tracking Links & Tools Grid */}
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid lg:grid-cols-3 gap-6 min-w-0">
         {/* Tracking Links Card */}
-        <div className="lg:col-span-2 rounded-2xl p-[1px] relative">
+        <div className="lg:col-span-2 rounded-2xl p-[1px] relative min-w-0">
           <div className="relative rounded-2xl p-6 shadow-sm h-full flex flex-col" style={{ background: "var(--lg-paper-raised)", border: "1px solid var(--lg-line)" }}>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <div className="flex items-center gap-3">
@@ -391,7 +391,7 @@ function OfferDetailContent() {
 
         {/* Landing Page Theme Card */}
         {availableThemes.length > 0 && (
-          <div className="rounded-2xl p-[1px] relative">
+          <div className="rounded-2xl p-[1px] relative min-w-0">
             <div className="relative rounded-2xl p-6 shadow-sm h-full" style={{ background: "var(--lg-paper-raised)", border: "1px solid var(--lg-line)" }}>
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center border" style={{ background: "var(--lg-pink-soft)", color: "var(--lg-pink)", borderColor: "var(--lg-pink-soft)" }}>
