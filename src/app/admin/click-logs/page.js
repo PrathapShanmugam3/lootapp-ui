@@ -87,22 +87,56 @@ export default function ClickLogsPage() {
           <Loader style={{ padding: 32 }} />
         ) : (
           <>
-            <AdminTable columns={["#", "Click ID", "Offer", "Affiliate", "Event", "IP", "Date", "Status", "Action"]}>
-              {data.clicks.map((c, i) => (
-                <tr key={c.id} style={{ borderTop: "1px solid var(--lg-line-soft)" }}>
-                  <td style={{ padding: "10px 16px", color: "var(--lg-ink-faint)", fontSize: 12.5, fontWeight: 600 }}>{(page - 1) * limit + i + 1}</td>
-                  <td style={{ padding: "10px 16px", fontFamily: "monospace", fontSize: 12 }}>{c.click_id}</td>
-                  <td style={{ padding: "10px 16px" }}>{c.off_name}</td>
-                  <td style={{ padding: "10px 16px" }}>{c.aff_id}</td>
-                  <td style={{ padding: "10px 16px" }}>{c.current_event}</td>
-                  <td style={{ padding: "10px 16px", fontSize: 12, color: "var(--lg-ink-faint)" }}>{c.ip}</td>
-                  <td style={{ padding: "10px 16px", fontSize: 12, color: "var(--lg-ink-faint)" }}>{c.date} {c.time}</td>
-                  <td style={{ padding: "10px 16px" }}><StatusBadge status={c.click_status === "1" ? "Converted" : "Pending"} /></td>
-                  <td style={{ padding: "10px 16px" }}>
-                    <a href={`/admin/edit-click?id=${c.id}`} style={{ color: "var(--lg-violet)", fontWeight: 700, fontSize: 12, textDecoration: "none", transition: "color 150ms ease" }}>Edit</a>
-                  </td>
-                </tr>
-              ))}
+            <AdminTable columns={[
+              "#", "Click ID", "Date", "Time", "Affiliate", "Offer", "IP", "Stage",
+              "User UPI", "Refer UPI", "Input1", "Input2", "Input4",
+              "Eve1 Status", "Eve2 Status", "Eve3 Status", "Eve4 Status", "Eve5 Status",
+              "User Pay", "Refer Pay", "Action",
+            ]}>
+              {data.clicks.map((c, i) => {
+                const eventStatusCell = (n) => {
+                  const done = c[`eve_${n}_status`] === "1";
+                  const hasEvent = (c[`eve_${n}`] || "").trim().length > 0;
+                  if (!hasEvent) return <span style={{ color: "var(--lg-ink-faint)", fontSize: 12 }}>-</span>;
+                  return <StatusBadge status={done ? "Done" : "Pending"} />;
+                };
+                const payCell = (pay) => {
+                  if (!pay) return <span style={{ color: "var(--lg-ink-faint)", fontSize: 12 }}>-</span>;
+                  return (
+                    <div style={{ fontSize: 12 }}>
+                      <div style={{ fontWeight: 700, color: "var(--lg-ink)" }}>₹{pay.amount}</div>
+                      <div style={{ color: "var(--lg-ink-faint)" }}>{pay.destination} · {pay.status}</div>
+                    </div>
+                  );
+                };
+                return (
+                  <tr key={c.id} style={{ borderTop: "1px solid var(--lg-line-soft)" }}>
+                    <td style={{ padding: "10px 16px", color: "var(--lg-ink-faint)", fontSize: 12.5, fontWeight: 600 }}>{(page - 1) * limit + i + 1}</td>
+                    <td style={{ padding: "10px 16px", fontFamily: "monospace", fontSize: 12 }}>{c.click_id}</td>
+                    <td style={{ padding: "10px 16px", fontSize: 12, color: "var(--lg-ink-faint)" }}>{c.date}</td>
+                    <td style={{ padding: "10px 16px", fontSize: 12, color: "var(--lg-ink-faint)" }}>{c.time}</td>
+                    <td style={{ padding: "10px 16px" }}>{c.aff_id}</td>
+                    <td style={{ padding: "10px 16px" }}>{c.off_name}</td>
+                    <td style={{ padding: "10px 16px", fontSize: 12, color: "var(--lg-ink-faint)" }}>{c.ip}</td>
+                    <td style={{ padding: "10px 16px" }}>{c.current_event}</td>
+                    <td style={{ padding: "10px 16px", fontSize: 12 }}>{c.aff_sub_1 || "-"}</td>
+                    <td style={{ padding: "10px 16px", fontSize: 12 }}>{c.aff_sub_2 || "-"}</td>
+                    <td style={{ padding: "10px 16px", fontSize: 12 }}>{c.aff_sub_3 || "-"}</td>
+                    <td style={{ padding: "10px 16px", fontSize: 12 }}>{c.aff_sub_4 || "-"}</td>
+                    <td style={{ padding: "10px 16px", fontSize: 12 }}>{c.aff_sub_5 || "-"}</td>
+                    <td style={{ padding: "10px 16px" }}>{eventStatusCell(1)}</td>
+                    <td style={{ padding: "10px 16px" }}>{eventStatusCell(2)}</td>
+                    <td style={{ padding: "10px 16px" }}>{eventStatusCell(3)}</td>
+                    <td style={{ padding: "10px 16px" }}>{eventStatusCell(4)}</td>
+                    <td style={{ padding: "10px 16px" }}>{eventStatusCell(5)}</td>
+                    <td style={{ padding: "10px 16px" }}>{payCell(c.user_pay_status)}</td>
+                    <td style={{ padding: "10px 16px" }}>{payCell(c.refer_pay_status)}</td>
+                    <td style={{ padding: "10px 16px" }}>
+                      <a href={`/admin/edit-click?id=${c.id}`} style={{ color: "var(--lg-violet)", fontWeight: 700, fontSize: 12, textDecoration: "none", transition: "color 150ms ease" }}>Edit</a>
+                    </td>
+                  </tr>
+                );
+              })}
             </AdminTable>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10, padding: "0 4px" }}>
               <select

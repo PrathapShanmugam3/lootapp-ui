@@ -46,6 +46,7 @@ const ADMIN_NAV = [
       { href: "/admin/top-earners", label: "Top Earners" },
       { href: "/admin/settings", label: "Settings" },
       { href: "/admin/gateway", label: "Gateway" },
+      { href: "/admin/link-domains", label: "Link Domains" },
       { href: "/admin/redeem-codes", label: "Redeem Codes" },
       { href: "/admin/account-delete-requests", label: "Account Delete Requests" },
     ],

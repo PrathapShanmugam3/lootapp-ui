@@ -46,9 +46,9 @@ export function AdminTable({ columns, children }) {
       <table style={{ width: "100%", fontSize: 14, borderCollapse: "collapse", minWidth: 640 }}>
         <thead>
           <tr style={{ background: "var(--lg-paper-sunken)", borderBottom: "1px solid var(--lg-line)", textAlign: "left" }}>
-            {columns.map((c) => (
+            {columns.map((c, i) => (
               <th
-                key={c}
+                key={i}
                 style={{
                   padding: "16px 24px",
                   fontSize: 11,

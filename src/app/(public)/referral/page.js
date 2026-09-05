@@ -21,6 +21,8 @@ function ReferralContent() {
   const [submitting, setSubmitting] = useState(false);
   const validation = useFormValidation();
   const [generatedLink, setGeneratedLink] = useState("");
+  const [linkDomains, setLinkDomains] = useState([]);
+  const [selectedDomain, setSelectedDomain] = useState("");
 
   useEffect(() => {
     if (!code) {
@@ -40,6 +42,16 @@ function ReferralContent() {
       })
       .catch(() => setError("Offer not found"))
       .finally(() => setLoading(false));
+
+    api.get("/api/link-domains")
+      .then((res) => {
+        if (res.success && res.domains?.length) {
+          setLinkDomains(res.domains);
+          const def = res.domains.find((d) => d.is_default) || res.domains[0];
+          setSelectedDomain(def.domain);
+        }
+      })
+      .catch(() => {});
   }, [code]);
 
   const handleSubmit = async (e) => {
@@ -73,7 +85,8 @@ function ReferralContent() {
       });
       
       if (res.success) {
-        setGeneratedLink(`${window.location.origin}/leads?o=${res.referCode}`);
+        const origin = selectedDomain ? `https://${selectedDomain}` : window.location.origin;
+        setGeneratedLink(`${origin}/leads?o=${res.referCode}`);
       } else {
         alert(res.message);
       }
@@ -187,6 +200,17 @@ function ReferralContent() {
         <label className={labelClass}>Telegram User ID (Optional)</label>
         <input type="text" value={telegram} onChange={(e) => setTelegram(e.target.value)} className={inputClass} placeholder="@username" />
       </div>
+
+      {linkDomains.length > 1 && (
+        <div>
+          <label className={labelClass}>Link Domain</label>
+          <select value={selectedDomain} onChange={(e) => setSelectedDomain(e.target.value)} className={inputClass}>
+            {linkDomains.map((d) => (
+              <option key={d.id} value={d.domain}>{d.domain}</option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <button disabled={submitting} type="submit" className={buttonClass}>
         {submitting ? "Generating..." : "Generate Referral Link"}

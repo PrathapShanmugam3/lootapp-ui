@@ -66,8 +66,11 @@ export default function AddOfferPage() {
     eve_1: "", eve_1_name: "", eve_1_user_po: "", eve_1_refer_po: "",
     eve_2: "", eve_2_name: "", eve_2_user_po: "", eve_2_refer_po: "",
     eve_3: "", eve_3_name: "", eve_3_user_po: "", eve_3_refer_po: "",
+    eve_4: "", eve_4_name: "", eve_4_user_po: "", eve_4_refer_po: "",
+    eve_5: "", eve_5_name: "", eve_5_user_po: "", eve_5_refer_po: "",
     input_1: "", input_1_type: "text", input_2: "", input_2_type: "text", input_3: "", input_3_type: "text",
   });
+  const [conversionEvents, setConversionEvents] = useState([]);
   const [message, setMessage] = useState(null);
   const [saving, setSaving] = useState(false);
 
@@ -84,7 +87,8 @@ export default function AddOfferPage() {
     setSaving(true);
     setMessage(null);
     try {
-      const res = await api.post("/api/admin/offers", form);
+      const payload = { ...form, conversion_event: conversionEvents.join(",") };
+      const res = await api.post("/api/admin/offers", payload);
       if (res.success) {
         router.push(`/admin/offer-detail?o=${res.offId}`);
       } else {
@@ -124,10 +128,10 @@ export default function AddOfferPage() {
 
         <AdminCard style={sectionCard}>
           <div style={sectionTitle}><span style={dot} />Offer Details</div>
-          <div style={field}><label style={label}>Steps (one per line)</label><TextArea rows={4} value={form.steps} onChange={(e) => set("steps", e.target.value)} /></div>
-          <div style={field}><label style={label}>Benefits (one per line)</label><TextArea rows={4} value={form.offer_benefits} onChange={(e) => set("offer_benefits", e.target.value)} /></div>
-          <div style={field}><label style={label}>Fees &amp; Charges (one per line)</label><TextArea rows={3} value={form.offer_fees_charges} onChange={(e) => set("offer_fees_charges", e.target.value)} /></div>
-          <div style={field}><label style={label}>Terms (one per line)</label><TextArea rows={3} value={form.terms} onChange={(e) => set("terms", e.target.value)} /></div>
+          <div style={field}><label style={label}>Steps (one per line)</label><TextArea rows={4} value={form.steps} onChange={(e) => set("steps", e.target.value)} placeholder={"Step 1: Click on the offer link.\nStep 2: Complete the required action.\nStep 3: Done! You will get cashback within 24-48 hours."} /></div>
+          <div style={field}><label style={label}>Benefits (one per line)</label><TextArea rows={4} value={form.offer_benefits} onChange={(e) => set("offer_benefits", e.target.value)} placeholder={"Instant cashback on completion.\nNo hidden charges.\n100% safe and secure."} /></div>
+          <div style={field}><label style={label}>Fees &amp; Charges (one per line)</label><TextArea rows={3} value={form.offer_fees_charges} onChange={(e) => set("offer_fees_charges", e.target.value)} placeholder={"No fees and charges applicable."} /></div>
+          <div style={field}><label style={label}>Terms (one per line)</label><TextArea rows={3} value={form.terms} onChange={(e) => set("terms", e.target.value)} placeholder={"Tracking Time: Up to 24 hours\nPayout Time: Up to 7 days\nOffer valid for new users only."} /></div>
         </AdminCard>
 
         <AdminCard style={sectionCard}>
@@ -145,7 +149,7 @@ export default function AddOfferPage() {
 
         <AdminCard style={sectionCard}>
           <div style={sectionTitle}><span style={dot} />Events &amp; Payouts</div>
-          {[1, 2, 3].map((n) => (
+          {[1, 2, 3, 4, 5].map((n) => (
             <div key={n} style={{ ...row, gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", marginBottom: 12 }}>
               <TextInput placeholder={`Event ${n} slug`} value={form[`eve_${n}`]} onChange={(e) => set(`eve_${n}`, e.target.value)} onFocus={focusIn} onBlur={focusOut} style={inputStyle} />
               <TextInput placeholder="Display name" value={form[`eve_${n}_name`]} onChange={(e) => set(`eve_${n}_name`, e.target.value)} onFocus={focusIn} onBlur={focusOut} style={inputStyle} />
@@ -153,7 +157,30 @@ export default function AddOfferPage() {
               <TextInput type="number" min="0" step="0.01" placeholder="Refer payout" value={form[`eve_${n}_refer_po`]} onChange={(e) => set(`eve_${n}_refer_po`, e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ ...inputStyle, fontVariantNumeric: "tabular-nums" }} />
             </div>
           ))}
-          <div style={field}><label style={label}>Conversion Event (terminal event slug)</label><TextInput value={form.conversion_event} onChange={(e) => set("conversion_event", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
+          <div style={field}>
+            <label style={label}>Conversion Events (any one marks the click fully converted)</label>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+              {[1, 2, 3, 4, 5].filter((n) => form[`eve_${n}`].trim()).map((n) => {
+                const slug = form[`eve_${n}`].trim();
+                const checked = conversionEvents.includes(slug);
+                return (
+                  <label key={n} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "var(--lg-ink)", background: "var(--lg-paper-sunken)", padding: "8px 12px", borderRadius: "var(--lg-radius-sm)", cursor: "pointer" }}>
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={(e) => {
+                        setConversionEvents((prev) => e.target.checked ? [...prev, slug] : prev.filter((s) => s !== slug));
+                      }}
+                    />
+                    {form[`eve_${n}_name`].trim() || slug}
+                  </label>
+                );
+              })}
+              {[1, 2, 3, 4, 5].every((n) => !form[`eve_${n}`].trim()) && (
+                <span style={{ fontSize: 12.5, color: "var(--lg-ink-faint)" }}>Fill in event slugs above to choose which ones count as conversion.</span>
+              )}
+            </div>
+          </div>
         </AdminCard>
 
         <AdminCard style={sectionCard}>

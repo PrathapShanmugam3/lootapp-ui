@@ -9,14 +9,77 @@ export default function FailedPaymentsPage() {
   const [data, setData] = useState(null);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+  const [selected, setSelected] = useState([]);
+  const [repaying, setRepaying] = useState(false);
+  const [message, setMessage] = useState(null);
 
-  useEffect(() => {
-    api.get(`/api/admin/failed-payments?page=${page}&limit=${limit}`).then(setData).catch(() => setData(null));
-  }, [page, limit]);
+  function load() {
+    api.get(`/api/admin/failed-payments?page=${page}&limit=${limit}`)
+      .then((res) => { setData(res); setSelected([]); })
+      .catch(() => setData(null));
+  }
+
+  useEffect(load, [page, limit]);
+
+  function toggleSelect(id) {
+    setSelected((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
+  }
+
+  function toggleSelectAll() {
+    if (!data) return;
+    const allIds = data.payments.map((p) => p.id);
+    setSelected((prev) => prev.length === allIds.length ? [] : allIds);
+  }
+
+  async function handleRepay(id) {
+    setRepaying(true);
+    setMessage(null);
+    try {
+      const res = await api.post(`/api/admin/pay-records/${id}/repay`);
+      setMessage(res.success ? { type: "success", text: `Repay attempted: ${res.result?.status || "done"}.` } : { type: "error", text: res.message });
+      load();
+    } catch (err) {
+      setMessage({ type: "error", text: err.data?.message || err.message });
+    } finally {
+      setRepaying(false);
+    }
+  }
+
+  async function handleRepayBulk() {
+    if (selected.length === 0) return;
+    if (!window.confirm(`Repay ${selected.length} failed payment(s)? This will attempt to move real money again.`)) return;
+    setRepaying(true);
+    setMessage(null);
+    try {
+      const res = await api.post("/api/admin/pay-records/repay-bulk", { ids: selected });
+      const succeeded = res.results?.filter((r) => r.success).length || 0;
+      const failed = (res.results?.length || 0) - succeeded;
+      setMessage({ type: failed ? "error" : "success", text: `${succeeded} repaid, ${failed} could not be repaid.` });
+      setSelected([]);
+      load();
+    } catch (err) {
+      setMessage({ type: "error", text: err.data?.message || err.message });
+    } finally {
+      setRepaying(false);
+    }
+  }
 
   return (
     <div style={{ padding: "2rem", maxWidth: 1200, margin: "0 auto" }}>
-      <AdminPageHeader title="Failed Payments" subtitle={data ? `${data.totalRecords} failed` : ""} />
+      <AdminPageHeader
+        title="Failed Payments"
+        subtitle={data ? `${data.totalRecords} failed` : ""}
+        action={selected.length > 0 && (
+          <button onClick={handleRepayBulk} disabled={repaying} style={{ background: "var(--lg-violet)", color: "#fff", border: "none", borderRadius: "var(--lg-radius-pill)", padding: "10px 20px", fontWeight: 700, fontSize: 13, cursor: repaying ? "not-allowed" : "pointer" }}>
+            {repaying ? "Repaying…" : `Repay Selected (${selected.length})`}
+          </button>
+        )}
+      />
+      {message && (
+        <div style={{ padding: 12, borderRadius: "var(--lg-radius-sm)", marginBottom: 16, background: message.type === "error" ? "var(--lg-error-soft)" : "var(--lg-success-soft)", color: message.type === "error" ? "var(--lg-error)" : "var(--lg-success)", fontSize: 13, fontWeight: 600 }}>
+          {message.text}
+        </div>
+      )}
       <AdminCard style={{ borderRadius: "var(--lg-radius)", boxShadow: "var(--lg-shadow-md)", border: "none" }}>
         {!data ? (
           <Loader style={{ padding: 32, color: "var(--lg-ink-faint)" }} />
@@ -24,18 +87,23 @@ export default function FailedPaymentsPage() {
           <div style={{ padding: 32, color: "var(--lg-ink-faint)", fontSize: 13 }}>No failed payments.</div>
         ) : (
           <>
-          <AdminTable columns={["#", "Offer", "Pay To", "Pay ID", "Amount", "TRX ID", "Date", "Action"]}>
+          <AdminTable columns={[
+            <input key="select-all" type="checkbox" checked={selected.length === data.payments.length && data.payments.length > 0} onChange={toggleSelectAll} />,
+            "#", "Offer", "Pay To", "Pay ID", "Amount", "TRX ID", "Date", "Action",
+          ]}>
             {data.payments.map((p, i) => (
               <tr key={p.id} style={{ borderTop: "1px solid var(--lg-line-soft)", transition: "background-color 140ms ease" }} onMouseEnter={(e) => (e.currentTarget.style.background = "var(--lg-paper-sunken)")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                <td style={{ padding: "12px 16px" }}><input type="checkbox" checked={selected.includes(p.id)} onChange={() => toggleSelect(p.id)} /></td>
                 <td style={{ padding: "12px 16px", color: "var(--lg-ink-faint)", fontSize: 12.5, fontWeight: 600 }}>{(page - 1) * limit + i + 1}</td>
                 <td style={{ padding: "12px 16px", fontWeight: 700, color: "var(--lg-ink)" }}>{p.off_name}</td>
                 <td style={{ padding: "12px 16px" }}>{p.pay_to}</td>
-                <td style={{ padding: "12px 16px", fontFamily: "monospace", fontSize: 12, maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={p.pay_id}>{p.pay_id}</td>
+                <td style={{ padding: "12px 16px", fontFamily: "monospace", fontSize: 12, wordBreak: "break-all" }}>{p.pay_id}</td>
                 <td style={{ padding: "12px 16px", fontWeight: 700, fontFamily: "var(--lg-font-display)", fontVariantNumeric: "tabular-nums" }}>₹{p.pay_amount}</td>
-                <td style={{ padding: "12px 16px", fontFamily: "monospace", fontSize: 11, maxWidth: 180, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={p.trx_id}>{p.trx_id}</td>
+                <td style={{ padding: "12px 16px", fontFamily: "monospace", fontSize: 11, wordBreak: "break-all" }}>{p.trx_id}</td>
                 <td style={{ padding: "12px 16px", fontSize: 12, color: "var(--lg-ink-faint)", fontVariantNumeric: "tabular-nums" }}>{p.date} {p.time}</td>
-                <td style={{ padding: "12px 16px" }}>
+                <td style={{ padding: "12px 16px", display: "flex", gap: 14, alignItems: "center" }}>
                   <a href={`/admin/edit-payment?id=${p.id}`} style={{ color: "var(--lg-violet)", fontWeight: 700, fontSize: 12, textDecoration: "none", transition: "color 150ms ease" }} onMouseEnter={(e) => (e.currentTarget.style.color = "var(--lg-pink)")} onMouseLeave={(e) => (e.currentTarget.style.color = "var(--lg-violet)")}>Edit</a>
+                  <button onClick={() => handleRepay(p.id)} disabled={repaying} style={{ color: "var(--lg-success)", background: "none", border: "none", fontWeight: 700, fontSize: 12, cursor: repaying ? "not-allowed" : "pointer", padding: 0 }}>Repay</button>
                 </td>
               </tr>
             ))}

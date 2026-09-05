@@ -72,6 +72,7 @@ function EditUserContent() {
   const [auditLog, setAuditLog] = useState(null);
   const [stateReason, setStateReason] = useState("");
   const [stateSaving, setStateSaving] = useState(false);
+  const [adjustAmount, setAdjustAmount] = useState("");
 
   function loadUser() {
     api.get(`/api/admin/users/${id}`).then((res) => setUser(res.user)).catch(() => setUser(null));
@@ -102,6 +103,14 @@ function EditUserContent() {
 
   function set(key, value) {
     setUser((u) => ({ ...u, [key]: value }));
+  }
+
+  function applyAdjustment(sign) {
+    const amount = Number(adjustAmount);
+    if (!amount || amount <= 0) return;
+    const newBalance = Math.max(0, Number(user.balance) + sign * amount);
+    set("balance", newBalance);
+    setAdjustAmount("");
   }
 
   async function handleSubmit(e) {
@@ -153,6 +162,15 @@ function EditUserContent() {
                 <option value="1">Active</option><option value="0">Inactive</option>
               </select>
             </div>
+          </div>
+          <div style={field}>
+            <label style={label}>Add / Cut Balance</label>
+            <div style={{ display: "flex", gap: 8 }}>
+              <TextInput type="number" step="0.01" min="0" placeholder="Amount" value={adjustAmount} onChange={(e) => setAdjustAmount(e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ flex: 1, ...inputStyle, fontVariantNumeric: "tabular-nums" }} />
+              <button type="button" onClick={() => applyAdjustment(1)} style={{ ...pillBtnStyle("var(--lg-success-soft)", "var(--lg-success)"), padding: "0 18px" }}>+ Add</button>
+              <button type="button" onClick={() => applyAdjustment(-1)} style={{ ...pillBtnStyle("var(--lg-error-soft)", "var(--lg-error)"), padding: "0 18px" }}>− Cut</button>
+            </div>
+            <span style={{ fontSize: 11.5, color: "var(--lg-ink-faint)", marginTop: 6, display: "block" }}>Applies to the Balance field above — remember to Save Changes after.</span>
           </div>
           <div style={field}>
             <label style={label}>Balance Adjustment Comment (if changing balance)</label>

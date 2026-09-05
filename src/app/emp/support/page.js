@@ -6,11 +6,23 @@ import Loader from "@/components/Loader";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
+const MESSAGE_TEMPLATES = [
+  { label: "Greeting", text: "Hi! Thanks for reaching out. How can I help you today?" },
+  { label: "Referral payout under review", text: "Your referral payout is currently under review. It will be processed within 24-48 hours." },
+  { label: "Ask for pay ID", text: "Could you please share the UPI ID or bank account you used for this referral?" },
+  { label: "Referral confirmed", text: "Thanks for confirming — your referral reward has been credited." },
+  { label: "Need more info", text: "Could you share a screenshot showing the completed step? That'll help us verify faster." },
+  { label: "Closing", text: "Glad we could help! Let us know if anything else comes up." },
+];
+
 export default function SupportPage() {
   const [conversations, setConversations] = useState(null);
   const [activeUserId, setActiveUserId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
+  const [file, setFile] = useState(null);
+  const [showTemplates, setShowTemplates] = useState(false);
+  const fileInputRef = useRef(null);
   const scrollRef = useRef(null);
 
   useEffect(() => {
@@ -28,16 +40,24 @@ export default function SupportPage() {
   }, [activeUserId]);
 
   async function handleSend() {
-    if (!text.trim() || !activeUserId) return;
+    if ((!text.trim() && !file) || !activeUserId) return;
     const form = new FormData();
     form.append("text", text.trim());
+    if (file) form.append("image", file);
     await api.post(`/api/emp/support/chat/${activeUserId}`, form);
     setText("");
+    setFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
     const res = await api.get(`/api/emp/support/chat/${activeUserId}?type=initial`);
     setMessages(res.messages);
     setTimeout(() => {
       if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }, 50);
+  }
+
+  function applyTemplate(t) {
+    setText(t.text);
+    setShowTemplates(false);
   }
 
   return (
@@ -99,7 +119,50 @@ export default function SupportPage() {
                 </div>
               ))}
             </div>
-            <div style={{ display: "flex", gap: 10, padding: 16, borderTop: "1px solid var(--lg-line)", background: "var(--lg-paper-raised)" }}>
+            {file && (
+              <div style={{ padding: "8px 16px", fontSize: 12, color: "var(--lg-ink-soft)", borderTop: "1px solid var(--lg-line-soft)", background: "var(--lg-paper-raised)", display: "flex", alignItems: "center", gap: 8 }}>
+                📎 {file.name}
+                <button onClick={() => { setFile(null); if (fileInputRef.current) fileInputRef.current.value = ""; }} style={{ background: "none", border: "none", color: "var(--lg-error)", cursor: "pointer", fontSize: 12, fontWeight: 700 }}>Remove</button>
+              </div>
+            )}
+            <div style={{ position: "relative", display: "flex", gap: 10, padding: 16, borderTop: "1px solid var(--lg-line)", background: "var(--lg-paper-raised)" }}>
+              {showTemplates && (
+                <div style={{ position: "absolute", bottom: "100%", left: 16, marginBottom: 8, background: "var(--lg-paper)", border: "1px solid var(--lg-line)", borderRadius: "var(--lg-radius)", boxShadow: "var(--lg-shadow-md)", width: 320, maxHeight: 260, overflowY: "auto", zIndex: 10 }}>
+                  {MESSAGE_TEMPLATES.map((t) => (
+                    <button
+                      key={t.label}
+                      onClick={() => applyTemplate(t)}
+                      style={{ display: "block", width: "100%", textAlign: "left", padding: "10px 14px", background: "none", border: "none", borderBottom: "1px solid var(--lg-line-soft)", cursor: "pointer" }}
+                    >
+                      <div style={{ fontWeight: 700, fontSize: 12.5, color: "var(--lg-ink)" }}>{t.label}</div>
+                      <div style={{ fontSize: 12, color: "var(--lg-ink-faint)", marginTop: 2 }}>{t.text}</div>
+                    </button>
+                  ))}
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={() => setShowTemplates((s) => !s)}
+                title="Preset messages"
+                style={{ background: "var(--lg-paper-sunken)", border: "1.5px solid var(--lg-line)", borderRadius: "50%", width: 42, height: 42, fontSize: 16, cursor: "pointer", flexShrink: 0 }}
+              >
+                💬
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={(e) => setFile(e.target.files?.[0] || null)}
+                style={{ display: "none" }}
+                id="emp-chat-file-input"
+              />
+              <label
+                htmlFor="emp-chat-file-input"
+                title="Attach image"
+                style={{ background: "var(--lg-paper-sunken)", border: "1.5px solid var(--lg-line)", borderRadius: "50%", width: 42, height: 42, fontSize: 16, cursor: "pointer", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}
+              >
+                📎
+              </label>
               <input
                 value={text}
                 onChange={(e) => setText(e.target.value)}

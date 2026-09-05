@@ -68,7 +68,7 @@ export default function PaymentLogsPage() {
                   <td style={{ padding: "12px 16px", color: "var(--lg-ink-faint)", fontSize: 12.5, fontWeight: 600 }}>{(page - 1) * limit + i + 1}</td>
                   <td style={{ padding: "12px 16px", fontWeight: 700, color: "var(--lg-ink)" }}>{l.off_name}</td>
                   <td style={{ padding: "12px 16px" }}>{l.pay_to}</td>
-                  <td style={{ padding: "12px 16px", fontFamily: "monospace", fontSize: 12, maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={l.pay_id}>{l.pay_id}</td>
+                  <td style={{ padding: "12px 16px", fontFamily: "monospace", fontSize: 12, wordBreak: "break-all" }}>{l.pay_id}</td>
                   <td style={{ padding: "12px 16px", fontSize: 12.5, color: "var(--lg-ink-soft)" }}>{l.event}</td>
                   <td style={{ padding: "12px 16px", fontWeight: 700, fontFamily: "var(--lg-font-display)", fontVariantNumeric: "tabular-nums" }}>₹{l.pay_amount}</td>
                   <td style={{ padding: "12px 16px" }}><StatusBadge status={l.pay_status} /></td>

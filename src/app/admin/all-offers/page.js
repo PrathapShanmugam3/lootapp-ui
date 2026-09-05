@@ -13,13 +13,26 @@ export default function AllOffersPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
 
-  useEffect(() => {
+  function load() {
     api.get("/api/admin/offers").then((res) => setOffers(res.offers)).catch(() => setOffers([]));
+  }
+
+  useEffect(() => {
+    load();
   }, []);
 
   useEffect(() => {
     setCurrentPage(1);
   }, [search]);
+
+  async function handleDuplicate(offId) {
+    const res = await api.post(`/api/admin/offers/${offId}/duplicate`);
+    if (res.success) {
+      load();
+    } else {
+      alert(res.message || "Failed to duplicate offer.");
+    }
+  }
 
   if (!offers) return <Loader style={{ padding: 32, color: "var(--lg-ink-soft)" }} />;
 
@@ -75,8 +88,14 @@ export default function AllOffersPage() {
               <td style={{ padding: "12px 16px", fontWeight: 700, color: "var(--lg-ink)" }}>{o.offer_name}</td>
               <td style={{ padding: "12px 16px", fontVariantNumeric: "tabular-nums" }}>{o.caps}</td>
               <td style={{ padding: "12px 16px" }}><StatusBadge status={o.offer_status} /></td>
-              <td style={{ padding: "12px 16px" }}>
+              <td style={{ padding: "12px 16px", display: "flex", gap: 14, alignItems: "center" }}>
                 <a href={`/admin/offer-detail?o=${o.off_id}`} style={{ color: "var(--lg-violet)", fontWeight: 700, fontSize: 12, textDecoration: "none", transition: "color 150ms ease" }}>View</a>
+                <button
+                  onClick={() => handleDuplicate(o.off_id)}
+                  style={{ color: "var(--lg-ink-soft)", background: "none", border: "none", fontWeight: 700, fontSize: 12, cursor: "pointer", padding: 0 }}
+                >
+                  Duplicate
+                </button>
               </td>
             </tr>
           ))}

@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { api } from "@/lib/apiClient";
 import { AdminPageHeader, AdminCard, AdminTable, PrimaryButton, TextInput } from "@/components/AdminPage";
 import Loader from "@/components/Loader";
 
-const emptyForm = { id: null, gtype: "upi", gname: "", gurl: "", statusVar: "", successResponse: "", trxIdVar: "", priority: 0, isActive: true };
+const emptyForm = {
+  id: null, gtype: "upi", gname: "", gurl: "", statusVar: "", successResponse: "", trxIdVar: "", priority: 0, isActive: true,
+  callbackUrl: "", callbackStatusVar1: "", callbackStatusVar2: "", callbackSuccessStatus: "",
+};
 
 const inputBase = {
   width: "100%", borderRadius: "var(--lg-radius-sm)", background: "var(--lg-paper-sunken)", border: "1.5px solid transparent",
@@ -85,6 +88,14 @@ export default function GatewayPage() {
             <TextInput placeholder="Success value" value={form.successResponse} onChange={(e) => set("successResponse", e.target.value)} style={inputBase} />
             <TextInput placeholder="TRX ID field name" value={form.trxIdVar} onChange={(e) => set("trxIdVar", e.target.value)} style={inputBase} />
           </div>
+
+          <h4 style={{ fontSize: 12.5, fontWeight: 700, color: "var(--lg-ink-soft)", marginBottom: 10 }}>Status Callback (for checking payment status after &quot;Processing&quot;)</h4>
+          <TextInput placeholder="Callback URL template (e.g. https://api.example.com/status?order_id={order_id})" value={form.callbackUrl} onChange={(e) => set("callbackUrl", e.target.value)} style={{ ...inputBase, marginBottom: 14 }} />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 18 }}>
+            <TextInput placeholder="Status var 1 (parent field)" value={form.callbackStatusVar1} onChange={(e) => set("callbackStatusVar1", e.target.value)} style={inputBase} />
+            <TextInput placeholder="Status var 2 (child field)" value={form.callbackStatusVar2} onChange={(e) => set("callbackStatusVar2", e.target.value)} style={inputBase} />
+            <TextInput placeholder="Success status value" value={form.callbackSuccessStatus} onChange={(e) => set("callbackSuccessStatus", e.target.value)} style={inputBase} />
+          </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginBottom: 18, alignItems: "center" }}>
             <div>
               <label style={{ fontSize: 12.5, fontWeight: 700, color: "var(--lg-ink-soft)", display: "block", marginBottom: 7 }}>Failover priority (lower tried first)</label>
@@ -133,22 +144,38 @@ export default function GatewayPage() {
         ) : (
           <AdminTable columns={["#", "ID", "Type", "Name", "Priority", "Active", "Action"]}>
             {gateways.map((g, i) => (
-              <tr key={g.id} style={{ borderTop: "1px solid var(--lg-line-soft)", transition: "background-color 140ms ease" }} onMouseEnter={(e) => (e.currentTarget.style.background = "var(--lg-paper-sunken)")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
-                <td style={{ padding: "12px 16px", color: "var(--lg-ink-faint)", fontSize: 12.5, fontWeight: 600 }}>{i + 1}</td>
-                <td style={{ padding: "12px 16px", fontVariantNumeric: "tabular-nums" }}>{g.id}</td>
-                <td style={{ padding: "12px 16px", textTransform: "uppercase", fontSize: 11.5, fontWeight: 700, color: "var(--lg-ink-faint)" }}>{g.gtype}</td>
-                <td style={{ padding: "12px 16px", fontWeight: 700, color: "var(--lg-ink)" }}>{g.gname}</td>
-                <td style={{ padding: "12px 16px", fontVariantNumeric: "tabular-nums" }}>{g.priority}</td>
-                <td style={{ padding: "12px 16px" }}>
-                  <span style={{ fontSize: 10.5, fontWeight: 800, padding: "4px 11px", borderRadius: "var(--lg-radius-pill)", background: g.is_active ? "var(--lg-success-soft)" : "var(--lg-line-soft)", color: g.is_active ? "var(--lg-success)" : "var(--lg-ink-faint)" }}>
-                    {g.is_active ? "Active" : "Inactive"}
-                  </span>
-                </td>
-                <td style={{ padding: "12px 16px", display: "flex", gap: 14 }}>
-                  <button onClick={() => setForm({ id: g.id, gtype: g.gtype, gname: g.gname, gurl: g.gurl, statusVar: g.status_var, successResponse: g.success_response, trxIdVar: g.trx_id_var, priority: g.priority, isActive: Boolean(g.is_active) })} style={{ color: "var(--lg-violet)", fontWeight: 700, fontSize: 12, background: "none", border: "none", cursor: "pointer", padding: 0, transition: "color 150ms ease" }} onMouseEnter={(e) => (e.currentTarget.style.color = "var(--lg-pink)")} onMouseLeave={(e) => (e.currentTarget.style.color = "var(--lg-violet)")}>Edit</button>
-                  <button onClick={() => handleDelete(g.id)} style={{ color: "var(--lg-error)", fontWeight: 700, fontSize: 12, background: "none", border: "none", cursor: "pointer", padding: 0, transition: "opacity 150ms ease" }} onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")} onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}>Delete</button>
-                </td>
-              </tr>
+              <React.Fragment key={g.id}>
+                <tr style={{ borderTop: "1px solid var(--lg-line-soft)", transition: "background-color 140ms ease" }} onMouseEnter={(e) => (e.currentTarget.style.background = "var(--lg-paper-sunken)")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                  <td style={{ padding: "12px 16px", color: "var(--lg-ink-faint)", fontSize: 12.5, fontWeight: 600 }}>{i + 1}</td>
+                  <td style={{ padding: "12px 16px", fontVariantNumeric: "tabular-nums" }}>{g.id}</td>
+                  <td style={{ padding: "12px 16px", textTransform: "uppercase", fontSize: 11.5, fontWeight: 700, color: "var(--lg-ink-faint)" }}>{g.gtype}</td>
+                  <td style={{ padding: "12px 16px", fontWeight: 700, color: "var(--lg-ink)" }}>{g.gname}</td>
+                  <td style={{ padding: "12px 16px", fontVariantNumeric: "tabular-nums" }}>{g.priority}</td>
+                  <td style={{ padding: "12px 16px" }}>
+                    <span style={{ fontSize: 10.5, fontWeight: 800, padding: "4px 11px", borderRadius: "var(--lg-radius-pill)", background: g.is_active ? "var(--lg-success-soft)" : "var(--lg-line-soft)", color: g.is_active ? "var(--lg-success)" : "var(--lg-ink-faint)" }}>
+                      {g.is_active ? "Active" : "Inactive"}
+                    </span>
+                  </td>
+                  <td style={{ padding: "12px 16px", display: "flex", gap: 14 }}>
+                    <button onClick={() => setForm({
+                      id: g.id, gtype: g.gtype, gname: g.gname, gurl: g.gurl, statusVar: g.status_var, successResponse: g.success_response, trxIdVar: g.trx_id_var, priority: g.priority, isActive: Boolean(g.is_active),
+                      callbackUrl: g.callback_url || "", callbackStatusVar1: g.callback_status_var_1 || "", callbackStatusVar2: g.callback_status_var_2 || "", callbackSuccessStatus: g.callback_success_status || "",
+                    })} style={{ color: "var(--lg-violet)", fontWeight: 700, fontSize: 12, background: "none", border: "none", cursor: "pointer", padding: 0, transition: "color 150ms ease" }} onMouseEnter={(e) => (e.currentTarget.style.color = "var(--lg-pink)")} onMouseLeave={(e) => (e.currentTarget.style.color = "var(--lg-violet)")}>Edit</button>
+                    <button onClick={() => handleDelete(g.id)} style={{ color: "var(--lg-error)", fontWeight: 700, fontSize: 12, background: "none", border: "none", cursor: "pointer", padding: 0, transition: "opacity 150ms ease" }} onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")} onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}>Delete</button>
+                  </td>
+                </tr>
+                <tr style={{ borderBottom: "1px solid var(--lg-line-soft)" }}>
+                  <td colSpan={7} style={{ padding: "0 16px 14px", fontSize: 11.5, color: "var(--lg-ink-faint)" }}>
+                    <div style={{ background: "var(--lg-paper-sunken)", borderRadius: "var(--lg-radius-sm)", padding: "10px 14px", display: "flex", flexDirection: "column", gap: 4 }}>
+                      <div><strong style={{ color: "var(--lg-ink-soft)" }}>URL:</strong> <span style={{ fontFamily: "monospace", wordBreak: "break-all" }}>{g.gurl}</span></div>
+                      <div><strong style={{ color: "var(--lg-ink-soft)" }}>Status var:</strong> {g.status_var || "—"} · <strong style={{ color: "var(--lg-ink-soft)" }}>Success value:</strong> {g.success_response || "—"} · <strong style={{ color: "var(--lg-ink-soft)" }}>TRX ID var:</strong> {g.trx_id_var || "—"}</div>
+                      {g.callback_url && (
+                        <div><strong style={{ color: "var(--lg-ink-soft)" }}>Callback:</strong> <span style={{ fontFamily: "monospace", wordBreak: "break-all" }}>{g.callback_url}</span> ({g.callback_status_var_1} → {g.callback_status_var_2} == {g.callback_success_status})</div>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              </React.Fragment>
             ))}
           </AdminTable>
         )}

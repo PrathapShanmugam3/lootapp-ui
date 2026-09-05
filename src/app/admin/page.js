@@ -137,11 +137,14 @@ export default function AdminDashboardPage() {
 
   const stats1 = [
     { label: "Clicks Today", value: data.clicks.today.toLocaleString("en-IN"), sub: `${data.clicks.yesterday} yesterday`, icon: "clicks" },
+    { label: "Clicks This Month", value: data.clicks.month.toLocaleString("en-IN"), sub: `${data.clicks.lastMonth.toLocaleString("en-IN")} last month`, icon: "clicks" },
     { label: "Conversions Today", value: data.conversions.today.toLocaleString("en-IN"), sub: `${data.conversions.yesterday} yesterday`, icon: "check" },
-    { label: "Success Payout", value: `₹${data.withdrawals.month.toLocaleString("en-IN")}`, sub: "This month", icon: "wallet" },
+    { label: "Conversions This Month", value: data.conversions.month.toLocaleString("en-IN"), sub: `${data.conversions.lastMonth.toLocaleString("en-IN")} last month`, icon: "check" },
+    { label: "Payout Today", value: `₹${data.withdrawals.today.toLocaleString("en-IN")}`, sub: `₹${data.withdrawals.yesterday.toLocaleString("en-IN")} yesterday`, icon: "wallet" },
+    { label: "Payout This Month", value: `₹${data.withdrawals.month.toLocaleString("en-IN")}`, sub: `₹${data.withdrawals.lastMonth.toLocaleString("en-IN")} last month`, icon: "wallet" },
     { label: "Pending Payout", value: `₹${data.pendingAmount.toLocaleString("en-IN")}`, sub: "Awaiting approval", icon: "clock" },
     { label: "Processing Payout", value: `₹${data.processingAmount.toLocaleString("en-IN")}`, sub: "At gateway", icon: "clock" },
-    { label: "Failed Payout", value: `₹${data.failedPayouts.month.toLocaleString("en-IN")}`, sub: "This month", icon: "wallet" },
+    { label: "Failed Payout", value: `₹${data.failedPayouts.month.toLocaleString("en-IN")}`, sub: `₹${data.failedPayouts.lastMonth.toLocaleString("en-IN")} last month`, icon: "wallet" },
   ];
   const stats2 = [
     { label: "Live Offers", value: data.liveOffers, icon: "clock" },

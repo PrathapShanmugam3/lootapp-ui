@@ -27,6 +27,19 @@ function StatusSelect({ value, onChange, width }) {
   );
 }
 
+function GatewaySelect({ gateways, type, value, onChange }) {
+  const filtered = gateways.filter((g) => (g.gtype || "").toLowerCase() === type);
+  return (
+    <div style={{ position: "relative", width: "100%" }}>
+      <select value={value} onChange={(e) => onChange(e.target.value)} style={{ ...selectStyle, width: "100%" }} onFocus={focusOn} onBlur={focusOff}>
+        <option value="">— none —</option>
+        {filtered.map((g) => <option key={g.id} value={g.id}>{g.gname}</option>)}
+      </select>
+      <span style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", color: "var(--lg-ink-faint)", fontSize: 10 }}>▾</span>
+    </div>
+  );
+}
+
 function ActiveToggle({ checked, onChange, label: toggleLabel }) {
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", background: "var(--lg-paper-sunken)", borderRadius: "var(--lg-radius-sm)" }}>
@@ -43,12 +56,14 @@ function ActiveToggle({ checked, onChange, label: toggleLabel }) {
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState(null);
+  const [gateways, setGateways] = useState([]);
   const [message, setMessage] = useState(null);
   const [saving, setSaving] = useState(false);
   const [resetting, setResetting] = useState(false);
 
   useEffect(() => {
     api.get("/api/admin/settings").then((res) => setSettings(res.settings)).catch(() => setSettings(null));
+    api.get("/api/admin/gateways").then((res) => setGateways(res.gateways || [])).catch(() => setGateways([]));
   }, []);
 
   function set(key, value) {
@@ -102,30 +117,14 @@ export default function SettingsPage() {
 
       <form onSubmit={handleSave} noValidate>
         <AdminCard style={cardStyle}>
-          {sectionTitle("Default UPI Payment Settings")}
-          <div style={field}><label style={label}>Pay URL Template</label><TextInput required value={settings.pay_url} onChange={(e) => set("pay_url", e.target.value)} style={inputBase} /></div>
-          <div style={row}>
-            <div style={field}><label style={label}>Status Var</label><TextInput value={settings.status_var} onChange={(e) => set("status_var", e.target.value)} style={inputBase} /></div>
-            <div style={field}><label style={label}>Success Response</label><TextInput value={settings.success_response} onChange={(e) => set("success_response", e.target.value)} style={inputBase} /></div>
-          </div>
-          <div style={field}><label style={label}>TRX ID Var</label><TextInput value={settings.trx_id_var} onChange={(e) => set("trx_id_var", e.target.value)} style={inputBase} /></div>
-        </AdminCard>
-
-        <AdminCard style={cardStyle}>
-          {sectionTitle("Callback Settings")}
-          <div style={field}><label style={label}>Callback URL</label><TextInput required value={settings.callback_url} onChange={(e) => set("callback_url", e.target.value)} style={inputBase} /></div>
-          <div style={row}>
-            <div style={field}><label style={label}>Status Var 1 (parent)</label><TextInput value={settings.callback_status_var_1} onChange={(e) => set("callback_status_var_1", e.target.value)} style={inputBase} /></div>
-            <div style={field}><label style={label}>Status Var 2 (child)</label><TextInput value={settings.callback_status_var_2} onChange={(e) => set("callback_status_var_2", e.target.value)} style={inputBase} /></div>
-          </div>
-          <div style={field}><label style={label}>Success Status</label><TextInput value={settings.callback_success_status} onChange={(e) => set("callback_success_status", e.target.value)} style={inputBase} /></div>
-        </AdminCard>
-
-        <AdminCard style={cardStyle}>
-          {sectionTitle("User Wallet Gateway")}
+          {sectionTitle("Wallet Gateway Settings")}
+          <p style={{ fontSize: 12, color: "var(--lg-ink-faint)", marginTop: -10, marginBottom: 16 }}>
+            Which gateway (from the Gateway page) handles user wallet payouts for each method.
+          </p>
           <div style={row}>
             <div style={field}>
-              <label style={label}>UPI Gateway ID</label><TextInput value={settings.upi_gateway || ""} onChange={(e) => set("upi_gateway", e.target.value)} style={inputBase} />
+              <label style={label}>UPI Gateway</label>
+              <GatewaySelect gateways={gateways} type="upi" value={settings.upi_gateway || ""} onChange={(v) => set("upi_gateway", v)} />
             </div>
             <div style={field}>
               <label style={label}>UPI Status</label>
@@ -133,7 +132,10 @@ export default function SettingsPage() {
             </div>
           </div>
           <div style={row}>
-            <div style={field}><label style={label}>Bank Gateway ID</label><TextInput value={settings.bank_gateway || ""} onChange={(e) => set("bank_gateway", e.target.value)} style={inputBase} /></div>
+            <div style={field}>
+              <label style={label}>Bank Gateway</label>
+              <GatewaySelect gateways={gateways} type="bank" value={settings.bank_gateway || ""} onChange={(v) => set("bank_gateway", v)} />
+            </div>
             <div style={field}>
               <label style={label}>Bank Status</label>
               <StatusSelect value={settings.bank_status || "inactive"} onChange={(e) => set("bank_status", e.target.value)} />
@@ -142,18 +144,27 @@ export default function SettingsPage() {
         </AdminCard>
 
         <AdminCard style={cardStyle}>
-          {sectionTitle("Referral Wallet Gateway")}
+          {sectionTitle("EMP (Manager Portal) Gateway Settings")}
+          <p style={{ fontSize: 12, color: "var(--lg-ink-faint)", marginTop: -10, marginBottom: 16 }}>
+            Which gateway handles referral/manager-portal payouts for each method.
+          </p>
           <div style={row}>
-            <div style={field}><label style={label}>Refer UPI Gateway ID</label><TextInput value={settings.r_upi_gateway || ""} onChange={(e) => set("r_upi_gateway", e.target.value)} style={inputBase} /></div>
             <div style={field}>
-              <label style={label}>Refer UPI Status</label>
+              <label style={label}>UPI Gateway</label>
+              <GatewaySelect gateways={gateways} type="upi" value={settings.r_upi_gateway || ""} onChange={(v) => set("r_upi_gateway", v)} />
+            </div>
+            <div style={field}>
+              <label style={label}>UPI Status</label>
               <StatusSelect value={settings.r_upi_status || "inactive"} onChange={(e) => set("r_upi_status", e.target.value)} />
             </div>
           </div>
           <div style={row}>
-            <div style={field}><label style={label}>Refer Bank Gateway ID</label><TextInput value={settings.r_bank_gateway || ""} onChange={(e) => set("r_bank_gateway", e.target.value)} style={inputBase} /></div>
             <div style={field}>
-              <label style={label}>Refer Bank Status</label>
+              <label style={label}>Bank Gateway</label>
+              <GatewaySelect gateways={gateways} type="bank" value={settings.r_bank_gateway || ""} onChange={(v) => set("r_bank_gateway", v)} />
+            </div>
+            <div style={field}>
+              <label style={label}>Bank Status</label>
               <StatusSelect value={settings.r_bank_status || "inactive"} onChange={(e) => set("r_bank_status", e.target.value)} />
             </div>
           </div>

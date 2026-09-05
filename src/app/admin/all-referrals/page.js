@@ -26,20 +26,25 @@ export default function AllReferralsPage() {
           <Loader style={{ padding: 32 }} />
         ) : (
           <>
-            <AdminTable columns={["#", "ID", "Offer", "Affiliate", "Refer Code", "Telegram", "Action"]}>
-              {data.referrals.map((r, i) => (
-                <tr key={r.id} style={{ borderTop: "1px solid var(--lg-line)", transition: "background-color 140ms ease" }}>
-                  <td style={{ padding: "10px 16px", color: "var(--lg-ink-faint)", fontSize: 12.5, fontWeight: 600 }}>{(page - 1) * limit + i + 1}</td>
-                  <td style={{ padding: "10px 16px", fontVariantNumeric: "tabular-nums" }}>{r.id}</td>
-                  <td style={{ padding: "10px 16px", fontWeight: 700, color: "var(--lg-ink)" }}>{r.offer_name || r.offer_id}</td>
-                  <td style={{ padding: "10px 16px" }}><a href={`/admin/user_performance?user_id=${r.aff_id}`} style={{ color: "var(--lg-violet)", fontWeight: 600, textDecoration: "none", transition: "color 150ms ease" }}>{r.aff_id}</a></td>
-                  <td style={{ padding: "10px 16px", fontFamily: "monospace" }}>{r.refer_code}</td>
-                  <td style={{ padding: "10px 16px" }}>{r.ref_telegram || "—"}</td>
-                  <td style={{ padding: "10px 16px" }}>
-                    <a href={`/admin/edit-referral?id=${r.id}`} style={{ color: "var(--lg-violet)", fontWeight: 700, fontSize: 12, textDecoration: "none", transition: "color 150ms ease" }}>Edit</a>
-                  </td>
-                </tr>
-              ))}
+            <AdminTable columns={["#", "ID", "Offer", "Affiliate", "Refer Code", "Pay ID", "Event Amount", "Telegram", "Action"]}>
+              {data.referrals.map((r, i) => {
+                const eventAmount = [1, 2, 3, 4, 5].reduce((sum, n) => sum + Number(r[`eve_${n}_refer_po`] || 0), 0);
+                return (
+                  <tr key={r.id} style={{ borderTop: "1px solid var(--lg-line)", transition: "background-color 140ms ease" }}>
+                    <td style={{ padding: "10px 16px", color: "var(--lg-ink-faint)", fontSize: 12.5, fontWeight: 600 }}>{(page - 1) * limit + i + 1}</td>
+                    <td style={{ padding: "10px 16px", fontVariantNumeric: "tabular-nums" }}>{r.id}</td>
+                    <td style={{ padding: "10px 16px", fontWeight: 700, color: "var(--lg-ink)" }}>{r.offer_name || r.offer_id}</td>
+                    <td style={{ padding: "10px 16px" }}><a href={`/admin/user_performance?user_id=${r.aff_id}`} style={{ color: "var(--lg-violet)", fontWeight: 600, textDecoration: "none", transition: "color 150ms ease" }}>{r.aff_id}</a></td>
+                    <td style={{ padding: "10px 16px", fontFamily: "monospace" }}>{r.refer_code}</td>
+                    <td style={{ padding: "10px 16px", fontFamily: "monospace", fontSize: 12, wordBreak: "break-all" }}>{r.refer_pay_id || "—"}</td>
+                    <td style={{ padding: "10px 16px", fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>₹{eventAmount}</td>
+                    <td style={{ padding: "10px 16px" }}>{r.ref_telegram || "—"}</td>
+                    <td style={{ padding: "10px 16px" }}>
+                      <a href={`/admin/edit-referral?id=${r.id}`} style={{ color: "var(--lg-violet)", fontWeight: 700, fontSize: 12, textDecoration: "none", transition: "color 150ms ease" }}>Edit</a>
+                    </td>
+                  </tr>
+                );
+              })}
             </AdminTable>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10, padding: "0 4px" }}>
               <select

@@ -187,6 +187,12 @@ function OfferDetailContent() {
   const [modalOpen, setModalOpen] = useState(false);
   const [error, setError] = useState(null);
   const [themeSaving, setThemeSaving] = useState(false);
+  const [linkDomains, setLinkDomains] = useState([]);
+  const [selectedDomain, setSelectedDomain] = useState("");
+
+  const linkOrigin = selectedDomain
+    ? `https://${selectedDomain}`
+    : (typeof window !== "undefined" ? window.location.origin : "");
 
   async function handleThemeChange(theme) {
     setThemeSaving(true);
@@ -207,6 +213,16 @@ function OfferDetailContent() {
       .get(`/api/offers/${offId}`)
       .then(setData)
       .catch((err) => setError(err.message));
+
+    api.get("/api/link-domains")
+      .then((res) => {
+        if (res.success && res.domains?.length) {
+          setLinkDomains(res.domains);
+          const def = res.domains.find((d) => d.is_default) || res.domains[0];
+          setSelectedDomain(def.domain);
+        }
+      })
+      .catch(() => {});
   }, [offId]);
 
   if (error) {
@@ -290,13 +306,29 @@ function OfferDetailContent() {
             </div>
 
             <div className="space-y-6 flex-1">
+              {linkDomains.length > 1 && (
+                <div className="group">
+                  <label className="block text-xs font-bold uppercase tracking-wider mb-2.5 ml-1" style={{ color: "var(--lg-ink-soft)" }}>Link Domain</label>
+                  <select
+                    value={selectedDomain}
+                    onChange={(e) => setSelectedDomain(e.target.value)}
+                    className="w-full rounded-2xl p-3 text-sm shadow-inner border"
+                    style={{ background: "var(--lg-paper-sunken)", borderColor: "var(--lg-line)", color: "var(--lg-ink)" }}
+                  >
+                    {linkDomains.map((d) => (
+                      <option key={d.id} value={d.domain}>{d.domain}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
               <div className="group">
                 <label className="block text-xs font-bold uppercase tracking-wider mb-2.5 ml-1" style={{ color: "var(--lg-ink-soft)" }}>Your Offer URL</label>
                 <div className="flex items-center gap-3 rounded-2xl p-2 transition-colors shadow-inner border" style={{ background: "var(--lg-paper-sunken)", borderColor: "var(--lg-line)" }}>
                   <div className="flex-1 overflow-hidden pl-3">
-                    <p className="truncate text-sm font-mono select-all" style={{ color: "var(--lg-ink)" }}>{`${typeof window !== "undefined" ? window.location.origin : ""}/leads?o=${referralLink.referCode}`}</p>
+                    <p className="truncate text-sm font-mono select-all" style={{ color: "var(--lg-ink)" }}>{`${linkOrigin}/leads?o=${referralLink.referCode}`}</p>
                   </div>
-                  <CopyButton value={`${typeof window !== "undefined" ? window.location.origin : ""}/leads?o=${referralLink.referCode}`} />
+                  <CopyButton value={`${linkOrigin}/leads?o=${referralLink.referCode}`} />
                 </div>
               </div>
 
@@ -304,9 +336,9 @@ function OfferDetailContent() {
                 <label className="block text-xs font-bold uppercase tracking-wider mb-2.5 ml-1" style={{ color: "var(--lg-ink-soft)" }}>Sub Refer URL</label>
                 <div className="flex items-center gap-3 rounded-2xl p-2 transition-colors shadow-inner border" style={{ background: "var(--lg-paper-sunken)", borderColor: "var(--lg-line)" }}>
                   <div className="flex-1 overflow-hidden pl-3">
-                    <p className="truncate text-sm font-mono select-all" style={{ color: "var(--lg-ink)" }}>{`${typeof window !== "undefined" ? window.location.origin : ""}/referral?o=${referralLink.referCode}`}</p>
+                    <p className="truncate text-sm font-mono select-all" style={{ color: "var(--lg-ink)" }}>{`${linkOrigin}/referral?o=${referralLink.referCode}`}</p>
                   </div>
-                  <CopyButton value={`${typeof window !== "undefined" ? window.location.origin : ""}/referral?o=${referralLink.referCode}`} />
+                  <CopyButton value={`${linkOrigin}/referral?o=${referralLink.referCode}`} />
                 </div>
               </div>
             </div>

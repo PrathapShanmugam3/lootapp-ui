@@ -9,6 +9,9 @@ import Loader from "@/components/Loader";
 const label = { fontSize: 12.5, fontWeight: 700, color: "var(--lg-ink-soft)", display: "block", marginBottom: 7 };
 const field = { marginBottom: 18 };
 const row = { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16 };
+const sectionTitle = { display: "flex", alignItems: "center", gap: 10, fontSize: 13, fontWeight: 800, color: "var(--lg-ink)", marginBottom: 18, fontFamily: "var(--lg-font-display)" };
+const dot = { width: 8, height: 8, borderRadius: "50%", background: "linear-gradient(135deg, var(--lg-violet), var(--lg-pink))", flexShrink: 0 };
+const sectionCard = { padding: "26px 28px", marginBottom: 20 };
 
 const inputStyle = {
   width: "100%",
@@ -70,6 +73,18 @@ function actionBtnStyle(bg, color) {
   };
 }
 
+function TextArea({ value, onChange, rows, placeholder }) {
+  return <textarea rows={rows} value={value || ""} onChange={onChange} placeholder={placeholder} onFocus={focusIn} onBlur={focusOut} style={{ ...inputStyle, resize: "vertical", fontSize: 13 }} />;
+}
+
+function Select({ value, onChange, children, style }) {
+  return (
+    <select value={value} onChange={onChange} onFocus={focusIn} onBlur={focusOut} style={{ ...inputStyle, cursor: "pointer", ...style }}>
+      {children}
+    </select>
+  );
+}
+
 function OfferDetailContent() {
   const offId = useSearchParams().get("o");
   const [offer, setOffer] = useState(null);
@@ -77,10 +92,16 @@ function OfferDetailContent() {
   const [message, setMessage] = useState(null);
   const [saving, setSaving] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [gateways, setGateways] = useState([]);
+  const [conversionEvents, setConversionEvents] = useState([]);
 
   useEffect(() => {
     if (!offId) return;
-    api.get(`/api/admin/offers/${offId}`).then((res) => setOffer(res.offer)).catch(() => setOffer(null));
+    api.get(`/api/admin/offers/${offId}`).then((res) => {
+      setOffer(res.offer);
+      setConversionEvents((res.offer?.conversion_event || "").split(",").map((s) => s.trim()).filter(Boolean));
+    }).catch(() => setOffer(null));
+    api.get("/api/admin/offers/gateways").then((res) => setGateways(res.gateways)).catch(() => {});
   }, [offId]);
 
   function set(key, value) {
@@ -92,7 +113,8 @@ function OfferDetailContent() {
     setSaving(true);
     setMessage(null);
     try {
-      const res = await api.put(`/api/admin/offers/${offId}`, offer);
+      const payload = { ...offer, conversion_event: conversionEvents.join(",") };
+      const res = await api.put(`/api/admin/offers/${offId}`, payload);
       setMessage(res.success ? { type: "success", text: "Offer updated." } : { type: "error", text: res.message });
     } catch (err) {
       setMessage({ type: "error", text: err.data?.message || err.message });
@@ -144,11 +166,45 @@ function OfferDetailContent() {
 
       {tab === "edit" && (
         <form onSubmit={handleSave} noValidate>
-          <AdminCard style={{ padding: 24, marginBottom: 16 }}>
+          <AdminCard style={sectionCard}>
+            <div style={sectionTitle}><span style={dot} />Basic Info</div>
             <div style={row}>
               <div style={field}><label style={label}>Offer Name</label><TextInput required value={offer.offer_name} onChange={(e) => set("offer_name", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
-              <div style={field}><label style={label}>Caps</label><TextInput value={offer.caps} onChange={(e) => set("caps", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
+              <div style={field}><label style={label}>Offer Title (use {"{amount}"} for cashback placeholder)</label><TextInput value={offer.offer_title || ""} onChange={(e) => set("offer_title", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
             </div>
+            <div style={row}>
+              <div style={field}><label style={label}>Category</label><TextInput value={offer.category || ""} onChange={(e) => set("category", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
+              <div style={field}><label style={label}>Type</label>
+                <Select value={offer.type || "cpa"} onChange={(e) => set("type", e.target.value)}>
+                  <option value="cpa">CPA</option><option value="cpi">CPI</option><option value="cps">CPS</option>
+                </Select>
+              </div>
+            </div>
+          </AdminCard>
+
+          <AdminCard style={sectionCard}>
+            <div style={sectionTitle}><span style={dot} />Offer Details</div>
+            <div style={field}><label style={label}>Steps (one per line)</label><TextArea rows={4} value={offer.steps} onChange={(e) => set("steps", e.target.value)} /></div>
+            <div style={field}><label style={label}>Benefits (one per line)</label><TextArea rows={4} value={offer.offer_benefits} onChange={(e) => set("offer_benefits", e.target.value)} /></div>
+            <div style={field}><label style={label}>Fees &amp; Charges (one per line)</label><TextArea rows={3} value={offer.offer_fees_charges} onChange={(e) => set("offer_fees_charges", e.target.value)} /></div>
+            <div style={field}><label style={label}>Terms (one per line)</label><TextArea rows={3} value={offer.terms} onChange={(e) => set("terms", e.target.value)} /></div>
+          </AdminCard>
+
+          <AdminCard style={sectionCard}>
+            <div style={sectionTitle}><span style={dot} />Advertiser</div>
+            <div style={row}>
+              <div style={field}><label style={label}>Advertiser Name</label><TextInput value={offer.advertiser || ""} onChange={(e) => set("advertiser", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
+              <div style={field}><label style={label}>Advertiser Payout</label><TextInput value={offer.advertiser_po || ""} onChange={(e) => set("advertiser_po", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
+            </div>
+            <div style={field}><label style={label}>Offer URL (use {"{click_id}"} placeholder)</label><TextInput type="url" required value={offer.offer_url || ""} onChange={(e) => set("offer_url", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
+            <div style={row}>
+              <div style={field}><label style={label}>Logo URL</label><TextInput value={offer.logo || ""} onChange={(e) => set("logo", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
+              <div style={field}><label style={label}>Banner Image URL</label><TextInput value={offer.banner_image || ""} onChange={(e) => set("banner_image", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
+            </div>
+          </AdminCard>
+
+          <AdminCard style={sectionCard}>
+            <div style={sectionTitle}><span style={dot} />Events &amp; Payouts</div>
             {[1, 2, 3, 4, 5].map((n) => (
               <div key={n} style={{ ...row, gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", marginBottom: 12 }}>
                 <TextInput placeholder={`Event ${n} slug`} value={offer[`eve_${n}`] || ""} onChange={(e) => set(`eve_${n}`, e.target.value)} onFocus={focusIn} onBlur={focusOut} style={inputStyle} />
@@ -158,12 +214,91 @@ function OfferDetailContent() {
               </div>
             ))}
             <div style={field}>
-              <label style={label}>Offer Status</label>
-              <select value={offer.offer_status} onChange={(e) => set("offer_status", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ ...inputStyle, width: 200, cursor: "pointer" }}>
-                <option value="live">Live</option><option value="Paused">Paused</option><option value="inactive">Inactive</option>
-              </select>
+              <label style={label}>Conversion Events (any one marks the click fully converted)</label>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+                {[1, 2, 3, 4, 5].filter((n) => (offer[`eve_${n}`] || "").trim()).map((n) => {
+                  const slug = offer[`eve_${n}`].trim();
+                  const checked = conversionEvents.includes(slug);
+                  return (
+                    <label key={n} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "var(--lg-ink)", background: "var(--lg-paper-sunken)", padding: "8px 12px", borderRadius: "var(--lg-radius-sm)", cursor: "pointer" }}>
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={(e) => {
+                          setConversionEvents((prev) => e.target.checked ? [...prev, slug] : prev.filter((s) => s !== slug));
+                        }}
+                      />
+                      {(offer[`eve_${n}_name`] || "").trim() || slug}
+                    </label>
+                  );
+                })}
+                {[1, 2, 3, 4, 5].every((n) => !(offer[`eve_${n}`] || "").trim()) && (
+                  <span style={{ fontSize: 12.5, color: "var(--lg-ink-faint)" }}>Fill in event slugs above to choose which ones count as conversion.</span>
+                )}
+              </div>
             </div>
           </AdminCard>
+
+          <AdminCard style={sectionCard}>
+            <div style={sectionTitle}><span style={dot} />Custom Input Fields</div>
+            {[1, 2, 3].map((n) => (
+              <div key={n} style={{ ...row, gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", marginBottom: 12 }}>
+                <TextInput placeholder={`Input ${n} label`} value={offer[`input_${n}`] || ""} onChange={(e) => set(`input_${n}`, e.target.value)} onFocus={focusIn} onBlur={focusOut} style={inputStyle} />
+                <Select value={offer[`input_${n}_type`] || "text"} onChange={(e) => set(`input_${n}_type`, e.target.value)}>
+                  <option value="text">Text</option><option value="number">Number</option><option value="email">Email</option><option value="tel">Phone</option><option value="url">URL</option>
+                </Select>
+              </div>
+            ))}
+          </AdminCard>
+
+          <AdminCard style={sectionCard}>
+            <div style={sectionTitle}><span style={dot} />Payment &amp; Status</div>
+            <div style={row}>
+              <div style={field}>
+                <label style={label}>User Pay Method</label>
+                <Select value={offer.pay_method || "upi"} onChange={(e) => set("pay_method", e.target.value)}>
+                  <option value="upi">UPI</option><option value="bank">Bank</option><option value="wallet">Wallet</option>
+                </Select>
+              </div>
+              <div style={field}>
+                <label style={label}>User Gateway</label>
+                <Select value={offer.gateway_user || ""} onChange={(e) => set("gateway_user", e.target.value)}>
+                  <option value="">— none —</option>
+                  {gateways.map((g) => <option key={g.id} value={g.id}>{g.gname} ({g.gtype})</option>)}
+                </Select>
+              </div>
+            </div>
+            <div style={row}>
+              <div style={field}>
+                <label style={label}>Refer Pay Method</label>
+                <Select value={offer.pay_method1 || "upi"} onChange={(e) => set("pay_method1", e.target.value)}>
+                  <option value="upi">UPI</option><option value="bank">Bank</option><option value="wallet">Wallet</option>
+                </Select>
+              </div>
+              <div style={field}>
+                <label style={label}>Refer Gateway</label>
+                <Select value={offer.gateway_refer || ""} onChange={(e) => set("gateway_refer", e.target.value)}>
+                  <option value="">— none —</option>
+                  {gateways.map((g) => <option key={g.id} value={g.id}>{g.gname} ({g.gtype})</option>)}
+                </Select>
+              </div>
+            </div>
+            <div style={row}>
+              <div style={field}><label style={label}>Caps</label><TextInput value={offer.caps || ""} onChange={(e) => set("caps", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
+              <div style={field}><label style={label}>Pay Limit</label><TextInput value={offer.pay_limit || ""} onChange={(e) => set("pay_limit", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
+            </div>
+            <div style={row}>
+              <div style={field}><label style={label}>Pay Time</label><TextInput value={offer.pay_time || ""} onChange={(e) => set("pay_time", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
+              <div style={field}><label style={label}>Offer Comment</label><TextInput value={offer.offer_comm || ""} onChange={(e) => set("offer_comm", e.target.value)} onFocus={focusIn} onBlur={focusOut} style={{ width: "100%", ...inputStyle }} /></div>
+            </div>
+            <div style={field}>
+              <label style={label}>Offer Status</label>
+              <Select value={offer.offer_status} onChange={(e) => set("offer_status", e.target.value)} style={{ width: 200 }}>
+                <option value="live">Live</option><option value="Paused">Paused</option><option value="inactive">Inactive</option>
+              </Select>
+            </div>
+          </AdminCard>
+
           <PrimaryButton type="submit" disabled={saving}>{saving ? "Saving…" : "Save Changes"}</PrimaryButton>
         </form>
       )}
