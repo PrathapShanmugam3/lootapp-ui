@@ -222,10 +222,17 @@ a {
 }
 
 .nav__container {
-  height: 100%;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  /* justify-content: space-between (previous) pushed .nav__logout past the
+     bottom edge and out of the scrollable area whenever the nav-links list
+     was taller than the viewport — common on mobile with several dropdown
+     groups open, which is exactly why the logout button was unreachable
+     there. margin-top: auto on .nav__logout below achieves the same
+     "stick to bottom when there's room" look, but as part of the normal
+     document flow, so it scrolls into view like any other content when
+     there isn't room. */
   padding-bottom: 2rem;
   overflow-y: auto;
   scrollbar-width: none;
@@ -284,9 +291,10 @@ a {
 }
 
 .nav__logout {
-  margin-top: 1.5rem;
+  margin-top: auto;
   border-top: 1px solid var(--border-color);
   padding-top: 1rem;
+  flex-shrink: 0;
   color: var(--lg-error) !important;
 }
 .nav__logout:hover {
