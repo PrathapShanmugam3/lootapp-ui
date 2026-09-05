@@ -68,8 +68,11 @@ export default function EmpDashboardPage() {
               <tr style={{ textAlign: "left" }}>
                 <th style={{ paddingBottom: 10, fontSize: 10.5, fontWeight: 800, color: "var(--lg-ink-faint)", textTransform: "uppercase", letterSpacing: "0.06em", width: 50 }}>#</th>
                 <th style={{ paddingBottom: 10, fontSize: 10.5, fontWeight: 800, color: "var(--lg-ink-faint)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Offer</th>
+                <th style={{ paddingBottom: 10, fontSize: 10.5, fontWeight: 800, color: "var(--lg-ink-faint)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Pay ID</th>
                 <th style={{ paddingBottom: 10, fontSize: 10.5, fontWeight: 800, color: "var(--lg-ink-faint)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Amount</th>
                 <th style={{ paddingBottom: 10, fontSize: 10.5, fontWeight: 800, color: "var(--lg-ink-faint)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Status</th>
+                <th style={{ paddingBottom: 10, fontSize: 10.5, fontWeight: 800, color: "var(--lg-ink-faint)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Date</th>
+                <th style={{ paddingBottom: 10, fontSize: 10.5, fontWeight: 800, color: "var(--lg-ink-faint)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Time</th>
               </tr>
             </thead>
             <tbody>
@@ -80,6 +83,7 @@ export default function EmpDashboardPage() {
                   <tr key={i} style={{ borderTop: "1px solid var(--lg-line-soft)" }}>
                     <td style={{ padding: "10px 0", color: "var(--lg-ink-faint)", fontWeight: 600 }}>{i + 1}</td>
                     <td style={{ padding: "10px 0", fontWeight: 600, color: "var(--lg-ink)" }}>{p.offName}</td>
+                    <td style={{ padding: "10px 0", fontFamily: "monospace", fontSize: 12, wordBreak: "break-all" }}>{p.payId}</td>
                     <td style={{ padding: "10px 0", fontWeight: 700, fontVariantNumeric: "tabular-nums", fontFamily: "var(--lg-font-display)" }}>₹{p.amount}</td>
                     <td style={{ padding: "10px 0" }}>
                       <span
@@ -98,6 +102,8 @@ export default function EmpDashboardPage() {
                         {p.status}
                       </span>
                     </td>
+                    <td style={{ padding: "10px 0", fontSize: 12, color: "var(--lg-ink-faint)" }}>{p.date}</td>
+                    <td style={{ padding: "10px 0", fontSize: 12, color: "var(--lg-ink-faint)" }}>{p.time}</td>
                   </tr>
                 );
               })}

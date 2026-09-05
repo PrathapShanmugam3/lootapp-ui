@@ -18,7 +18,7 @@ export default function EmpLiveOffersPage() {
     <div style={{ padding: "2rem", maxWidth: 1100, margin: "0 auto" }}>
       <AdminPageHeader title="Live Offers" subtitle={`${offers.length} currently live (read-only)`} />
       <AdminCard>
-        <AdminTable columns={["#", "ID", "Name", "Caps", "Status"]}>
+        <AdminTable columns={["#", "ID", "Name", "Caps", "Status", "Action"]}>
           {offers.map((o, i) => (
             <tr
               key={o.off_id}
@@ -31,6 +31,9 @@ export default function EmpLiveOffersPage() {
               <td style={{ padding: "12px 16px", fontWeight: 700, color: "var(--lg-ink)" }}>{o.offer_name}</td>
               <td style={{ padding: "12px 16px", fontVariantNumeric: "tabular-nums" }}>{o.caps}</td>
               <td style={{ padding: "12px 16px" }}><StatusBadge status={o.offer_status} /></td>
+              <td style={{ padding: "12px 16px" }}>
+                <a href={`/emp/offer-detail?o=${o.off_id}`} style={{ color: "var(--lg-violet)", fontWeight: 700, fontSize: 12, textDecoration: "none", transition: "color 150ms ease" }}>View Details</a>
+              </td>
             </tr>
           ))}
         </AdminTable>

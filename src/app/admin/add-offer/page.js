@@ -58,8 +58,12 @@ export default function AddOfferPage() {
   const [gateways, setGateways] = useState([]);
   const [form, setForm] = useState({
     offer_name: "", offer_title: "", category: "", type: "cpa",
-    steps: "", offer_benefits: "", offer_fees_charges: "", terms: "",
-    advertiser: "", advertiser_po: "", offer_url: "", logo: "", banner_image: "",
+    steps: "Done! You will get cashback within",
+    offer_benefits: "No benefits details provided.",
+    offer_fees_charges: "No fees and charges details provided.",
+    terms: "Tracking Time: \nPayout Time: ",
+    advertiser: "", advertiser_po: "", offer_url: "",
+    logo: "../home/img/offer.jpg", banner_image: "../home/img/banner.jpg",
     conversion_event: "", caps: "", pay_time: "", pay_method: "upi", pay_method1: "upi",
     gateway_user: "", gateway_refer: "", visibility: "all", offer_status: "live",
     manual_event: "", offer_comm: "", pay_limit: "",
@@ -128,10 +132,10 @@ export default function AddOfferPage() {
 
         <AdminCard style={sectionCard}>
           <div style={sectionTitle}><span style={dot} />Offer Details</div>
-          <div style={field}><label style={label}>Steps (one per line)</label><TextArea rows={4} value={form.steps} onChange={(e) => set("steps", e.target.value)} placeholder={"Step 1: Click on the offer link.\nStep 2: Complete the required action.\nStep 3: Done! You will get cashback within 24-48 hours."} /></div>
-          <div style={field}><label style={label}>Benefits (one per line)</label><TextArea rows={4} value={form.offer_benefits} onChange={(e) => set("offer_benefits", e.target.value)} placeholder={"Instant cashback on completion.\nNo hidden charges.\n100% safe and secure."} /></div>
-          <div style={field}><label style={label}>Fees &amp; Charges (one per line)</label><TextArea rows={3} value={form.offer_fees_charges} onChange={(e) => set("offer_fees_charges", e.target.value)} placeholder={"No fees and charges applicable."} /></div>
-          <div style={field}><label style={label}>Terms (one per line)</label><TextArea rows={3} value={form.terms} onChange={(e) => set("terms", e.target.value)} placeholder={"Tracking Time: Up to 24 hours\nPayout Time: Up to 7 days\nOffer valid for new users only."} /></div>
+          <div style={field}><label style={label}>Steps (one per line)</label><TextArea rows={4} value={form.steps} onChange={(e) => set("steps", e.target.value)} /></div>
+          <div style={field}><label style={label}>Benefits (one per line)</label><TextArea rows={4} value={form.offer_benefits} onChange={(e) => set("offer_benefits", e.target.value)} /></div>
+          <div style={field}><label style={label}>Fees &amp; Charges (one per line)</label><TextArea rows={3} value={form.offer_fees_charges} onChange={(e) => set("offer_fees_charges", e.target.value)} /></div>
+          <div style={field}><label style={label}>Terms (one per line)</label><TextArea rows={3} value={form.terms} onChange={(e) => set("terms", e.target.value)} /></div>
         </AdminCard>
 
         <AdminCard style={sectionCard}>

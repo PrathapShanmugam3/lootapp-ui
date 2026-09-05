@@ -7,7 +7,6 @@ const ADMIN_NAV = [
   {
     type: "group", icon: "offer", label: "Offers",
     items: [
-      { href: "/admin/add-offer", label: "Add Offer" },
       { href: "/admin/live-offer", label: "Live Offers" },
       { href: "/admin/all-offers", label: "All Offers" },
     ],
@@ -38,10 +37,12 @@ const ADMIN_NAV = [
     ],
   },
   { type: "link", href: "/admin/chat", icon: "message", label: "Chat" },
+  { type: "link", href: "/admin/message-templates", icon: "message", label: "Message Templates" },
   {
     type: "group", icon: "cog", label: "Manage",
     items: [
       { href: "/admin/all-users", label: "Manage Users" },
+      { href: "/admin/managers", label: "Managers" },
       { href: "/admin/all-referrals", label: "Manage Referrals" },
       { href: "/admin/top-earners", label: "Top Earners" },
       { href: "/admin/settings", label: "Settings" },

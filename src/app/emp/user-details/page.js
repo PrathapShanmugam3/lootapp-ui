@@ -16,16 +16,20 @@ function UserDetailsContent() {
   const [dbId, setDbId] = useState(null);
   const [message, setMessage] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [loadError, setLoadError] = useState(null);
 
   useEffect(() => {
     if (!userId) return;
-    api.get(`/api/emp/users?search=${userId}&page=1`).then((res) => {
-      const match = res.users.find((u) => u.user_id === userId);
-      if (match) {
-        setDbId(match.id);
-        api.get(`/api/emp/users/${match.id}`).then((r) => setUser(r.user));
-      }
-    });
+    api.get(`/api/emp/users/by-user-id/${userId}`)
+      .then((res) => {
+        if (res.success) {
+          setDbId(res.user.id);
+          setUser(res.user);
+        } else {
+          setLoadError(res.message || "User not found.");
+        }
+      })
+      .catch((err) => setLoadError(err.data?.message || err.message || "Failed to load user."));
   }, [userId]);
 
   function set(key, value) {
@@ -48,6 +52,16 @@ function UserDetailsContent() {
     }
   }
 
+  const effectiveError = !userId ? "No user ID provided." : loadError;
+  if (effectiveError) {
+    return (
+      <div style={{ padding: "2rem", maxWidth: 600, margin: "0 auto" }}>
+        <div style={{ padding: 14, borderRadius: "var(--lg-radius-sm)", background: "var(--lg-error-soft)", color: "var(--lg-error)", fontSize: 13, fontWeight: 600 }}>
+          {effectiveError}
+        </div>
+      </div>
+    );
+  }
   if (!user) return <Loader style={{ padding: 32 }} />;
 
   return (

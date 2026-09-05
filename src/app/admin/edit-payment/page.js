@@ -67,7 +67,7 @@ function EditPaymentContent() {
                 onFocus={(e) => { e.target.style.borderColor = "var(--lg-violet)"; e.target.style.background = "var(--lg-paper-raised)"; e.target.style.boxShadow = "0 0 0 4px rgba(16,185,129,0.12)"; }}
                 onBlur={(e) => { e.target.style.borderColor = "transparent"; e.target.style.background = "var(--lg-paper-sunken)"; e.target.style.boxShadow = "none"; }}
               >
-                {["Success", "Failed", "Refunded to Wallet", "Processing", "Pending", "Rejected"].map((s) => <option key={s} value={s}>{s}</option>)}
+                {["Success", "Failed", "Skipped", "Refunded to Wallet", "Processing", "Pending", "Rejected"].map((s) => <option key={s} value={s}>{s}</option>)}
               </select>
               <span style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", color: "var(--lg-ink-faint)", fontSize: 10 }}>▾</span>
             </div>

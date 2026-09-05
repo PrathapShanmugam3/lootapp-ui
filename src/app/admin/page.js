@@ -214,8 +214,8 @@ export default function AdminDashboardPage() {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
             <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0, fontFamily: "var(--lg-font-display)", color: "var(--lg-ink)" }}>Recent Payments</h2>
           </div>
-          <div>
-            {data.recentPayments.slice(0, 5).map((p, i, arr) => {
+          <div style={{ maxHeight: 480, overflowY: "auto" }}>
+            {data.recentPayments.slice(0, 50).map((p, i, arr) => {
               const initial = (p.offName || "?").charAt(0).toUpperCase();
               const success = p.status === "Success";
               return (

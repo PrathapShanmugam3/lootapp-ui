@@ -5,7 +5,7 @@ import { api } from "@/lib/apiClient";
 import { AdminPageHeader, AdminCard, AdminTable, StatusBadge, TextInput, Pagination, CsvExportButton } from "@/components/AdminPage";
 import Loader from "@/components/Loader";
 
-export default function PaymentLogsPage() {
+export default function EmpPaymentLogsPage() {
   const [data, setData] = useState(null);
   const [status, setStatus] = useState("");
   const [event, setEvent] = useState("");
@@ -18,7 +18,7 @@ export default function PaymentLogsPage() {
     if (status) params.set("status", status);
     if (event) params.set("event", event);
     if (search) params.set("search", search);
-    api.get(`/api/admin/payment-logs?${params}`).then(setData).catch(() => setData(null));
+    api.get(`/api/emp/payment-logs?${params}`).then(setData).catch(() => setData(null));
   }, [status, event, search, page, limit]);
 
   return (

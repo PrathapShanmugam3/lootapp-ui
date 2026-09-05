@@ -111,6 +111,7 @@ export function StatusBadge({ status }) {
     inactive: { bg: "var(--lg-line-soft)", text: "var(--lg-ink-faint)" },
     paused: { bg: "var(--lg-warning-soft)", text: "var(--lg-warning)", glow: "var(--lg-glow-warning)" },
     pending: { bg: "var(--lg-warning-soft)", text: "var(--lg-warning)", glow: "var(--lg-glow-warning)" },
+    skipped: { bg: "var(--lg-warning-soft)", text: "var(--lg-warning)", glow: "var(--lg-glow-warning)" },
     processing: { bg: "var(--lg-info-soft)", text: "var(--lg-info)" },
     failed: { bg: "var(--lg-error-soft)", text: "var(--lg-error)", glow: "var(--lg-glow-error)" },
     rejected: { bg: "var(--lg-error-soft)", text: "var(--lg-error)", glow: "var(--lg-glow-error)" },

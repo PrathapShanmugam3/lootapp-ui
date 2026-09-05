@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/apiClient";
-import { AdminPageHeader, AdminCard, AdminTable, StatusBadge } from "@/components/AdminPage";
+import { AdminPageHeader, AdminCard, AdminTable, StatusBadge, PrimaryButton } from "@/components/AdminPage";
 import Loader from "@/components/Loader";
 
 export default function LiveOffersPage() {
@@ -16,7 +16,11 @@ export default function LiveOffersPage() {
 
   return (
     <div style={{ padding: "2rem", maxWidth: 1100, margin: "0 auto" }}>
-      <AdminPageHeader title="Live Offers" subtitle={`${offers.length} currently live`} />
+      <AdminPageHeader
+        title="Live Offers"
+        subtitle={`${offers.length} currently live`}
+        action={<PrimaryButton onClick={() => (window.location.href = "/admin/add-offer")}>+ Add Offer</PrimaryButton>}
+      />
       <AdminCard>
         <AdminTable columns={["#", "ID", "Name", "Caps", "Status", "Action"]}>
           {offers.map((o, i) => (

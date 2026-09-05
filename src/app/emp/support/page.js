@@ -6,15 +6,6 @@ import Loader from "@/components/Loader";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
-const MESSAGE_TEMPLATES = [
-  { label: "Greeting", text: "Hi! Thanks for reaching out. How can I help you today?" },
-  { label: "Referral payout under review", text: "Your referral payout is currently under review. It will be processed within 24-48 hours." },
-  { label: "Ask for pay ID", text: "Could you please share the UPI ID or bank account you used for this referral?" },
-  { label: "Referral confirmed", text: "Thanks for confirming — your referral reward has been credited." },
-  { label: "Need more info", text: "Could you share a screenshot showing the completed step? That'll help us verify faster." },
-  { label: "Closing", text: "Glad we could help! Let us know if anything else comes up." },
-];
-
 export default function SupportPage() {
   const [conversations, setConversations] = useState(null);
   const [activeUserId, setActiveUserId] = useState(null);
@@ -22,11 +13,13 @@ export default function SupportPage() {
   const [text, setText] = useState("");
   const [file, setFile] = useState(null);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [templates, setTemplates] = useState([]);
   const fileInputRef = useRef(null);
   const scrollRef = useRef(null);
 
   useEffect(() => {
     api.get("/api/emp/support/conversations").then((res) => setConversations(res.conversations)).catch(() => setConversations([]));
+    api.get("/api/emp/message-templates").then((res) => setTemplates(res.templates || [])).catch(() => setTemplates([]));
   }, []);
 
   useEffect(() => {
@@ -128,9 +121,11 @@ export default function SupportPage() {
             <div style={{ position: "relative", display: "flex", gap: 10, padding: 16, borderTop: "1px solid var(--lg-line)", background: "var(--lg-paper-raised)" }}>
               {showTemplates && (
                 <div style={{ position: "absolute", bottom: "100%", left: 16, marginBottom: 8, background: "var(--lg-paper)", border: "1px solid var(--lg-line)", borderRadius: "var(--lg-radius)", boxShadow: "var(--lg-shadow-md)", width: 320, maxHeight: 260, overflowY: "auto", zIndex: 10 }}>
-                  {MESSAGE_TEMPLATES.map((t) => (
+                  {templates.length === 0 ? (
+                    <div style={{ padding: "10px 14px", fontSize: 12, color: "var(--lg-ink-faint)" }}>No templates yet — ask an admin to add some.</div>
+                  ) : templates.map((t) => (
                     <button
-                      key={t.label}
+                      key={t.id}
                       onClick={() => applyTemplate(t)}
                       style={{ display: "block", width: "100%", textAlign: "left", padding: "10px 14px", background: "none", border: "none", borderBottom: "1px solid var(--lg-line-soft)", cursor: "pointer" }}
                     >

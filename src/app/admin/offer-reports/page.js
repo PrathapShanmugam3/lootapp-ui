@@ -40,7 +40,7 @@ export default function OfferReportsPage() {
               <td style={{ padding: "10px 16px", fontVariantNumeric: "tabular-nums" }}>{o.conversions.toLocaleString("en-IN")}</td>
               <td style={{ padding: "10px 16px", fontWeight: 700, fontFamily: "var(--lg-font-display)", fontVariantNumeric: "tabular-nums" }}>₹{o.payout}</td>
               <td style={{ padding: "10px 16px" }}>
-                <a href={`/detailed-report?o=${o.off_id}`} style={{ color: "var(--lg-violet)", fontWeight: 700, fontSize: 12, textDecoration: "none", transition: "color 150ms ease" }}>Details</a>
+                <a href={`/admin/offer-detail?o=${o.off_id}`} style={{ color: "var(--lg-violet)", fontWeight: 700, fontSize: 12, textDecoration: "none", transition: "color 150ms ease" }}>Details</a>
               </td>
             </tr>
           ))}
